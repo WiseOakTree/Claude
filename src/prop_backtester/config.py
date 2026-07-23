@@ -83,6 +83,10 @@ class RiskConfig:
     stop_bricks: float = 2.0            # Stop-Distanz = stop_bricks * Brick-Groesse
     max_leverage: float = 5.0           # Obergrenze fuer Nominalwert / Kontostand
     min_notional: float = 10.0          # kleinstmoegliche Position (Boersen-Minimum)
+    # TP-Ziele fuer die Signal-Nachricht als R-Vielfache (R = Stop-Distanz).
+    # Nur informativ fuer manuelles Teil-Mitnehmen -- der Backtest nutzt sie NICHT
+    # (dort ist der Ausstieg immer das Gegensignal / Reversal).
+    tp_r_multiples: list = field(default_factory=lambda: [2.0, 4.0])
 
     def validate(self) -> None:
         if not (0 < self.risk_per_trade_pct < 1):
@@ -91,6 +95,8 @@ class RiskConfig:
             raise ValueError("stop_bricks muss > 0 sein")
         if self.max_leverage <= 0:
             raise ValueError("max_leverage muss > 0 sein")
+        if any(m <= 0 for m in self.tp_r_multiples):
+            raise ValueError("tp_r_multiples muessen > 0 sein")
 
 
 @dataclass

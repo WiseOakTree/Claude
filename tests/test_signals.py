@@ -81,8 +81,36 @@ def test_format_message_contains_key_fields():
     sig = signals.compute_latest_signal(df, cfg)
     msg = signals.format_message("XBTUSD", 60, sig, cfg)
     assert "XBTUSD" in msg
-    assert "Stop" in msg or sig.target == 0
     assert "UTC" in msg
+    if sig.target != 0:
+        assert "SL" in msg and "TP1" in msg
+
+
+def test_tp_levels_direction_and_count():
+    df = data.generate_synthetic(bars=1500, seed=5)
+    cfg = BacktestConfig()
+    cfg.risk.tp_r_multiples = [2.0, 4.0]
+    sig = signals.compute_latest_signal(df, cfg)
+    assert sig is not None and sig.target != 0
+    assert len(sig.tp_levels) == 2
+    # TP liegt in Handelsrichtung, SL entgegengesetzt
+    for m, tp_price, pct in sig.tp_levels:
+        if sig.target == 1:
+            assert tp_price > sig.trigger_price and sig.stop_price < sig.trigger_price
+        else:
+            assert tp_price < sig.trigger_price and sig.stop_price > sig.trigger_price
+    # 4R doppelt so weit wie 2R
+    r2 = abs(sig.tp_levels[0][1] - sig.trigger_price)
+    r4 = abs(sig.tp_levels[1][1] - sig.trigger_price)
+    assert abs(r4 - 2 * r2) < 1e-6
+
+
+def test_empty_tp_multiples_no_tp():
+    df = data.generate_synthetic(bars=1500, seed=5)
+    cfg = BacktestConfig()
+    cfg.risk.tp_r_multiples = []
+    sig = signals.compute_latest_signal(df, cfg)
+    assert sig.tp_levels == []
 
 
 def test_resolve_secret_env(monkeypatch):

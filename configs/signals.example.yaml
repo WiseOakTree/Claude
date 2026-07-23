@@ -26,9 +26,13 @@ strategy:
 
 risk:
   risk_per_trade_pct: 0.003   # 0.3% (Worst-DD 6.9% im 4-Jahres-Test)
-  stop_bricks: 2.0
+  stop_bricks: 2.0            # SL-Distanz = 2 Bricks (= das Reversal)
   max_leverage: 5.0
   min_notional: 10.0
+  # TP-Ziele in der Nachricht als R-Vielfache (R = SL-Distanz). Nur Info fuers
+  # manuelle Teil-Mitnehmen -- Kern-Ausstieg bleibt das Gegensignal (Reversal).
+  # Leere Liste [] = keine TPs anzeigen.
+  tp_r_multiples: [2.0, 4.0]
 
 # --- Telegram --------------------------------------------------------------
 # Token von @BotFather (Telegram: /newbot). Chat-ID: schreibe deinem Bot etwas,

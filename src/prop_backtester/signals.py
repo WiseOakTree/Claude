@@ -21,8 +21,8 @@ import json
 import os
 import sys
 import time
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional, Tuple
 
 import pandas as pd
 
@@ -43,6 +43,8 @@ class Signal:
     stop_distance: float
     size: float            # empfohlene Positionsgroesse (Basiswert-Einheiten)
     notional: float        # Nominalwert der Position
+    # TP-Level: Liste aus (R-Vielfaches, Preis, Bewegung-in-%)
+    tp_levels: List[Tuple[float, float, float]] = field(default_factory=list)
 
     @property
     def side_text(self) -> str:
@@ -73,11 +75,18 @@ def compute_latest_signal(df: pd.DataFrame, cfg: BacktestConfig,
         size = min(size, (cfg.initial_balance * r.max_leverage) / price)
     else:
         size = 0.0
+    # TP-Level als R-Vielfache der Stop-Distanz (R = Risiko pro Trade)
+    tp_levels: List[Tuple[float, float, float]] = []
+    if target != 0 and stop_dist > 0:
+        for m in r.tp_r_multiples:
+            tp_price = price + side * m * stop_dist
+            move_pct = (m * stop_dist / price) * 100 if price else 0.0
+            tp_levels.append((float(m), float(tp_price), float(move_pct)))
     return Signal(
         time=pd.Timestamp(last["time"]).tz_convert("UTC"),
         target=target, trigger_price=price, current_price=current,
         brick_size=brick, stop_price=stop_price, stop_distance=stop_dist,
-        size=size, notional=size * price,
+        size=size, notional=size * price, tp_levels=tp_levels,
     )
 
 
@@ -102,11 +111,14 @@ def format_message(pair: str, interval_minutes: int, sig: Signal,
         f"▸ Brick (ATR): {sig.brick_size:,.2f}",
     ]
     if sig.target != 0:
+        lines.append(f"🛑 SL (2 Bricks): <b>{sig.stop_price:,.2f}</b>  (Risiko ≈{stop_pct:.2f}%)")
+        for i, (m, tp_price, move_pct) in enumerate(sig.tp_levels, start=1):
+            lines.append(f"🎯 TP{i} ({m:g}R): <b>{tp_price:,.2f}</b>  (+{move_pct:.2f}%)")
         lines += [
-            f"▸ Stop (2 Bricks): <b>{sig.stop_price:,.2f}</b>  (≈{stop_pct:.2f}%)",
             f"▸ Risiko {cfg.risk.risk_per_trade_pct*100:g}% von {cfg.initial_balance:,.0f} "
             f"= {risk_amt:,.0f} → Size ≈ <b>{sig.size:.4g}</b> "
             f"(Nominal {sig.notional:,.0f})",
+            "ℹ️ Kern-Ausstieg = Gegensignal (Reversal); TP = optionale Teilmitnahme",
         ]
     lines += ["", f"⏱ {sig.time.strftime('%Y-%m-%d %H:%M UTC')} · geschlossene Kerze"]
     return "\n".join(lines)
