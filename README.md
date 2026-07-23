@@ -167,6 +167,10 @@ Die Nachricht enthält Richtung, Einstiegs-/Triggerkurs, Stop (2 Bricks) und die
 zur Risiko-Einstellung passende Positionsgröße. Voreingestellt ist die
 4-Jahres-validierte Config (0.75× ATR, 0.3 % Risiko).
 
+**24/7 auf einem Server (systemd):** Schritt-für-Schritt in
+[`docs/deploy_signals.md`](docs/deploy_signals.md) — Auto-Neustart nach Reboot,
+Token sicher getrennt.
+
 > ⚠️ Signale sind Entscheidungshilfen, keine automatischen Orders — du platzierst
 > die Trades selbst. Kein Finanzrat.
 
