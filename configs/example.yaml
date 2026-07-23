@@ -1,0 +1,32 @@
+# Beispiel-Konfiguration fuer den Krypto-Prop-Backtester.
+# Alle Werte sind optional -- fehlende Felder nutzen die Defaults.
+
+# Startkapital = Groesse deines Kraken-Prop-Kontos (z.B. 5000 ... 200000).
+initial_balance: 50000
+
+# Renko-Bricks: ATR-basiert (dynamisch) -- passt sich an die Volatilitaet an.
+renko:
+  mode: atr            # "atr" oder "fixed"
+  atr_period: 14       # Laenge der ATR fuer die Brick-Groesse
+  atr_multiplier: 1.0  # Brick-Groesse = ATR * multiplier (groesser = weniger, groessere Bricks)
+  # Fuer feste Bricks stattdessen:
+  # mode: fixed
+  # fixed_brick_pct: 0.01   # 1% vom Preis
+
+# Strategie: Reversal nach 2 gleichgerichteten Bricks (Stop-and-Reverse).
+strategy:
+  reversal_bricks: 2
+  allow_long: true
+  allow_short: true
+
+# Handelskosten (Anteile: 0.0005 = 0.05%).
+costs:
+  fee_pct: 0.0005      # Taker-Gebuehr pro Seite
+  slippage_pct: 0.0003 # Slippage pro Fill
+
+# Risiko / Positionsgroesse.
+risk:
+  risk_per_trade_pct: 0.005  # 0.5% des Kontostands Risiko je Trade
+  stop_bricks: 2.0           # Stop-Distanz = 2 Bricks (= das Reversal-Signal)
+  max_leverage: 5.0
+  min_notional: 10.0

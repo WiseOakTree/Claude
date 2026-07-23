@@ -1,0 +1,198 @@
+# Krypto Prop Backtester — Renko-Reversal für die Kraken-Prop-Challenge
+
+Ein **realistischer** Backtester, um eine manuell handelbare **Renko-Reversal-Strategie**
+gegen die Regeln der **Kraken-Prop-Challenge** zu testen — mit dem Ziel, die
+Challenge **nachhaltig** (nicht per Glück) zu bestehen.
+
+Die Engine bewertet die Strategie nicht nur nach Rendite, sondern prüft, ob die
+Equity-Kurve **jede** Kraken-Regel einhält: Profit-Target, Max Daily Loss und
+Max Total Drawdown — inklusive **unrealisiertem** PnL, so wie Kraken es rechnet.
+
+---
+
+## Die Idee in einem Satz
+
+> Renko-Bricks glätten das Rauschen. Bei **2 Gegen-Bricks** dreht die Position
+> (Stop-and-Reverse). Der Backtester zeigt dir, ob dieses simple Regelwerk die
+> engen Drawdown-Limits von Kraken übersteht — und mit welcher Positionsgröße.
+
+---
+
+## Kraken-Prop-Regeln (eingebaute Presets)
+
+Stand 2026. **Für alle Tiers gilt: 3 % Max Daily Loss** (Reset 00:30 UTC),
+**realized + unrealized** PnL zählen, keine Consistency-Rule, keine
+Mindest-Handelstage.
+
+| Preset          | Profit-Target      | Max Drawdown   | Typ      |
+|-----------------|--------------------|----------------|----------|
+| `1step_turbo`   | 9 %                | 3 %            | statisch |
+| `1step_pro`     | 12 %               | 3 %            | statisch |
+| `1step_classic` | 10 %               | 6 %            | statisch |
+| `2step_classic` | 10 % + 5 %         | 8 %            | trailing |
+
+- **statisch**: Drawdown-Grenze = Startkapital − X % (fix, ab Kontostart).
+- **trailing**: Grenze folgt dem **Equity-Hoch** nach oben.
+
+> ⚠️ **Prop-Firmen ändern Regeln.** Diese Werte sind ein dokumentierter
+> Ausgangspunkt. Gleiche sie **vor dem Kauf** mit der aktuellen Kraken-Seite ab.
+> Kraken Prop ist der Consumer-Rebrand von *Breakout*; die alte
+> Vertragssprache nennt teils abweichende Zahlen. Quellen unten.
+
+---
+
+## Installation
+
+```bash
+python -m pip install -r requirements.txt
+# oder als Paket (inkl. CLI-Befehl "prop-backtester"):
+python -m pip install -e .
+```
+
+Nur NumPy/Pandas werden zwingend gebraucht. `matplotlib` ist optional (nur für Plots).
+
+---
+
+## Schnellstart
+
+```bash
+# Mit synthetischen Demo-Daten (kein Netzwerk nötig)
+PYTHONPATH=src python -m prop_backtester --demo --balance 50000 --risk 0.005
+
+# Mit eigener CSV (Spalten: time,open,high,low,close,volume)
+PYTHONPATH=src python -m prop_backtester --csv meine_daten.csv --config configs/example.yaml
+
+# Live von Kraken laden (öffentliche API, XBTUSD, 1h-Kerzen) + Plot speichern
+PYTHONPATH=src python -m prop_backtester --kraken XBTUSD --interval 60 --plot equity.png
+
+# Alle Presets anzeigen
+PYTHONPATH=src python -m prop_backtester --list-presets
+```
+
+Oder als Python-API:
+
+```python
+from prop_backtester import backtest, BacktestConfig, data
+
+df = data.generate_synthetic(bars=8000)      # oder data.load_csv(...) / data.fetch_kraken_ohlc(...)
+cfg = BacktestConfig()
+cfg.initial_balance = 50_000
+cfg.risk.risk_per_trade_pct = 0.005          # 0.5 % Risiko pro Trade
+
+result, metrics, challenges = backtest(df, cfg)
+print(metrics["return_pct"], metrics["max_drawdown_pct"])
+for key, ch in challenges.items():
+    print(key, "PASS" if ch.passed else "FAIL")
+```
+
+Siehe auch `examples/quickstart.py`.
+
+---
+
+## Wie es funktioniert
+
+### 1. Renko-Bricks (ATR-basiert)
+Die Brick-Größe ist **dynamisch** = `ATR(14) × Multiplikator` (Wilder-ATR). In
+volatilen Phasen werden Bricks größer, in ruhigen kleiner — realistischer für
+Krypto als eine feste Größe. Ein neuer Brick entsteht, sobald sich der Preis um
+eine Brick-Größe vom letzten Brick-Schluss entfernt. Fixe Bricks (% oder $) sind
+per Config ebenfalls möglich.
+
+### 2. Strategie: 2-Brick-Reversal (Stop-and-Reverse)
+Sobald **2 gleichgerichtete Bricks** vorliegen, ist die Zielposition long (+1)
+bzw. short (−1). Die Position bleibt bestehen, bis das Gegensignal (2
+Gegen-Bricks) kommt — dann wird gedreht. Das entspricht dem klassischen
+2-Brick-Reversal: Nach einem Up-Brick auf Kurs C müssen für 2 Down-Bricks
+2 × Brick fallen. Der Fill erfolgt am Gitter-Level des auslösenden Bricks (ein
+Kurs, der intrabar real erreicht wurde → **kein Lookahead**).
+
+Per Config: `allow_short: false` macht daraus eine Long-only-Strategie (geht bei
+Verkaufssignalen flach, statt zu shorten).
+
+### 3. Realistische Ausführung
+- **Positionsgröße** aus Risiko: `Risiko% × Kontostand ÷ (stop_bricks × Brick)`.
+  Der Stop entspricht dem Reversal-Abstand (2 Bricks). Gehebelt bis `max_leverage`.
+- **Gebühren** pro Seite + **Slippage** pro Fill (adversariell).
+- **Mark-to-Market** je Bar inkl. unrealisiertem PnL, plus **konservative
+  Intrabar-Extrema** (High/Low), damit Drawdown-Breaches nicht „durchrutschen".
+
+### 4. Prop-Regel-Prüfung
+Der Evaluator läuft Bar für Bar über die Equity-Kurve:
+- **Daily-Reset 00:30 UTC** setzt die Tages-Verlustgrenze neu.
+- **Breach** (Daily Loss *oder* Drawdown) wird **vor** dem Target geprüft
+  (pessimistisch). Beim Trailing-Drawdown wird das Equity-Hoch in der
+  ungünstigsten Reihenfolge angehoben.
+- **Mehrstufig (2-Step):** Phase 2 wird auf einem **frischen** Konto gleicher
+  Größe bewertet — genau wie in echt.
+
+---
+
+## Nachhaltig bestehen — worauf es ankommt
+
+Der Backtester macht die zentrale Wahrheit sichtbar: **Bei Krypto ist nicht das
+Target das Problem, sondern der Drawdown.** 3–8 % Drawdown sind bei BTC/ETH
+schnell erreicht. Praktische Hebel:
+
+1. **Risiko pro Trade klein halten** (`risk_per_trade_pct` 0.3–0.7 %). Das ist
+   der stärkste Regler gegen einen frühen Drawdown-Bust.
+2. **Preset zur eigenen Vola wählen:** Enge 3 %-Drawdown-Tiers (Turbo/Pro)
+   verzeihen fast nichts. `1step_classic` (6 %) ist oft der nachhaltigste
+   Startpunkt.
+3. **Brick-Größe kalibrieren** (`atr_multiplier`): größere Bricks = weniger
+   Whipsaw, aber späteres Reagieren. Über mehrere Werte backtesten.
+4. **Über viele Marktphasen testen** (Bull, Bär, Range) — nicht nur das eine
+   schöne Jahr. Mit `--kraken` echte Historie ziehen oder mehrere Seeds/CSV nutzen.
+
+---
+
+## Konfiguration
+
+Alle Parameter stehen in `configs/example.yaml` (Renko, Strategie, Kosten,
+Risiko). CLI-Flags (`--balance`, `--risk`, `--atr-period`, `--atr-mult`)
+überschreiben einzelne Werte.
+
+---
+
+## Tests
+
+```bash
+python -m pytest -q
+```
+
+---
+
+## Projektstruktur
+
+```
+src/prop_backtester/
+  config.py     # Konfigurations-Objekte (+ YAML-Loader)
+  data.py       # CSV / Kraken-API / synthetische Daten
+  renko.py      # ATR-basierter Renko-Aufbau
+  strategy.py   # 2-Brick-Reversal-Signale
+  engine.py     # Ausführung, Kosten, Equity-Kurve
+  prop.py       # Kraken-Presets + Regel-Evaluator
+  report.py     # Kennzahlen, Textbericht, Plot
+  cli.py        # Kommandozeile
+configs/example.yaml
+examples/quickstart.py
+tests/
+```
+
+---
+
+## Haftungsausschluss
+
+Dieses Projekt dient der **Recherche und Bildung**. Es ist keine Anlageberatung.
+Backtests bilden die Zukunft nicht ab; reale Ausführung, Slippage, Gebühren und
+Regeländerungen können abweichen. Kraken kann funded Capital nach eigenem
+Ermessen als simuliert („B-Book") behandeln. Handle nur mit Kapital, dessen
+Verlust du verkraften kannst.
+
+---
+
+## Quellen (Kraken-Prop-Regeln)
+
+- [Kraken Prop — Übersicht](https://www.kraken.com/prop)
+- [Support: What is Kraken Prop?](https://support.kraken.com/articles/what-is-kraken-prop)
+- [Support: How Kraken Prop Evaluations Work](https://support.kraken.com/articles/how-kraken-prop-evaluations-work)
+- [Support: Kraken Prop FAQ](https://support.kraken.com/articles/kraken-prop-faq)
