@@ -22,6 +22,7 @@ from .prop import evaluate_all_presets, evaluate_challenge, PRESETS, ChallengeRe
 from .report import compute_metrics
 from .sweep import (run_sweep, synthetic_scenarios, walkforward_scenarios,
                     DEFAULT_GRID, SweepResult)
+from . import data, kraken
 
 __all__ = [
     "backtest",
@@ -40,6 +41,8 @@ __all__ = [
     "walkforward_scenarios",
     "DEFAULT_GRID",
     "SweepResult",
+    "data",
+    "kraken",
 ]
 
 __version__ = "0.1.0"

@@ -95,6 +95,42 @@ Siehe auch `examples/quickstart.py`.
 
 ---
 
+## Echte Kraken-Historie laden
+
+Krakens OHLC-API liefert nur ~720 aktuelle Kerzen. Für **tiefe Historie** nutzt
+der eingebaute Downloader den **Trades-Endpoint** und aggregiert die Trades zu
+OHLC-Bars:
+
+```bash
+# BTC/USD, 1h-Bars, Zeitraum wählbar; schreibt eine CSV
+PYTHONPATH=src python -m prop_backtester --download-kraken XBTUSD \
+    --interval 60 --from 2024-01-01 --to 2024-06-01 --out xbtusd_1h.csv
+
+# dann Backtest / robuster Walk-Forward-Sweep auf echten Daten:
+PYTHONPATH=src python -m prop_backtester --csv xbtusd_1h.csv --balance 50000
+PYTHONPATH=src python -m prop_backtester --sweep --csv xbtusd_1h.csv --wf-window 3000 --wf-step 1500
+```
+
+Programmatisch:
+
+```python
+from prop_backtester import kraken
+df = kraken.download_ohlc("XBTUSD", interval_minutes=60,
+                          since="2024-01-01", until="2024-06-01")
+df.to_csv("xbtusd_1h.csv")
+```
+
+Details: paginiert automatisch über den `last`-Cursor, respektiert das
+Rate-Limit (`--sleep`, Default 1.6 s) mit exponentiellem Backoff, und lässt sich
+per `--max-trades` begrenzen. Tiefe Historien dauern entsprechend.
+
+> 🌐 **Netzwerk:** Der Download braucht ausgehenden Zugriff auf `api.kraken.com`.
+> In manchen Umgebungen (z.B. eingeschränkte Egress-Policy) ist das blockiert —
+> dann den Download **lokal** ausführen und die CSV übertragen. Siehe die Doku zu
+> [Umgebungen & Netzwerk](https://code.claude.com/docs/en/claude-code-on-the-web).
+
+---
+
 ## Wie es funktioniert
 
 ### 1. Renko-Bricks (ATR-basiert)
@@ -239,6 +275,7 @@ src/prop_backtester/
   engine.py     # Ausführung, Kosten (Gebühr/Spread/Slippage/Funding), Equity-Kurve
   prop.py       # Kraken-Presets + Regel-Evaluator
   sweep.py      # Parameter-Sweep + Robustheit (Multi-Szenario / Walk-Forward)
+  kraken.py     # Downloader: tiefe Historie via Trades-Endpoint -> OHLC
   report.py     # Kennzahlen, Textbericht, Plot
   cli.py        # Kommandozeile
 configs/example.yaml

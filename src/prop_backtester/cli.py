@@ -63,6 +63,19 @@ def build_parser() -> argparse.ArgumentParser:
                     help="Walk-Forward-Schrittweite (Bars); Default = Fenstergroesse")
     sw.add_argument("--sweep-csv", metavar="FILE", help="Sweep-Tabelle als CSV speichern")
 
+    dl = p.add_argument_group("Kraken-Download (tiefe Historie via Trades-Endpoint)")
+    dl.add_argument("--download-kraken", metavar="PAIR",
+                    help="Trades von Kraken laden und zu OHLC aggregieren, z.B. XBTUSD")
+    dl.add_argument("--from", dest="from_date", default=0,
+                    help="Startzeit (ISO-Datum oder Unix-Sekunden)")
+    dl.add_argument("--to", dest="to_date", default=None,
+                    help="Endzeit (ISO-Datum oder Unix-Sekunden)")
+    dl.add_argument("--out", help="Ziel-CSV fuer die heruntergeladenen OHLC-Daten")
+    dl.add_argument("--max-trades", type=int, default=None,
+                    help="Maximale Anzahl Trades (begrenzt den Download)")
+    dl.add_argument("--sleep", type=float, default=1.6,
+                    help="Pause zwischen API-Calls in Sekunden (Rate-Limit)")
+
     cfgg = p.add_argument_group("Konfiguration")
     cfgg.add_argument("--config", help="YAML-Konfigurationsdatei")
     cfgg.add_argument("--balance", type=float, help="Startkapital ueberschreiben")
@@ -87,6 +100,25 @@ def _apply_overrides(cfg: BacktestConfig, args) -> BacktestConfig:
     if args.atr_mult is not None:
         cfg.renko.atr_multiplier = args.atr_mult
     return cfg.validate()
+
+
+def _run_download(args) -> int:
+    from . import kraken
+
+    out = args.out or f"{args.download_kraken.lower()}_{args.interval}m.csv"
+    print(f"Lade Kraken-Trades fuer {args.download_kraken} (Intervall {args.interval}min)...")
+    print("Hinweis: der Trades-Endpoint paginiert -- tiefe Historien dauern (Rate-Limit).")
+    df = kraken.download_ohlc(
+        args.download_kraken, interval_minutes=args.interval,
+        since=args.from_date, until=args.to_date,
+        max_trades=args.max_trades, sleep_s=args.sleep,
+    )
+    df.to_csv(out)
+    print(f"\nFertig: {len(df)} OHLC-Bars von {df.index[0]} bis {df.index[-1]}")
+    print(f"Gespeichert: {out}")
+    print(f"\nNaechster Schritt:\n  python -m prop_backtester --csv {out} --balance 50000"
+          f"\n  python -m prop_backtester --sweep --csv {out} --wf-window 3000 --wf-step 1500")
+    return 0
 
 
 def _run_sweep(args, cfg: BacktestConfig) -> int:
@@ -123,6 +155,9 @@ def main(argv=None) -> int:
             print(f"  {key:16s} {r.name}")
             print(f"  {'':16s} {r.note}")
         return 0
+
+    if args.download_kraken:
+        return _run_download(args)
 
     cfg = load_config(args.config) if args.config else BacktestConfig()
     cfg = _apply_overrides(cfg, args)
