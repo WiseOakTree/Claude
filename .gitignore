@@ -10,4 +10,7 @@ venv/
 *.png
 *.json
 !configs/*.json
+# Live-Bot: echte Config (mit Telegram-Token) und Zustandsdatei nie committen
+configs/signals.yaml
+signal_state.json
 .DS_Store

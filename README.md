@@ -134,6 +134,44 @@ per `--max-trades` begrenzen. Tiefe Historien dauern entsprechend.
 
 ---
 
+## Live-Signale nach Telegram
+
+Der Bot zieht die aktuellen Kraken-Kerzen, erkennt neue 2-Brick-Reversals und
+schickt dir bei einem Signal eine Telegram-Nachricht — du schaust nur noch aufs
+Handy. Nutzt **nur geschlossene Kerzen** (kein Repainting) und merkt sich, was
+schon gesendet wurde (kein Doppel-Ping).
+
+**1. Telegram-Bot anlegen:** In Telegram `@BotFather` → `/newbot` → Token kopieren.
+Deinem neuen Bot einmal etwas schreiben, dann Chat-ID holen:
+`https://api.telegram.org/bot<TOKEN>/getUpdates` → `chat.id`.
+
+**2. Config anlegen:** `configs/signals.example.yaml` → `configs/signals.yaml` kopieren.
+Token/Chat-ID am besten als Umgebungsvariablen setzen (nicht in die Datei):
+
+```bash
+export TELEGRAM_TOKEN=123456:ABC...
+export TELEGRAM_CHAT_ID=987654321
+python -m prop_backtester.signals --config configs/signals.yaml --once   # Testlauf
+python -m prop_backtester.signals --config configs/signals.yaml --loop   # dauerhaft
+```
+
+**3. Dauerbetrieb (damit du nur noch Telegram brauchst):** auf einem immer laufenden
+Gerät (Raspberry Pi, kleiner VPS) `--loop` starten, oder stündlich per Cron:
+
+```cron
+5 * * * * cd /pfad/zum/projekt && TELEGRAM_TOKEN=... TELEGRAM_CHAT_ID=... \
+  python -m prop_backtester.signals --config configs/signals.yaml --once >> signals.log 2>&1
+```
+
+Die Nachricht enthält Richtung, Einstiegs-/Triggerkurs, Stop (2 Bricks) und die
+zur Risiko-Einstellung passende Positionsgröße. Voreingestellt ist die
+4-Jahres-validierte Config (0.75× ATR, 0.3 % Risiko).
+
+> ⚠️ Signale sind Entscheidungshilfen, keine automatischen Orders — du platzierst
+> die Trades selbst. Kein Finanzrat.
+
+---
+
 ## Wie es funktioniert
 
 ### 1. Renko-Bricks (ATR-basiert)
@@ -293,6 +331,8 @@ src/prop_backtester/
   sweep.py      # Parameter-Sweep + Robustheit (Multi-Szenario / Walk-Forward)
   kraken.py     # Downloader: tiefe Historie via Trades-Endpoint -> OHLC
   viz.py        # Heatmaps der Sweep-Ergebnisse (Pass-Rate / Rendite / Drawdown)
+  signals.py    # Live-Signal-Bot (Renko-Reversal -> Telegram)
+  telegram.py   # Telegram-Versand
   report.py     # Kennzahlen, Textbericht, Plot
   cli.py        # Kommandozeile
 configs/example.yaml

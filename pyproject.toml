@@ -21,6 +21,7 @@ dev = ["pytest>=7.0"]
 
 [project.scripts]
 prop-backtester = "prop_backtester.cli:main"
+prop-signals = "prop_backtester.signals:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

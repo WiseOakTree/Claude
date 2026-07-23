@@ -1,0 +1,41 @@
+# Konfiguration fuer den Live-Signal-Bot (Renko-Reversal -> Telegram).
+# Kopiere zu configs/signals.yaml und trage deine Telegram-Daten ein.
+#
+# Start:
+#   python -m prop_backtester.signals --config configs/signals.yaml --once   # Testlauf
+#   python -m prop_backtester.signals --config configs/signals.yaml --loop   # dauerhaft
+
+# Welche Paare ueberwachen (Kraken-Namen, z.B. XBTUSD, ETHUSD, SOLUSD)
+pairs:
+  - XBTUSD
+
+interval_minutes: 60          # Kerzen-Intervall (60 = 1h, wie im Backtest)
+
+# --- Strategie = die 4-Jahres-validierte robuste Einstellung ---------------
+initial_balance: 50000        # dein Prop-Konto (fuer die Positionsgroessen-Empfehlung)
+
+renko:
+  mode: atr
+  atr_period: 14
+  atr_multiplier: 0.75        # 4-Jahres-Optimum
+
+strategy:
+  reversal_bricks: 2
+  allow_long: true
+  allow_short: true
+
+risk:
+  risk_per_trade_pct: 0.003   # 0.3% (Worst-DD 6.9% im 4-Jahres-Test)
+  stop_bricks: 2.0
+  max_leverage: 5.0
+  min_notional: 10.0
+
+# --- Telegram --------------------------------------------------------------
+# Token von @BotFather (Telegram: /newbot). Chat-ID: schreibe deinem Bot etwas,
+# dann https://api.telegram.org/bot<TOKEN>/getUpdates aufrufen -> chat.id.
+# Sicherer: Werte leer lassen und stattdessen Umgebungsvariablen setzen:
+#   export TELEGRAM_TOKEN=123456:ABC...
+#   export TELEGRAM_CHAT_ID=987654321
+telegram:
+  token: ${TELEGRAM_TOKEN}    # oder direkt "123456:ABC..." (dann nicht committen!)
+  chat_id: ${TELEGRAM_CHAT_ID}
