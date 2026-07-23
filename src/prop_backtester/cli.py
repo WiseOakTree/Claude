@@ -62,6 +62,8 @@ def build_parser() -> argparse.ArgumentParser:
     sw.add_argument("--wf-step", type=int, default=None,
                     help="Walk-Forward-Schrittweite (Bars); Default = Fenstergroesse")
     sw.add_argument("--sweep-csv", metavar="FILE", help="Sweep-Tabelle als CSV speichern")
+    sw.add_argument("--heatmap", metavar="PNG",
+                    help="Heatmap (Pass-Rate / Rendite / Drawdown) als PNG speichern")
 
     dl = p.add_argument_group("Kraken-Download (tiefe Historie via Trades-Endpoint)")
     dl.add_argument("--download-kraken", metavar="PAIR",
@@ -143,6 +145,11 @@ def _run_sweep(args, cfg: BacktestConfig) -> int:
     if args.sweep_csv:
         sweep.table.to_csv(args.sweep_csv, index=False)
         print(f"\nSweep-Tabelle gespeichert: {args.sweep_csv}")
+    if args.heatmap:
+        from .viz import save_heatmap
+        ok = save_heatmap(sweep, args.heatmap)
+        print(("\nHeatmap gespeichert: " + args.heatmap) if ok
+              else "\nHinweis: matplotlib nicht verfuegbar, Heatmap uebersprungen.")
     return 0
 
 

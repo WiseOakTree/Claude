@@ -73,6 +73,9 @@ PYTHONPATH=src python -m prop_backtester --sweep --preset 1step_classic --scenar
 
 # Sweep als Walk-Forward auf echten Daten (rollierende Fenster)
 PYTHONPATH=src python -m prop_backtester --sweep --csv daten.csv --wf-window 3000 --wf-step 1500
+
+# Sweep + Heatmap (Pass-Rate / Rendite / Drawdown) als PNG
+PYTHONPATH=src python -m prop_backtester --sweep --scenarios 12 --heatmap heatmap.png
 ```
 
 Oder als Python-API:
@@ -198,12 +201,25 @@ Programmatisch:
 
 ```python
 from prop_backtester.sweep import run_sweep, synthetic_scenarios, DEFAULT_GRID
+from prop_backtester.viz import save_heatmap
 
 scenarios = synthetic_scenarios(n=20, bars=6000)
 sweep = run_sweep(scenarios, DEFAULT_GRID, preset_key="1step_classic")
 print(sweep.best)          # robusteste Parameter
 print(sweep.table.head())  # komplettes Ranking
+save_heatmap(sweep, "heatmap.png")   # 3-Panel-Heatmap
 ```
+
+### Heatmap
+
+`save_heatmap` (bzw. `--heatmap`) rendert drei Panels über das Parametergitter
+(ATR-Multiplikator × Risiko): **Pass-Rate** (sequenziell), **Median-Rendite**
+(divergierend um 0) und **Worst-Drawdown** (divergierend um das Drawdown-Limit
+des Presets). Blau = gut, Rot = schlecht; jede Zelle ist zusätzlich beschriftet,
+sodass die Farbe nie die einzige Information ist. Auf echten Kraken-Daten zeigt
+sie klar: **kleine Bricks (0.5–0.75× ATR) unten-links gewinnen**, große Bricks
+(≥1.25×) bestehen nicht, und mehr Risiko/Trade erkauft Rendite gegen
+Drawdown-Nähe zum Limit.
 
 ---
 
@@ -276,6 +292,7 @@ src/prop_backtester/
   prop.py       # Kraken-Presets + Regel-Evaluator
   sweep.py      # Parameter-Sweep + Robustheit (Multi-Szenario / Walk-Forward)
   kraken.py     # Downloader: tiefe Historie via Trades-Endpoint -> OHLC
+  viz.py        # Heatmaps der Sweep-Ergebnisse (Pass-Rate / Rendite / Drawdown)
   report.py     # Kennzahlen, Textbericht, Plot
   cli.py        # Kommandozeile
 configs/example.yaml
