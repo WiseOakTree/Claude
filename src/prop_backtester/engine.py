@@ -4,7 +4,9 @@ Die Engine laeuft ueber die *realen* OHLCV-Bars (nicht nur ueber Bricks), damit
 die Equity-Kurve fuer die Prop-Regel-Pruefung realistisch ist:
 
   * Positionsgroesse per Risiko-%-vom-Kontostand (Stop = ``stop_bricks`` * Brick).
-  * Gebuehren + Slippage pro Fill.
+  * Realistische Kosten pro Fill: Gebuehr + halber Spread + fixe Slippage +
+    **vola-abhaengige** Slippage (teurer in wilden Phasen).
+  * **Funding-Kosten** auf offene Positionen (Perp-Funding-Drag pro Bar).
   * Mark-to-Market inkl. **unrealisiertem** PnL -- Kraken Prop rechnet realized
     UND unrealized in Daily-Loss und Drawdown ein.
   * Fuer jede Bar werden zusaetzlich die intrabar Extrema (equity_low/high)
@@ -24,12 +26,13 @@ from .config import BacktestConfig
 
 @dataclass
 class Position:
-    side: int          # +1 long, -1 short
-    size: float        # Einheiten des Basiswerts
-    entry_fill: float  # tatsaechlicher Einstiegskurs (inkl. Slippage)
-    entry_fee: float   # bezahlte Einstiegsgebuehr (Kontowaehrung)
+    side: int              # +1 long, -1 short
+    size: float            # Einheiten des Basiswerts
+    entry_fill: float      # tatsaechlicher Einstiegskurs (inkl. Slippage/Spread)
+    entry_fee: float       # bezahlte Einstiegsgebuehr (Kontowaehrung)
     entry_time: pd.Timestamp
     brick_size: float
+    funding_accrued: float = 0.0  # bis dato aufgelaufene Funding-Kosten
 
 
 @dataclass
@@ -41,25 +44,50 @@ class BacktestResult:
     config: BacktestConfig
 
 
+def _infer_dt_hours(index: pd.DatetimeIndex) -> float:
+    """Bar-Dauer in Stunden aus dem Zeitindex (Median der Abstaende)."""
+    if len(index) < 2:
+        return 1.0
+    deltas = np.diff(index.view("int64"))  # Nanosekunden
+    med_ns = float(np.median(deltas))
+    return max(med_ns / 3.6e12, 1e-6)  # ns -> Stunden
+
+
 class Engine:
     def __init__(self, cfg: BacktestConfig):
         self.cfg = cfg.validate()
-        self.fee = cfg.costs.fee_pct
-        self.slip = cfg.costs.slippage_pct
+        c = cfg.costs
+        self.fee = c.fee_pct
+        self.slip = c.slippage_pct
+        self.half_spread = c.half_spread_pct
+        self.slip_vol = c.slippage_vol_mult
+        self.funding_daily = c.funding_rate_daily_pct
+
+    # --- Kosten ---------------------------------------------------------
+    def _adverse(self, brick_size: float, price: float) -> float:
+        """Adversariale Fill-Verschiebung als Anteil (Spread + Slippage + Vola)."""
+        vol_component = self.slip_vol * (brick_size / price) if price > 0 else 0.0
+        return self.slip + self.half_spread + vol_component
 
     # --- Bewertung ------------------------------------------------------
     def _unrealized(self, pos: Optional[Position], price: float) -> float:
-        """Unrealisierter PnL (Mark-to-Market, ohne Slippage, inkl. Gebuehren)."""
+        """Unrealisierter PnL (Mark-to-Market): PnL - Gebuehren - Funding.
+
+        Slippage/Spread werden erst beim tatsaechlichen Fill realisiert, daher
+        hier nur die Exit-Gebuehr geschaetzt (so markiert auch eine Boerse).
+        """
         if pos is None:
             return 0.0
         exit_fee_est = self.fee * price * pos.size
-        return pos.side * (price - pos.entry_fill) * pos.size - pos.entry_fee - exit_fee_est
+        return (pos.side * (price - pos.entry_fill) * pos.size
+                - pos.entry_fee - exit_fee_est - pos.funding_accrued)
 
     def _realize(self, pos: Position, price: float) -> float:
-        """Realisierter PnL beim Schliessen (inkl. Slippage + Exit-Gebuehr)."""
-        exit_fill = price * (1 - pos.side * self.slip)
+        """Realisierter PnL beim Schliessen (inkl. Spread/Slippage + Funding)."""
+        exit_fill = price * (1 - pos.side * self._adverse(pos.brick_size, price))
         exit_fee = self.fee * exit_fill * pos.size
-        return pos.side * (exit_fill - pos.entry_fill) * pos.size - pos.entry_fee - exit_fee
+        return (pos.side * (exit_fill - pos.entry_fill) * pos.size
+                - pos.entry_fee - exit_fee - pos.funding_accrued)
 
     def _open(self, side: int, price: float, brick_size: float,
               balance: float, time: pd.Timestamp) -> Optional[Position]:
@@ -68,10 +96,9 @@ class Engine:
         stop_dist = risk.stop_bricks * brick_size
         if stop_dist <= 0:
             return None
-        entry_fill = price * (1 + side * self.slip)
+        entry_fill = price * (1 + side * self._adverse(brick_size, price))
         size = (balance * risk.risk_per_trade_pct) / stop_dist
-        # Hebelbegrenzung
-        max_size = (balance * risk.max_leverage) / entry_fill
+        max_size = (balance * risk.max_leverage) / entry_fill  # Hebelbegrenzung
         size = min(size, max_size)
         if size <= 0 or size * entry_fill < risk.min_notional:
             return None
@@ -81,11 +108,11 @@ class Engine:
     # --- Hauptlauf ------------------------------------------------------
     def run(self, df: pd.DataFrame, signals: pd.DataFrame) -> BacktestResult:
         n = len(df)
-        opens = df["open"].to_numpy(float)
         highs = df["high"].to_numpy(float)
         lows = df["low"].to_numpy(float)
         closes = df["close"].to_numpy(float)
         times = df.index
+        dt_frac = _infer_dt_hours(times) / 24.0  # Bruchteil eines Tages je Bar
 
         # Signale pro Bar buendeln (netto: letztes Ziel je Bar gewinnt)
         sig_by_bar: Dict[int, Tuple[int, float, float]] = {}
@@ -104,6 +131,11 @@ class Engine:
 
         for i in range(n):
             hi, lo, cl = highs[i], lows[i], closes[i]
+
+            # Funding auf die zu Beginn der Bar gehaltene Position (Nominalwert ~ size*close)
+            if pos is not None and self.funding_daily > 0:
+                pos.funding_accrued += self.funding_daily * dt_frac * pos.size * cl
+
             lows_cand = []
             highs_cand = []
 
@@ -168,6 +200,7 @@ def _trade_record(pos: Position, exit_price: float, pnl: float,
         "size": pos.size,
         "entry_price": pos.entry_fill,
         "exit_price": exit_price,
+        "funding": pos.funding_accrued,
         "pnl": pnl,
         "return_pct": pnl / (pos.entry_fill * pos.size) if pos.size else 0.0,
     }

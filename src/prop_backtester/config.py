@@ -50,14 +50,29 @@ class StrategyConfig:
 
 @dataclass
 class CostConfig:
-    """Realistische Handelskosten (Gebuehren + Slippage), als Anteil (0.001 = 0.1%)."""
+    """Realistische Handelskosten, als Anteil (0.001 = 0.1%).
 
-    fee_pct: float = 0.0005     # Taker-Gebuehr pro Seite (Kraken-Prop nutzt eigene Liquiditaet)
-    slippage_pct: float = 0.0003  # Slippage pro Fill, adversariell angewendet
+    Deckt die vier realen Kostenquellen ab:
+      * ``fee_pct``            -- Boersen-/Taker-Gebuehr pro Seite
+      * ``half_spread_pct``    -- halber Bid/Ask-Spread pro Fill
+      * ``slippage_pct``       -- fixe Slippage pro Fill
+      * ``slippage_vol_mult``  -- zusaetzliche Slippage ~ Volatilitaet
+                                  (mult * Brick/Preis) -- teurer in wilden Phasen
+      * ``funding_rate_daily_pct`` -- Finanzierungskosten pro Tag auf den
+                                  Nominalwert offener Positionen (Perp-Funding-Drag)
+    """
+
+    fee_pct: float = 0.0005            # Taker-Gebuehr pro Seite
+    slippage_pct: float = 0.0002       # fixe Slippage pro Fill
+    half_spread_pct: float = 0.0002    # halber Spread pro Fill
+    slippage_vol_mult: float = 0.05    # vola-abhaengige Slippage (* Brick/Preis)
+    funding_rate_daily_pct: float = 0.0003  # ~0.01%/8h Funding-Drag auf Nominalwert
 
     def validate(self) -> None:
-        if self.fee_pct < 0 or self.slippage_pct < 0:
-            raise ValueError("Kosten duerfen nicht negativ sein")
+        for name in ("fee_pct", "slippage_pct", "half_spread_pct",
+                     "slippage_vol_mult", "funding_rate_daily_pct"):
+            if getattr(self, name) < 0:
+                raise ValueError(f"Kosten duerfen nicht negativ sein: {name}")
 
 
 @dataclass

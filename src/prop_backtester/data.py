@@ -54,9 +54,9 @@ def load_csv(path: str, time_col: Optional[str] = None) -> pd.DataFrame:
         else:
             time_col = df.columns[0]
     ts = df[time_col]
-    if np.issubdtype(ts.dtype, np.number):
+    if pd.api.types.is_numeric_dtype(ts):
         # Heuristik: Millisekunden vs. Sekunden
-        unit = "ms" if ts.max() > 1e12 else "s"
+        unit = "ms" if float(ts.max()) > 1e12 else "s"
         idx = pd.to_datetime(ts, unit=unit, utc=True)
     else:
         idx = pd.to_datetime(ts, utc=True)
@@ -118,6 +118,69 @@ def generate_synthetic(bars: int = 5000, start: str = "2025-01-01",
     low = np.minimum(open_, close) - intrabar
     low = np.maximum(low, 1e-8)
     volume = rng.uniform(10, 200, size=bars)
+    index = pd.date_range(start=start, periods=bars, freq=f"{interval_minutes}min", tz="UTC")
+    df = pd.DataFrame(
+        {"open": open_, "high": high, "low": low, "close": close, "volume": volume},
+        index=index,
+    )
+    return _finalize(df)
+
+
+def generate_realistic(bars: int = 6000, start: str = "2025-01-01",
+                       interval_minutes: int = 60, start_price: float = 40_000.0,
+                       annual_drift: float = 0.10, annual_vol: float = 0.70,
+                       t_dof: float = 4.0, jump_prob: float = 0.002,
+                       jump_size_mult: float = 4.0, vol_persistence: float = 0.94,
+                       vol_reactivity: float = 0.05, regime_switch_prob: float = 0.01,
+                       seed: int = 42) -> pd.DataFrame:
+    """Erzeugt *realistischere* Krypto-OHLCV-Daten als ein reiner Random Walk.
+
+    Enthaelt die drei Eigenschaften, die Drawdowns realistisch machen:
+      * **Volatilitaets-Cluster** (GARCH(1,1)): ruhige und wilde Phasen wechseln.
+      * **Fat Tails** (Student-t-Innovationen): extreme Kerzen sind haeufiger.
+      * **Jumps** und **Regime-Wechsel** (Bull/Baer/Range): abrupte Moves.
+
+    Ideal, um zu pruefen, ob eine Strategie die engen Prop-Drawdowns auch in
+    ungemuetlichen Marktphasen ueberlebt.
+    """
+    if t_dof <= 2:
+        raise ValueError("t_dof muss > 2 sein (endliche Varianz)")
+    rng = np.random.default_rng(seed)
+    dt = interval_minutes / (60 * 24 * 365)
+    var_bar = (annual_vol ** 2) * dt
+    mu_bar = annual_drift * dt
+    alpha, beta = vol_reactivity, vol_persistence
+    omega = var_bar * (1 - alpha - beta) if (alpha + beta) < 1 else var_bar * 0.01
+
+    t_scale = np.sqrt(t_dof / (t_dof - 2))  # standardisiert die t-Verteilung auf Varianz 1
+    regime_drift = np.array([1.0, -1.0, 0.0])  # Bull / Baer / Range
+
+    logret = np.empty(bars)
+    sigma_arr = np.empty(bars)
+    sigma2 = var_bar
+    eps_prev = 0.0
+    reg = 0
+    for k in range(bars):
+        if rng.random() < regime_switch_prob:
+            reg = int(rng.integers(0, 3))
+        sigma2 = omega + alpha * eps_prev ** 2 + beta * sigma2
+        sigma = np.sqrt(sigma2)
+        z = rng.standard_t(t_dof) / t_scale
+        eps = sigma * z
+        if rng.random() < jump_prob:
+            eps += rng.normal(0.0, jump_size_mult * sigma)
+        logret[k] = mu_bar * regime_drift[reg] - 0.5 * sigma2 + eps
+        sigma_arr[k] = sigma
+        eps_prev = eps
+
+    close = start_price * np.exp(np.cumsum(logret))
+    open_ = np.empty(bars)
+    open_[0] = start_price
+    open_[1:] = close[:-1]
+    wick = np.abs(rng.normal(0.0, 1.0, size=bars)) * sigma_arr * close
+    high = np.maximum(open_, close) + wick
+    low = np.maximum(np.minimum(open_, close) - wick, 1e-8)
+    volume = rng.uniform(10, 200, size=bars) * (1 + sigma_arr / max(np.median(sigma_arr), 1e-12))
     index = pd.date_range(start=start, periods=bars, freq=f"{interval_minutes}min", tz="UTC")
     df = pd.DataFrame(
         {"open": open_, "high": high, "low": low, "close": close, "volume": volume},

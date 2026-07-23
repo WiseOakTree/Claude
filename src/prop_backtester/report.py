@@ -94,6 +94,42 @@ def format_report(result: BacktestResult, metrics: dict,
     return "\n".join(lines)
 
 
+def format_sweep(sweep, top: int = 12) -> str:
+    """Formatiert das Sweep-Ergebnis als Ranking-Tabelle."""
+    from .prop import PRESETS
+
+    table = sweep.table
+    param_cols = [c for c in table.columns
+                  if c not in ("pass_rate", "median_return", "median_maxdd",
+                               "worst_maxdd", "n_scenarios")]
+    lines = []
+    lines.append("=" * 78)
+    lines.append(" PARAMETER-SWEEP -- ROBUSTHEIT ueber Szenarien")
+    lines.append("=" * 78)
+    lines.append(f" Preset   : {PRESETS[sweep.preset].name}")
+    lines.append(f" Szenarien: {sweep.n_scenarios}  (Pass-Rate = Anteil bestandener Versuche)")
+    lines.append("-" * 78)
+
+    header = "  ".join(f"{c.split('.')[-1]:>12s}" for c in param_cols)
+    lines.append(f" {header}   pass%   medRet%   medDD%   worstDD%")
+    lines.append("-" * 78)
+    for _, r in table.head(top).iterrows():
+        params = "  ".join(f"{r[c]:>12.4g}" for c in param_cols)
+        lines.append(
+            f" {params}   {r['pass_rate']*100:5.1f}  {r['median_return']*100:7.2f}  "
+            f"{r['median_maxdd']*100:6.2f}  {r['worst_maxdd']*100:7.2f}"
+        )
+    lines.append("-" * 78)
+    best = sweep.best
+    best_desc = ", ".join(f"{c.split('.')[-1]}={best[c]:g}" for c in param_cols)
+    lines.append(f" BESTE ROBUSTE EINSTELLUNG: {best_desc}")
+    lines.append(f"   -> Pass-Rate {best['pass_rate']*100:.1f}%, "
+                 f"Median-Rendite {best['median_return']*100:.2f}%, "
+                 f"Worst-Drawdown {best['worst_maxdd']*100:.2f}%")
+    lines.append("=" * 78)
+    return "\n".join(lines)
+
+
 def save_plot(result: BacktestResult, path: str) -> bool:
     """Speichert Equity-Kurve + Drawdown als PNG. Gibt False zurueck ohne matplotlib."""
     try:

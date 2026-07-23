@@ -22,7 +22,8 @@ from .report import format_report, save_plot
 def _load_data(args):
     from . import data
     if args.demo:
-        return data.generate_synthetic(bars=args.demo_bars, interval_minutes=args.interval)
+        gen = data.generate_synthetic if args.simple_demo else data.generate_realistic
+        return gen(bars=args.demo_bars, interval_minutes=args.interval)
     if args.csv:
         return data.load_csv(args.csv)
     if args.kraken:
@@ -39,10 +40,28 @@ def build_parser() -> argparse.ArgumentParser:
     src = p.add_argument_group("Datenquelle")
     src.add_argument("--csv", help="OHLCV-CSV laden")
     src.add_argument("--kraken", metavar="PAIR", help="Von Kraken laden, z.B. XBTUSD")
-    src.add_argument("--demo", action="store_true", help="Synthetische Demo-Daten nutzen")
+    src.add_argument("--demo", action="store_true",
+                     help="Realistische Demo-Daten nutzen (GARCH, Fat Tails, Jumps)")
+    src.add_argument("--simple-demo", action="store_true",
+                     help="Demo als einfachen Random Walk erzeugen (statt realistisch)")
     src.add_argument("--demo-bars", type=int, default=8000, help="Anzahl Demo-Bars")
     src.add_argument("--interval", type=int, default=60, help="Bar-Intervall in Minuten")
     src.add_argument("--since", type=int, default=None, help="Kraken: Unix-Startzeit")
+
+    sw = p.add_argument_group("Parameter-Sweep")
+    sw.add_argument("--sweep", action="store_true",
+                    help="Parameter-Sweep ueber Szenarien (Robustheit statt Einzellauf)")
+    sw.add_argument("--preset", default="1step_classic",
+                    help="Preset, fuer das optimiert wird (siehe --list-presets)")
+    sw.add_argument("--scenarios", type=int, default=12,
+                    help="Anzahl synthetischer Szenarien (ohne echte Daten)")
+    sw.add_argument("--sweep-bars", type=int, default=6000,
+                    help="Bars pro synthetischem Szenario")
+    sw.add_argument("--wf-window", type=int, default=None,
+                    help="Walk-Forward-Fenstergroesse (Bars) bei echten Daten")
+    sw.add_argument("--wf-step", type=int, default=None,
+                    help="Walk-Forward-Schrittweite (Bars); Default = Fenstergroesse")
+    sw.add_argument("--sweep-csv", metavar="FILE", help="Sweep-Tabelle als CSV speichern")
 
     cfgg = p.add_argument_group("Konfiguration")
     cfgg.add_argument("--config", help="YAML-Konfigurationsdatei")
@@ -70,6 +89,31 @@ def _apply_overrides(cfg: BacktestConfig, args) -> BacktestConfig:
     return cfg.validate()
 
 
+def _run_sweep(args, cfg: BacktestConfig) -> int:
+    from .sweep import (DEFAULT_GRID, run_sweep, synthetic_scenarios,
+                        walkforward_scenarios)
+    from .report import format_sweep
+
+    if args.csv or args.kraken:
+        # Walk-Forward auf echten Daten -- der realistischste Robustheitstest
+        df = _load_data(args)
+        window = args.wf_window or max(len(df) // 6, cfg.renko.atr_period + 50)
+        scenarios = walkforward_scenarios(df, window_bars=window, step_bars=args.wf_step)
+        print(f"Walk-Forward: {len(scenarios)} Fenster à {window} Bars aus {len(df)} Bars.\n")
+    else:
+        scenarios = synthetic_scenarios(n=args.scenarios, bars=args.sweep_bars,
+                                        interval_minutes=args.interval)
+        print(f"Synthetisch: {len(scenarios)} realistische Szenarien à {args.sweep_bars} Bars.\n")
+
+    sweep = run_sweep(scenarios, DEFAULT_GRID, preset_key=args.preset, base_cfg=cfg)
+    print(format_sweep(sweep))
+
+    if args.sweep_csv:
+        sweep.table.to_csv(args.sweep_csv, index=False)
+        print(f"\nSweep-Tabelle gespeichert: {args.sweep_csv}")
+    return 0
+
+
 def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
 
@@ -82,6 +126,9 @@ def main(argv=None) -> int:
 
     cfg = load_config(args.config) if args.config else BacktestConfig()
     cfg = _apply_overrides(cfg, args)
+
+    if args.sweep:
+        return _run_sweep(args, cfg)
 
     df = _load_data(args)
     if len(df) < cfg.renko.atr_period + 5:

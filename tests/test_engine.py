@@ -15,6 +15,11 @@ def _df(prices):
     )
 
 
+def _zero_costs():
+    return CostConfig(fee_pct=0.0, slippage_pct=0.0, half_spread_pct=0.0,
+                      slippage_vol_mult=0.0, funding_rate_daily_pct=0.0)
+
+
 def test_profitable_long_trade_no_costs():
     # Long ab Signal, Preis steigt weiter -> Gewinn.
     df = _df([100, 101, 102, 103, 104, 105, 106, 107])
@@ -25,7 +30,7 @@ def test_profitable_long_trade_no_costs():
         "target": [1],
         "brick_size": [1.0],
     })
-    cfg = BacktestConfig(costs=CostConfig(fee_pct=0.0, slippage_pct=0.0))
+    cfg = BacktestConfig(costs=_zero_costs())
     res = run_backtest(df, signals, cfg)
     assert res.final_balance > res.initial_balance
     assert len(res.trades) == 1
@@ -38,9 +43,28 @@ def test_costs_reduce_pnl():
         "time": [df.index[1]], "src_index": [1], "price": [101.0],
         "target": [1], "brick_size": [1.0],
     })
-    no_cost = run_backtest(df, signals, BacktestConfig(costs=CostConfig(0.0, 0.0)))
-    with_cost = run_backtest(df, signals, BacktestConfig(costs=CostConfig(0.001, 0.001)))
+    costly = CostConfig(fee_pct=0.001, slippage_pct=0.001, half_spread_pct=0.0005,
+                        slippage_vol_mult=0.1, funding_rate_daily_pct=0.001)
+    no_cost = run_backtest(df, signals, BacktestConfig(costs=_zero_costs()))
+    with_cost = run_backtest(df, signals, BacktestConfig(costs=costly))
     assert with_cost.final_balance < no_cost.final_balance
+
+
+def test_funding_costs_a_held_position():
+    # Flache Kursbewegung: ohne Funding ~0 PnL, mit Funding klar negativ.
+    df = _df([100.0] * 50)
+    signals = pd.DataFrame({
+        "time": [df.index[1]], "src_index": [1], "price": [100.0],
+        "target": [1], "brick_size": [1.0],
+    })
+    no_fund = CostConfig(fee_pct=0.0, slippage_pct=0.0, half_spread_pct=0.0,
+                         slippage_vol_mult=0.0, funding_rate_daily_pct=0.0)
+    with_fund = CostConfig(fee_pct=0.0, slippage_pct=0.0, half_spread_pct=0.0,
+                           slippage_vol_mult=0.0, funding_rate_daily_pct=0.01)
+    r0 = run_backtest(df, signals, BacktestConfig(costs=no_fund))
+    r1 = run_backtest(df, signals, BacktestConfig(costs=with_fund))
+    assert r1.final_balance < r0.final_balance
+    assert r1.trades["funding"].iloc[0] > 0
 
 
 def test_full_pipeline_runs_and_is_finite():

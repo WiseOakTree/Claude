@@ -19,10 +19,13 @@ strategy:
   allow_long: true
   allow_short: true
 
-# Handelskosten (Anteile: 0.0005 = 0.05%).
+# Handelskosten (Anteile: 0.0005 = 0.05%). So realistisch wie moeglich:
 costs:
-  fee_pct: 0.0005      # Taker-Gebuehr pro Seite
-  slippage_pct: 0.0003 # Slippage pro Fill
+  fee_pct: 0.0005              # Taker-Gebuehr pro Seite
+  slippage_pct: 0.0002         # fixe Slippage pro Fill
+  half_spread_pct: 0.0002      # halber Bid/Ask-Spread pro Fill
+  slippage_vol_mult: 0.05      # zusaetzliche Slippage ~ Volatilitaet (* Brick/Preis)
+  funding_rate_daily_pct: 0.0003  # Perp-Funding-Drag/Tag auf offenen Nominalwert (~0.01%/8h)
 
 # Risiko / Positionsgroesse.
 risk:

@@ -67,6 +67,12 @@ PYTHONPATH=src python -m prop_backtester --kraken XBTUSD --interval 60 --plot eq
 
 # Alle Presets anzeigen
 PYTHONPATH=src python -m prop_backtester --list-presets
+
+# PARAMETER-SWEEP: robusteste Einstellung ueber viele Marktphasen finden
+PYTHONPATH=src python -m prop_backtester --sweep --preset 1step_classic --scenarios 12
+
+# Sweep als Walk-Forward auf echten Daten (rollierende Fenster)
+PYTHONPATH=src python -m prop_backtester --sweep --csv daten.csv --wf-window 3000 --wf-step 1500
 ```
 
 Oder als Python-API:
@@ -127,6 +133,67 @@ Der Evaluator läuft Bar für Bar über die Equity-Kurve:
 
 ---
 
+## Parameter-Sweep — die robusteste Einstellung finden
+
+Ein Einzellauf sagt wenig: Vielleicht hattest du Glück mit dem Zeitfenster. Der
+**Sweep** testet jede Parameter-Kombination gegen **viele Szenarien** und misst,
+wie *zuverlässig* sie besteht.
+
+```
+ atr_multiplier  atr_period  risk_per_trade_pct   pass%   medRet%   medDD%   worstDD%
+         0.75          14          0.005          91.7    18.19     5.94     9.21
+         0.75          20          0.005          83.3    20.80     7.87    10.91
+            1          14         0.0075          50.0    11.14     9.79    12.52
+ BESTE ROBUSTE EINSTELLUNG: atr_multiplier=0.75, atr_period=14, risk_per_trade_pct=0.005
+   -> Pass-Rate 91.7%, Median-Rendite 18.19%, Worst-Drawdown 9.21%
+```
+
+- **`pass_rate`**: Anteil der Szenarien, in denen die Challenge bestanden wurde
+  — die eigentliche Kennzahl für *nachhaltiges* Bestehen.
+- Ranking: höchste Pass-Rate → kleinster Worst-Case-Drawdown → höchste Rendite.
+- **Zwei Szenario-Quellen:**
+  - *Synthetisch* (`--scenarios N`): viele realistische Zufallsmärkte mit
+    gestreuter Drift/Vola (Bull, Bär, Range).
+  - *Walk-Forward* (`--csv/--kraken` + `--wf-window/--wf-step`): rollierende
+    Fenster echter Historie — der realistischste Test. Jedes Fenster ist ein
+    eigener Challenge-Versuch.
+
+Programmatisch:
+
+```python
+from prop_backtester.sweep import run_sweep, synthetic_scenarios, DEFAULT_GRID
+
+scenarios = synthetic_scenarios(n=20, bars=6000)
+sweep = run_sweep(scenarios, DEFAULT_GRID, preset_key="1step_classic")
+print(sweep.best)          # robusteste Parameter
+print(sweep.table.head())  # komplettes Ranking
+```
+
+---
+
+## Wie realistisch ist das?
+
+Bewusst auf Realismus ausgelegt — die Punkte, die Backtests sonst schönrechnen:
+
+- **Kosten:** Gebühr + halber Spread + fixe Slippage + **vola-abhängige
+  Slippage** (teurer in wilden Phasen) + **Funding-Kosten** auf offene
+  Positionen (Perp-Drag). Alles in `configs/example.yaml` einstellbar.
+- **Equity-Bewertung wie bei Kraken:** realized **und** unrealized PnL fließen in
+  Daily-Loss und Drawdown ein; Daily-Reset 00:30 UTC.
+- **Konservative Intrabar-Prüfung:** Breaches werden gegen High/Low geprüft und
+  *vor* dem Target ausgewertet (pessimistisch) — kein „durchrutschen".
+- **Realistische Testmärkte:** der Demo-/Szenario-Generator nutzt
+  **Volatilitäts-Cluster (GARCH), Fat Tails (Student-t) und Jumps** statt eines
+  reinen Random Walks — so werden enge Drawdowns wirklich gestresst.
+- **Kein Lookahead:** Fills am Renko-Gitter-Level, das intrabar real erreicht wurde.
+
+**Grenzen (ehrlich):** Bar-granular (kein Tick-Orderbuch), Renko-Fills sind eine
+Näherung der Ausführung, Funding als konstanter Drag statt echter Funding-Kurve,
+und synthetische Daten bleiben synthetisch. Für die belastbarste Aussage:
+**echte Kraken-Historie im Walk-Forward-Sweep** verwenden.
+
+---
+
 ## Nachhaltig bestehen — worauf es ankommt
 
 Der Backtester macht die zentrale Wahrheit sichtbar: **Bei Krypto ist nicht das
@@ -169,8 +236,9 @@ src/prop_backtester/
   data.py       # CSV / Kraken-API / synthetische Daten
   renko.py      # ATR-basierter Renko-Aufbau
   strategy.py   # 2-Brick-Reversal-Signale
-  engine.py     # Ausführung, Kosten, Equity-Kurve
+  engine.py     # Ausführung, Kosten (Gebühr/Spread/Slippage/Funding), Equity-Kurve
   prop.py       # Kraken-Presets + Regel-Evaluator
+  sweep.py      # Parameter-Sweep + Robustheit (Multi-Szenario / Walk-Forward)
   report.py     # Kennzahlen, Textbericht, Plot
   cli.py        # Kommandozeile
 configs/example.yaml

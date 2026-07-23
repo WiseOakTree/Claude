@@ -20,6 +20,8 @@ from .strategy import generate_signals
 from .engine import run_backtest, BacktestResult
 from .prop import evaluate_all_presets, evaluate_challenge, PRESETS, ChallengeResult
 from .report import compute_metrics
+from .sweep import (run_sweep, synthetic_scenarios, walkforward_scenarios,
+                    DEFAULT_GRID, SweepResult)
 
 __all__ = [
     "backtest",
@@ -33,6 +35,11 @@ __all__ = [
     "evaluate_challenge",
     "evaluate_all_presets",
     "compute_metrics",
+    "run_sweep",
+    "synthetic_scenarios",
+    "walkforward_scenarios",
+    "DEFAULT_GRID",
+    "SweepResult",
 ]
 
 __version__ = "0.1.0"
