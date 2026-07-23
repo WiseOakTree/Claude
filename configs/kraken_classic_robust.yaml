@@ -1,0 +1,33 @@
+# Robuste Einstellung fuer Kraken 1-Step Classic (10% Ziel, 6% max Drawdown).
+# Abgeleitet aus dem Sweep ueber 8 echte Kraken-Coins (siehe Heatmap):
+# die "nachhaltige Zone" unten-links -- kleine Bricks, moderates Risiko.
+#
+# Kernbefund: Nicht das Target ist das Problem, sondern der Drawdown.
+#   - Risiko 0.4% je Trade -> Worst-Drawdown ~5.0% (unter dem 6%-Limit)
+#   - Risiko 0.5% je Trade -> Worst-Drawdown ~6.2% (BEREITS ueber dem Limit!)
+# Deshalb ist 0.4% die Obergrenze. Fuer mehr Sicherheitsabstand: 0.003 (0.3%).
+
+initial_balance: 50000        # = deine Kraken-Prop-Kontogroesse
+
+renko:
+  mode: atr
+  atr_period: 14
+  atr_multiplier: 0.5         # kleine Bricks gewinnen klar auf echtem Crypto
+
+strategy:
+  reversal_bricks: 2          # Einstieg/Reversal bei 2 Gegen-Bricks
+  allow_long: true
+  allow_short: true
+
+costs:                        # realistische Kosten (so nah wie moeglich)
+  fee_pct: 0.0005
+  slippage_pct: 0.0002
+  half_spread_pct: 0.0002
+  slippage_vol_mult: 0.05
+  funding_rate_daily_pct: 0.0003
+
+risk:
+  risk_per_trade_pct: 0.004   # PRIMAER 0.4% | KONSERVATIV: auf 0.003 setzen
+  stop_bricks: 2.0            # Stop-Distanz = 2 Bricks (= das Reversal-Signal)
+  max_leverage: 5.0
+  min_notional: 10.0
