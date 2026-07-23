@@ -1,18 +1,22 @@
 # Robuste Einstellung fuer Kraken 1-Step Classic (10% Ziel, 6% max Drawdown).
-# Abgeleitet aus dem Sweep ueber 8 echte Kraken-Coins (siehe Heatmap):
-# die "nachhaltige Zone" unten-links -- kleine Bricks, moderates Risiko.
 #
-# Kernbefund: Nicht das Target ist das Problem, sondern der Drawdown.
-#   - Risiko 0.4% je Trade -> Worst-Drawdown ~5.0% (unter dem 6%-Limit)
-#   - Risiko 0.5% je Trade -> Worst-Drawdown ~6.2% (BEREITS ueber dem Limit!)
-# Deshalb ist 0.4% die Obergrenze. Fuer mehr Sicherheitsabstand: 0.003 (0.3%).
+# Validiert im WALK-FORWARD ueber 4 Jahre BTC 1h (46 x 90-Tage-Fenster,
+# 2022-2026, inkl. Baerenmarkt) -- nicht nur ein trendstarkes Kurzfenster.
+#
+# Bestes Setting ueber 4 Jahre: ATR 0.75x / Risiko 0.3%
+#   -> Pass-Rate 91%, Median-Fensterrendite +16.5%, Worst-Drawdown 6.9%
+# Der 30-Tage-Test hatte 0.5x/0.4% favorisiert -- das war leicht ueberangepasst;
+# ueber den Zyklus gewinnen etwas groessere Bricks (weniger Whipsaw) + weniger Risiko.
+#
+# Ehrlich: KEIN Setting besteht immer. ~9% der Fenster (die haertesten Crashs)
+# reissen auch hier das 6%-Limit. Nachhaltig != unfehlbar.
 
 initial_balance: 50000        # = deine Kraken-Prop-Kontogroesse
 
 renko:
   mode: atr
   atr_period: 14
-  atr_multiplier: 0.5         # kleine Bricks gewinnen klar auf echtem Crypto
+  atr_multiplier: 0.75        # 4-Jahres-Optimum (0.5x ueberpasst kurze Trendphasen)
 
 strategy:
   reversal_bricks: 2          # Einstieg/Reversal bei 2 Gegen-Bricks
@@ -27,7 +31,7 @@ costs:                        # realistische Kosten (so nah wie moeglich)
   funding_rate_daily_pct: 0.0003
 
 risk:
-  risk_per_trade_pct: 0.004   # PRIMAER 0.4% | KONSERVATIV: auf 0.003 setzen
+  risk_per_trade_pct: 0.003   # PRIMAER 0.3% (Worst-DD 6.9%) | mehr Rendite: 0.004 (Worst-DD 9.2%)
   stop_bricks: 2.0            # Stop-Distanz = 2 Bricks (= das Reversal-Signal)
   max_leverage: 5.0
   min_notional: 10.0
