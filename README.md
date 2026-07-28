@@ -171,11 +171,29 @@ zur Risiko-Einstellung passende Positionsgröße. Voreingestellt ist die
 [`docs/deploy_signals.md`](docs/deploy_signals.md) — Auto-Neustart nach Reboot,
 Token sicher getrennt.
 
-> ⚠️ **Wichtig — bitte vorher lesen:** [`docs/realism.md`](docs/realism.md).
-> Der Edge hängt daran, dass **an den Brick-Levels** gefüllt wird (vorab platzierte
-> Orders). Wer erst nach Kerzenschluss auf die Benachrichtigung reagiert, handelt
-> im Test mit **negativer** Erwartung (Pass-Rate 91 % → 7 %). Signale sind
-> Entscheidungshilfen, keine automatischen Orders. Kein Finanzrat.
+### Zwei Modi — und warum `levels` der richtige ist
+
+| Modus | Was kommt aufs Handy | Im Test |
+|---|---|---|
+| **`levels`** (Default) | Die **kommenden Trigger-Level** mit SL/TP/Size — du legst dort **vorab** Stop-Orders hin | **94 % Pass-Rate** |
+| `signals` | Meldung erst **nachdem** das Reversal ausgelöst hat | 7 % Pass-Rate |
+
+Der Edge hängt daran, dass **auf dem Brick-Level** gefüllt wird. Die Levels
+stehen im Voraus fest (`Anker ± Brickgröße`), deshalb funktionieren ruhende
+Orders — Reagieren nach Kerzenschluss dagegen nicht (siehe
+[`docs/realism.md`](docs/realism.md)). Validiert: die vorhergesagten Level
+weichen im Median nur **0,017 %** vom echten Auslösepreis ab.
+
+```bash
+python -m prop_backtester.signals --config configs/signals.yaml --loop            # levels (Default)
+python -m prop_backtester.signals --config configs/signals.yaml --loop --mode signals
+```
+
+Der Bot meldet sich nur, wenn sich die Level ändern (kein Spam). Zieh die Orders
+stündlich nach — die Level wandern mit der ATR und dem Trend.
+
+> ⚠️ Signale sind Entscheidungshilfen, keine automatischen Orders — du platzierst
+> sie selbst. Kein Finanzrat. Vorher [`docs/realism.md`](docs/realism.md) lesen.
 
 ---
 

@@ -66,9 +66,9 @@ def test_check_pair_sends_once_then_dedups(tmp_path):
     state = {}
     sp = str(tmp_path / "state.json")
     s1 = signals.check_pair("XBTUSD", cfg, 60, "T", 1, state, sp,
-                            fetch_fn=fetch, send_fn=send, verbose=False)
+                            fetch_fn=fetch, send_fn=send, verbose=False, mode="signals")
     s2 = signals.check_pair("XBTUSD", cfg, 60, "T", 1, state, sp,
-                            fetch_fn=fetch, send_fn=send, verbose=False)
+                            fetch_fn=fetch, send_fn=send, verbose=False, mode="signals")
     assert s1 is not None
     assert s2 is None           # zweiter Lauf: kein Doppel-Ping
     assert len(sent) == 1
@@ -119,3 +119,72 @@ def test_resolve_secret_env(monkeypatch):
     assert signals._resolve_secret("direct", "X") == "direct"
     monkeypatch.setenv("FALLBACK", "fb")
     assert signals._resolve_secret(None, "FALLBACK") == "fb"
+
+
+# --- Levels-Modus: vorab platzierbare Orders --------------------------------
+def _ramp_df(prices):
+    idx = pd.date_range("2025-01-01", periods=len(prices), freq="1h", tz="UTC")
+    p = np.asarray(prices, float)
+    return pd.DataFrame({"open": p, "high": p, "low": p, "close": p,
+                         "volume": np.ones_like(p)}, index=idx)
+
+
+def _fixed_cfg(brick=1.0):
+    cfg = BacktestConfig()
+    cfg.renko.mode = "fixed"
+    cfg.renko.fixed_brick = brick
+    cfg.renko.fixed_brick_pct = None
+    return cfg
+
+
+def test_level_plan_trigger_math():
+    # Aufwaertslauf -> Position long; Short-Trigger muss 2 Bricks unter dem Anker liegen
+    df = _ramp_df(list(range(100, 121)))
+    cfg = _fixed_cfg(1.0)
+    plan = signals.compute_level_plan(df, cfg, drop_last=False)
+    assert plan is not None
+    assert plan.position == 1 and plan.run_dir == 1
+    shorts = [o for o in plan.orders if o.direction == -1]
+    assert len(shorts) == 1
+    # 2 Gegen-Bricks noetig -> Anker - 2 * Brick
+    assert abs(shorts[0].trigger - (plan.anchor - 2 * cfg.renko.fixed_brick)) < 1e-9
+    assert shorts[0].bricks_needed == 2
+    # keine Long-Order, da bereits long
+    assert all(o.direction != 1 for o in plan.orders)
+
+
+def test_level_plan_pending_reversal_needs_one_brick():
+    # Auf, dann genau 1 Gegen-Brick -> Short-Trigger nur noch 1 Brick entfernt
+    df = _ramp_df([100, 101, 102, 103, 104, 105, 104])
+    cfg = _fixed_cfg(1.0)
+    plan = signals.compute_level_plan(df, cfg, drop_last=False)
+    assert plan.run_dir == -1 and plan.run_len == 1
+    shorts = [o for o in plan.orders if o.direction == -1]
+    assert shorts and shorts[0].bricks_needed == 1
+    assert abs(shorts[0].trigger - (plan.anchor - 1.0)) < 1e-9
+
+
+def test_level_plan_stop_and_tp_orientation():
+    df = _ramp_df(list(range(100, 121)))
+    cfg = _fixed_cfg(1.0)
+    plan = signals.compute_level_plan(df, cfg, drop_last=False)
+    o = [x for x in plan.orders if x.direction == -1][0]
+    assert o.stop_price > o.trigger            # Short: SL oberhalb
+    assert all(tp < o.trigger for _, tp, _ in o.tp_levels)  # TPs unterhalb
+    assert o.size > 0
+
+
+def test_levels_message_and_dedup(tmp_path):
+    df = data.generate_synthetic(bars=1200, seed=11)
+    cfg = BacktestConfig()
+    sent = []
+    fetch = lambda pair, interval_minutes=60: df
+    send = lambda token, chat, text: sent.append(text)
+    state, sp = {}, str(tmp_path / "s.json")
+    p1 = signals.check_pair("XBTUSD", cfg, 60, "T", 1, state, sp,
+                            fetch_fn=fetch, send_fn=send, verbose=False, mode="levels")
+    p2 = signals.check_pair("XBTUSD", cfg, 60, "T", 1, state, sp,
+                            fetch_fn=fetch, send_fn=send, verbose=False, mode="levels")
+    assert p1 is not None and p2 is None      # unveraenderte Level -> kein Spam
+    assert len(sent) == 1
+    assert "Order-Level" in sent[0] and "Stop" in sent[0]

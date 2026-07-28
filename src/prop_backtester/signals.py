@@ -24,6 +24,7 @@ import time
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
 
 from .config import BacktestConfig, config_from_dict
@@ -90,6 +91,170 @@ def compute_latest_signal(df: pd.DataFrame, cfg: BacktestConfig,
     )
 
 
+@dataclass
+class PendingOrder:
+    """Eine im Voraus platzierbare Stop-Order am naechsten Trigger-Level."""
+
+    direction: int         # +1 Buy-Stop (long), -1 Sell-Stop (short)
+    trigger: float         # Kurs, bei dem das Reversal ausloest
+    distance_pct: float    # Abstand vom aktuellen Kurs
+    bricks_needed: int     # wie viele Bricks noch fehlen
+    stop_price: float
+    stop_distance: float
+    size: float
+    notional: float
+    tp_levels: List[Tuple[float, float, float]] = field(default_factory=list)
+
+    @property
+    def order_text(self) -> str:
+        return "Buy-Stop" if self.direction == 1 else "Sell-Stop"
+
+    @property
+    def side_text(self) -> str:
+        return "LONG" if self.direction == 1 else "SHORT"
+
+
+@dataclass
+class LevelPlan:
+    """Aktueller Zustand + die daraus folgenden Order-Level."""
+
+    time: pd.Timestamp       # Zeit der letzten geschlossenen Kerze
+    current_price: float
+    brick_size: float
+    anchor: float            # Schlusskurs des letzten Bricks (Gitter-Anker)
+    position: int            # aktuell laut Strategie gehaltene Position
+    run_dir: int             # Richtung der laufenden Brick-Serie
+    run_len: int
+    orders: List[PendingOrder] = field(default_factory=list)
+
+    @property
+    def fingerprint(self) -> str:
+        """Kennung zur Dedup: Position + gerundete Trigger-Level."""
+        trig = "/".join(f"{o.direction}@{o.trigger:.4g}" for o in self.orders)
+        return f"{self.position}|{trig}"
+
+
+def _current_brick_size(df: pd.DataFrame, cfg: BacktestConfig) -> float:
+    """Brick-Groesse fuer den *naechsten* Brick (aktuelle ATR bzw. fix)."""
+    rc = cfg.renko
+    if rc.mode == "atr":
+        from .renko import wilder_atr
+        atr = wilder_atr(df, rc.atr_period)
+        return float(atr.iloc[-1]) * rc.atr_multiplier
+    if rc.fixed_brick is not None:
+        return float(rc.fixed_brick)
+    return float(df["close"].iloc[-1]) * float(rc.fixed_brick_pct)
+
+
+def compute_level_plan(df: pd.DataFrame, cfg: BacktestConfig,
+                       drop_last: bool = True) -> Optional[LevelPlan]:
+    """Berechnet, bei welchen Kursen das naechste Reversal ausloest.
+
+    Die Renko-Level stehen im Voraus fest: Der naechste Aufwaerts-Brick entsteht
+    bei ``Anker + Brick``, der naechste Abwaerts-Brick bei ``Anker - Brick``.
+    Fuer ein Signal braucht es ``reversal_bricks`` Bricks in eine Richtung --
+    daraus ergibt sich der exakte Trigger-Kurs, an dem eine Stop-Order liegen muss.
+    """
+    if drop_last and len(df) > 1:
+        df = df.iloc[:-1]
+    bricks = build_renko(df, cfg.renko).bricks
+    if len(bricks) == 0:
+        return None
+
+    anchor = float(bricks["close"].iloc[-1])
+    brick = _current_brick_size(df, cfg)
+    if not np.isfinite(brick) or brick <= 0:
+        return None
+
+    # Laufende Brick-Serie bestimmen
+    dirs = bricks["direction"].to_numpy()
+    run_dir = int(dirs[-1])
+    run_len = 1
+    for d in dirs[-2::-1]:
+        if int(d) == run_dir:
+            run_len += 1
+        else:
+            break
+
+    sig = generate_signals(bricks, cfg.strategy)
+    position = int(sig["target"].iloc[-1]) if len(sig) else 0
+    current = float(df["close"].iloc[-1])
+    n = cfg.strategy.reversal_bricks
+    r = cfg.risk
+
+    def make_order(direction: int) -> Optional[PendingOrder]:
+        same = run_len if run_dir == direction else 0
+        needed = max(1, n - same)
+        trigger = anchor + direction * needed * brick
+        # Wuerde dieses Signal die Position ueberhaupt aendern?
+        target = direction
+        if direction == 1 and not cfg.strategy.allow_long:
+            target = 0 if position == -1 else position
+        if direction == -1 and not cfg.strategy.allow_short:
+            target = 0 if position == 1 else position
+        if target == position:
+            return None
+        stop_dist = r.stop_bricks * brick
+        side = target if target != 0 else 0
+        stop_price = trigger - side * stop_dist
+        if target != 0 and stop_dist > 0:
+            size = (cfg.initial_balance * r.risk_per_trade_pct) / stop_dist
+            size = min(size, (cfg.initial_balance * r.max_leverage) / trigger)
+        else:
+            size = 0.0
+        tps: List[Tuple[float, float, float]] = []
+        if target != 0 and stop_dist > 0:
+            for m in r.tp_r_multiples:
+                tps.append((float(m), float(trigger + side * m * stop_dist),
+                            float(m * stop_dist / trigger * 100)))
+        return PendingOrder(
+            direction=direction, trigger=float(trigger),
+            distance_pct=float((trigger - current) / current * 100),
+            bricks_needed=int(needed), stop_price=float(stop_price),
+            stop_distance=float(stop_dist), size=float(size),
+            notional=float(size * trigger), tp_levels=tps,
+        )
+
+    orders = [o for o in (make_order(1), make_order(-1)) if o is not None]
+    return LevelPlan(
+        time=pd.Timestamp(df.index[-1]).tz_convert("UTC"), current_price=current,
+        brick_size=brick, anchor=anchor, position=position,
+        run_dir=run_dir, run_len=run_len, orders=orders,
+    )
+
+
+def format_levels_message(pair: str, interval_minutes: int, plan: LevelPlan,
+                          cfg: BacktestConfig) -> str:
+    """Telegram-Nachricht mit vorab platzierbaren Orders."""
+    pos_txt = {1: "🟢 LONG", -1: "🔴 SHORT", 0: "⚪️ keine Position"}[plan.position]
+    lines = [
+        f"📍 <b>{pair}</b> ({interval_minutes}m) — Order-Level",
+        f"Position: {pos_txt}  ·  Kurs {plan.current_price:,.2f}",
+        f"Brick {plan.brick_size:,.2f} · Anker {plan.anchor:,.2f} · "
+        f"Serie {plan.run_len}× {'▲' if plan.run_dir == 1 else '▼'}",
+        "",
+    ]
+    if not plan.orders:
+        lines.append("Keine Order nötig — Position passt zur Lage.")
+    for o in plan.orders:
+        arrow = "🟢⬆️" if o.direction == 1 else "🔴⬇️"
+        lines.append(
+            f"{arrow} <b>{o.order_text} {o.trigger:,.2f}</b> "
+            f"({o.distance_pct:+.2f}% · {o.bricks_needed} Brick"
+            f"{'s' if o.bricks_needed > 1 else ''})"
+        )
+        lines.append(f"    🛑 SL {o.stop_price:,.2f}")
+        for i, (m, tp, pct) in enumerate(o.tp_levels, start=1):
+            lines.append(f"    🎯 TP{i} ({m:g}R) {tp:,.2f}")
+        lines.append(f"    Size ≈ {o.size:.4g} (Nominal {o.notional:,.0f})")
+    lines += [
+        "",
+        "ℹ️ Orders <b>vorab</b> platzieren — der Edge hängt am Fill auf dem Level.",
+        f"⏱ {plan.time.strftime('%Y-%m-%d %H:%M UTC')} · Level verschieben sich mit der ATR",
+    ]
+    return "\n".join(lines)
+
+
 def format_message(pair: str, interval_minutes: int, sig: Signal,
                    cfg: BacktestConfig) -> str:
     """Baut die Telegram-Nachricht (HTML) -- auf einen Blick handelbar."""
@@ -151,13 +316,39 @@ def _mark_sent(state: dict, pair: str, sig: Signal) -> None:
 # --- Runner ----------------------------------------------------------------
 def check_pair(pair: str, cfg: BacktestConfig, interval_minutes: int,
                token: str, chat_id, state: dict, state_path: str,
-               fetch_fn=None, send_fn=None, verbose: bool = True) -> Optional[Signal]:
-    """Prueft ein Paar einmal; sendet bei neuem Signal. Gibt das Signal zurueck."""
+               fetch_fn=None, send_fn=None, verbose: bool = True,
+               mode: str = "levels"):
+    """Prueft ein Paar einmal und sendet bei Neuigkeit.
+
+    ``mode="levels"``  -- kommende Trigger-Level (fuer vorab platzierte Orders).
+                          Empfohlen: nur so ist der Backtest-Edge erreichbar.
+    ``mode="signals"`` -- Meldung erst nach ausgeloestem Reversal (Bestaetigung).
+    """
     from . import data as data_mod
     fetch = fetch_fn or data_mod.fetch_kraken_ohlc
     send = send_fn or telegram.send_message
 
     df = fetch(pair, interval_minutes=interval_minutes)
+
+    if mode == "levels":
+        plan = compute_level_plan(df, cfg)
+        if plan is None:
+            if verbose:
+                print(f"[{pair}] noch keine Level (zu wenige Daten).")
+            return None
+        key = f"levels|{plan.fingerprint}"
+        if state.get(pair) == key:
+            if verbose:
+                print(f"[{pair}] Level unveraendert — nichts gesendet.")
+            return None
+        send(token, chat_id, format_levels_message(pair, interval_minutes, plan, cfg))
+        state[pair] = key
+        _save_state(state_path, state)
+        if verbose:
+            trig = ", ".join(f"{o.order_text} {o.trigger:.2f}" for o in plan.orders)
+            print(f"[{pair}] Level gesendet: {trig or 'keine'}")
+        return plan
+
     sig = compute_latest_signal(df, cfg)
     if sig is None:
         if verbose:
@@ -232,6 +423,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--loop", action="store_true", help="dauerhaft laufen")
     p.add_argument("--state", default="signal_state.json", help="Zustandsdatei")
     p.add_argument("--pair", help="einzelnes Paar erzwingen (statt Config-Liste)")
+    p.add_argument("--mode", choices=["levels", "signals"], default="levels",
+                   help="levels = kommende Order-Level im Voraus (empfohlen); "
+                        "signals = Meldung nach ausgeloestem Reversal")
     return p
 
 
@@ -244,9 +438,9 @@ def main(argv=None) -> int:
         raise SystemExit("Telegram-Token/Chat-ID fehlen (Config oder Umgebungsvariablen "
                          "TELEGRAM_TOKEN / TELEGRAM_CHAT_ID).")
     if args.loop:
-        run_loop(cfg, pairs, interval, token, chat_id, args.state)
+        run_loop(cfg, pairs, interval, token, chat_id, args.state, mode=args.mode)
     else:
-        run_once(cfg, pairs, interval, token, chat_id, args.state)
+        run_once(cfg, pairs, interval, token, chat_id, args.state, mode=args.mode)
     return 0
 
 

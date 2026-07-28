@@ -23,18 +23,40 @@ Pass-Rate über alle 46 Fenster: **91 % bei Level-Fill → 7 % bei 1 Stunde Verz
 Einstieg frisst ~27 % der Stop-Distanz und kippt das Chance/Risiko-Verhältnis.
 Die Trefferquote fällt um 14 Punkte — aus einem Gewinn wird ein Nullsummenspiel.
 
-### Konsequenz für die Praxis
+### Konsequenz für die Praxis — und die Lösung
 
 > **Die Strategie funktioniert nur mit vorab platzierten Orders an den
 > Brick-Levels — nicht durch manuelles Reagieren auf eine Benachrichtigung.**
 
 Das ist machbar, weil die Levels **im Voraus bekannt** sind: Der nächste
 Aufwärts-Brick liegt bei `Anker + Brickgröße`, der nächste Abwärts-Brick bei
-`Anker − Brickgröße`. Man kann dort ruhende Stop-Orders hinterlegen.
+`Anker − Brickgröße`; für ein Signal braucht es `reversal_bricks` davon. Genau
+das macht der Signal-Bot im Modus `levels` (Default).
 
-Wer stattdessen erst nach Kerzenschluss reagiert (klassischer Alert-Workflow),
-handelt eine **andere, hier nicht validierte Strategie** — im Test mit
-negativer Erwartung.
+**Validierung der vorhergesagten Level** (705 echte Signale, 1,5 Jahre BTC):
+
+| Kennzahl | Wert |
+|---|---|
+| Level exakt getroffen (< 0,05 % Fehler) | 78,9 % |
+| Abweichung Median | **0,017 %** |
+| Abweichung 95. Perzentil | 0,146 % |
+
+Und der entscheidende Test — Handel **mit den vorhergesagten Leveln** statt den
+perfekten Brick-Levels (16 Walk-Forward-Fenster):
+
+| Variante | Pass-Rate | Median-Rendite |
+|---|---|---|
+| Ideal: Fill am echten Brick-Level | 88 % | +18,6 % |
+| **Real: Fill am vorhergesagten Level** | **94 %** | **+20,9 %** |
+| Reagieren nach Kerzenschluss (1 h) | 7 % | −4,6 % |
+
+Der Edge bleibt mit ruhenden Orders vollständig erhalten (minimal besser, weil
+ATR-Drift teils zu einem früheren, günstigeren Fill führt). Wer stattdessen erst
+nach Kerzenschluss reagiert, handelt eine **andere, hier nicht validierte
+Strategie** — im Test mit negativer Erwartung.
+
+Weil die Level mit ATR und Trend wandern, müssen die Orders **stündlich
+nachgezogen** werden — der Bot meldet Änderungen automatisch.
 
 ## 2. Kostensensitivität
 

@@ -68,7 +68,8 @@ Type=simple
 WorkingDirectory=/opt/prop-bot
 EnvironmentFile=/etc/prop-signals.env
 ExecStart=/opt/prop-bot/.venv/bin/python -m prop_backtester.signals \
-  --config configs/signals.example.yaml --loop --state /opt/prop-bot/signal_state.json
+  --config configs/signals.example.yaml --loop --mode levels \
+  --state /opt/prop-bot/signal_state.json
 Restart=always
 RestartSec=30
 
@@ -88,8 +89,14 @@ systemctl status prop-signals --no-pager      # läuft er?
 journalctl -u prop-signals -f                 # Live-Logs (Strg+C zum Beenden)
 ```
 
-Ab jetzt läuft der Bot dauerhaft. Bei jedem neuen 2-Brick-Reversal kommt eine
-Telegram-Nachricht — der `signal_state.json` verhindert Doppel-Pings.
+Ab jetzt läuft der Bot dauerhaft im Modus **`levels`**: Er schickt dir die
+kommenden Trigger-Level mit SL/TP/Size, damit du dort **vorab** Stop-Orders
+platzieren kannst. Das ist der einzige Weg, den Backtest-Edge zu erreichen —
+Details in [realism.md](realism.md). `signal_state.json` verhindert Doppel-Pings;
+gemeldet wird nur, wenn sich die Level ändern.
+
+**Dein Ablauf:** Nachricht kommt → Stop-Order(s) auf die genannten Level legen →
+bei Änderungsmeldung Order anpassen. Nicht auf ausgelöste Signale reagieren.
 
 ## Anpassen
 
