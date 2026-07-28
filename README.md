@@ -171,8 +171,11 @@ zur Risiko-Einstellung passende Positionsgröße. Voreingestellt ist die
 [`docs/deploy_signals.md`](docs/deploy_signals.md) — Auto-Neustart nach Reboot,
 Token sicher getrennt.
 
-> ⚠️ Signale sind Entscheidungshilfen, keine automatischen Orders — du platzierst
-> die Trades selbst. Kein Finanzrat.
+> ⚠️ **Wichtig — bitte vorher lesen:** [`docs/realism.md`](docs/realism.md).
+> Der Edge hängt daran, dass **an den Brick-Levels** gefüllt wird (vorab platzierte
+> Orders). Wer erst nach Kerzenschluss auf die Benachrichtigung reagiert, handelt
+> im Test mit **negativer** Erwartung (Pass-Rate 91 % → 7 %). Signale sind
+> Entscheidungshilfen, keine automatischen Orders. Kein Finanzrat.
 
 ---
 
