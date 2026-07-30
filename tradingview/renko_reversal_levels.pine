@@ -37,10 +37,12 @@ tp1R    = input.float(2.0,   "TP1 (R-Vielfaches)",    minval=0,    step=0.5, gro
 tp2R    = input.float(4.0,   "TP2 (R-Vielfaches)",    minval=0,    step=0.5, group=grpR)
 
 grpV = "Anzeige"
-showGrid   = input.bool(true, "Brick-Gitter (Anker)",                       group=grpV)
-showLevels = input.bool(true, "Trigger-/SL-/TP-Level",                      group=grpV)
-showTable  = input.bool(true, "Info-Tabelle",                               group=grpV)
-showMarks  = input.bool(true, "Historische Signale",                        group=grpV)
+showGrid    = input.bool(true,  "Brick-Gitter (Anker)",                      group=grpV)
+showPos     = input.bool(true,  "SL/TP der OFFENEN Position",                group=grpV)
+showLevels  = input.bool(true,  "Trigger-Level der nächsten Order",          group=grpV)
+showNextSLTP= input.bool(false, "…auch dessen SL/TP (mehr Linien)",          group=grpV)
+showTable   = input.bool(true,  "Info-Tabelle",                              group=grpV)
+showMarks   = input.bool(true,  "Historische Signale",                       group=grpV)
 
 // ------------------------------------------------------------ Renko-Zustand
 var float anchor   = na   // Schlusskurs des letzten Bricks (Gitter-Anker)
@@ -48,6 +50,8 @@ var float brickSz  = na   // aktuelle Brick-Groesse
 var int   runDir   = 0    // Richtung der laufenden Brick-Serie
 var int   runLen   = 0    // Laenge der Serie
 var int   position = 0    // Zielposition der Strategie (+1/-1/0)
+var float entryPx    = na // Einstiegskurs der laufenden Position
+var float entryBrick = na // Brick-Groesse beim Einstieg (fuer SL/TP der Position)
 
 atrV = ta.atr(atrLen)
 
@@ -77,6 +81,8 @@ if barstate.isconfirmed
                         want := position == -1 ? 0 : position
                     if want != position
                         position := want
+                        entryPx    := want == 0 ? na : anchor
+                        entryBrick := want == 0 ? na : size
                         if want == 1
                             sigLong := true
                         else
@@ -93,6 +99,8 @@ if barstate.isconfirmed
                         want := position == 1 ? 0 : position
                     if want != position
                         position := want
+                        entryPx    := want == 0 ? na : anchor
+                        entryBrick := want == 0 ? na : size
                         if want == -1
                             sigShort := true
                         else
@@ -116,7 +124,7 @@ wantDn   = allowShort ? -1 : (position ==  1 ? 0 : position)
 upActive = showLevels and not na(upTrig) and wantUp != position
 dnActive = showLevels and not na(dnTrig) and wantDn != position
 
-// SL / TP / Size je Richtung
+// --- SL / TP der NAECHSTEN Order (am Trigger-Level) ---
 stopDist = na(brickSz) ? na : stopBricks * brickSz
 riskAmt  = balance * riskPct / 100.0
 qty      = na(stopDist) or stopDist <= 0 ? na : riskAmt / stopDist
@@ -128,6 +136,14 @@ dnSL  = na(dnTrig) ? na : dnTrig + stopDist
 dnTP1 = na(dnTrig) or tp1R <= 0 ? na : dnTrig - tp1R * stopDist
 dnTP2 = na(dnTrig) or tp2R <= 0 ? na : dnTrig - tp2R * stopDist
 
+// --- SL / TP der OFFENEN Position (vom Einstieg gerechnet) ---
+posStop = na(entryBrick) ? na : stopBricks * entryBrick
+hasPos  = position != 0 and not na(entryPx) and not na(posStop)
+posSL   = hasPos ? entryPx - position * posStop : na
+posTP1  = hasPos and tp1R > 0 ? entryPx + position * tp1R * posStop : na
+posTP2  = hasPos and tp2R > 0 ? entryPx + position * tp2R * posStop : na
+posQty  = hasPos and posStop > 0 ? riskAmt / posStop : na
+
 // ------------------------------------------------------------------ Plots
 cUp   = color.new(#26A69A, 0)
 cDn   = color.new(#EF5350, 0)
@@ -137,55 +153,74 @@ cGrid = color.new(color.gray, 60)
 
 plot(showGrid ? anchor : na, "Anker (letzter Brick)", color=cGrid, style=plot.style_stepline, linewidth=1)
 
-plot(upActive ? upTrig : na, "Buy-Stop",  color=cUp, style=plot.style_linebr, linewidth=2)
-plot(dnActive ? dnTrig : na, "Sell-Stop", color=cDn, style=plot.style_linebr, linewidth=2)
-plot(upActive ? upSL  : na, "SL (Long)",  color=cSL, style=plot.style_linebr, linewidth=1)
-plot(dnActive ? dnSL  : na, "SL (Short)", color=cSL, style=plot.style_linebr, linewidth=1)
-plot(upActive ? upTP1 : na, "TP1 (Long)", color=cTP, style=plot.style_linebr, linewidth=1)
-plot(upActive ? upTP2 : na, "TP2 (Long)", color=cTP, style=plot.style_linebr, linewidth=1)
-plot(dnActive ? dnTP1 : na, "TP1 (Short)",color=cTP, style=plot.style_linebr, linewidth=1)
-plot(dnActive ? dnTP2 : na, "TP2 (Short)",color=cTP, style=plot.style_linebr, linewidth=1)
+// OFFENE Position: durchgezogene, dicke Linien (das aktiv zu managende)
+plot(showPos and hasPos ? posSL  : na, "SL offene Position",  color=cSL, style=plot.style_linebr, linewidth=2)
+plot(showPos and hasPos ? posTP1 : na, "TP1 offene Position", color=cTP, style=plot.style_linebr, linewidth=2)
+plot(showPos and hasPos ? posTP2 : na, "TP2 offene Position", color=cTP, style=plot.style_linebr, linewidth=2)
+plot(showPos and hasPos ? entryPx : na, "Einstieg", color=color.new(color.gray, 20), style=plot.style_linebr, linewidth=1)
+
+// NAECHSTE Order: Trigger-Level (dort Stop-Order platzieren)
+plot(upActive ? upTrig : na, "Buy-Stop",  color=cUp, style=plot.style_circles, linewidth=2)
+plot(dnActive ? dnTrig : na, "Sell-Stop", color=cDn, style=plot.style_circles, linewidth=2)
+
+// SL/TP der naechsten Order — optional, sonst zu viele Linien
+plot(showNextSLTP and upActive ? upSL  : na, "SL (nächste Long)",  color=color.new(#EF5350, 65), style=plot.style_circles, linewidth=1)
+plot(showNextSLTP and dnActive ? dnSL  : na, "SL (nächste Short)", color=color.new(#EF5350, 65), style=plot.style_circles, linewidth=1)
+plot(showNextSLTP and upActive ? upTP1 : na, "TP1 (nächste Long)", color=color.new(#42A5F5, 65), style=plot.style_circles, linewidth=1)
+plot(showNextSLTP and upActive ? upTP2 : na, "TP2 (nächste Long)", color=color.new(#42A5F5, 65), style=plot.style_circles, linewidth=1)
+plot(showNextSLTP and dnActive ? dnTP1 : na, "TP1 (nächste Short)",color=color.new(#42A5F5, 65), style=plot.style_circles, linewidth=1)
+plot(showNextSLTP and dnActive ? dnTP2 : na, "TP2 (nächste Short)",color=color.new(#42A5F5, 65), style=plot.style_circles, linewidth=1)
 
 plotshape(showMarks and sigLong,  "Long-Signal",  style=shape.triangleup,   location=location.belowbar, color=cUp, size=size.tiny)
 plotshape(showMarks and sigShort, "Short-Signal", style=shape.triangledown, location=location.abovebar, color=cDn, size=size.tiny)
 plotshape(showMarks and sigFlat,  "Flat",         style=shape.xcross,       location=location.belowbar, color=color.gray, size=size.tiny)
 
 // ---------------------------------------------------------------- Tabelle
-var table info = table.new(position.top_right, 2, 8, border_width=1)
+var table info = table.new(position.top_right, 2, 10, border_width=1)
 
 f(v) => na(v) ? "—" : str.tostring(v, format.mintick)
 
 if showTable and barstate.islast
-    posTxt  = position ==  1 ? "LONG" : position == -1 ? "SHORT" : "keine"
-    posCol  = position ==  1 ? cUp : position == -1 ? cDn : color.gray
-    bg      = color.new(color.black, 20)
-    table.cell(info, 0, 0, "Renko-Reversal", text_color=color.white, bgcolor=color.new(#F0A13C, 10), text_size=size.small)
-    table.cell(info, 1, 0, timeframe.period + "  ·  " + str.tostring(atrMult, "#.##") + "×ATR", text_color=color.white, bgcolor=color.new(#F0A13C, 10), text_size=size.small)
+    posTxt = position ==  1 ? "LONG" : position == -1 ? "SHORT" : "keine"
+    posCol = position ==  1 ? cUp : position == -1 ? cDn : color.gray
+    bg     = color.new(color.black, 20)
+    hdr    = color.new(#F0A13C, 10)
+    sec    = color.new(#2A3138, 10)
 
-    table.cell(info, 0, 1, "Position",  text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 1, posTxt,      text_color=posCol,      bgcolor=bg, text_size=size.small)
+    table.cell(info, 0, 0, "Renko-Reversal", text_color=color.white, bgcolor=hdr, text_size=size.small)
+    table.cell(info, 1, 0, timeframe.period + "  ·  " + str.tostring(atrMult, "#.##") + "×ATR  ·  Brick " + f(brickSz), text_color=color.white, bgcolor=hdr, text_size=size.small)
 
-    table.cell(info, 0, 2, "Brick",     text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 2, f(brickSz) + "  (Serie " + str.tostring(runLen) + (runDir == 1 ? "▲" : "▼") + ")", text_color=color.white, bgcolor=bg, text_size=size.small)
+    // ---- Block 1: OFFENE POSITION (das, was du jetzt managst) ----
+    table.cell(info, 0, 1, "OFFENE POSITION", text_color=color.white, bgcolor=sec, text_size=size.small)
+    table.cell(info, 1, 1, posTxt + (hasPos ? "  @ " + f(entryPx) : ""), text_color=posCol, bgcolor=sec, text_size=size.small)
 
-    // Aktive Order-Richtung(en)
+    table.cell(info, 0, 2, "  SL",        text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 2, f(posSL),      text_color=color.new(#EF5350, 0), bgcolor=bg, text_size=size.small)
+
+    table.cell(info, 0, 3, "  TP1 / TP2", text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 3, hasPos ? f(posTP1) + " / " + f(posTP2) : "—", text_color=cTP, bgcolor=bg, text_size=size.small)
+
+    table.cell(info, 0, 4, "  Size",      text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 4, na(posQty) ? "—" : str.tostring(posQty, "#.#####"), text_color=color.white, bgcolor=bg, text_size=size.small)
+
+    // ---- Block 2: NAECHSTE ORDER (vorab platzieren) ----
     string ordTxt = upActive ? "Buy-Stop " + f(upTrig) : ""
     ordTxt += dnActive ? (ordTxt == "" ? "" : "\n") + "Sell-Stop " + f(dnTrig) : ""
-    table.cell(info, 0, 3, "Order",     text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 3, ordTxt == "" ? "—" : ordTxt, text_color=upActive ? cUp : cDn, bgcolor=bg, text_size=size.small)
+    table.cell(info, 0, 5, "NÄCHSTE ORDER", text_color=color.white, bgcolor=sec, text_size=size.small)
+    table.cell(info, 1, 5, ordTxt == "" ? "—" : ordTxt, text_color=upActive ? cUp : cDn, bgcolor=sec, text_size=size.small)
 
-    table.cell(info, 0, 4, "SL",        text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 4, upActive ? f(upSL) : dnActive ? f(dnSL) : "—", text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 0, 6, "  danach SL",  text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 6, upActive ? f(upSL) : dnActive ? f(dnSL) : "—", text_color=color.new(#EF5350, 40), bgcolor=bg, text_size=size.small)
 
-    table.cell(info, 0, 5, "TP1 / TP2", text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 5, upActive ? f(upTP1) + " / " + f(upTP2) : dnActive ? f(dnTP1) + " / " + f(dnTP2) : "—", text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 0, 7, "  danach TP",  text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 7, upActive ? f(upTP1) + " / " + f(upTP2) : dnActive ? f(dnTP1) + " / " + f(dnTP2) : "—", text_color=color.new(#42A5F5, 40), bgcolor=bg, text_size=size.small)
 
-    table.cell(info, 0, 6, "Size",      text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 6, na(qty) ? "—" : str.tostring(qty, "#.#####") + "  (" + str.tostring(riskAmt, "#") + " Risiko)", text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 0, 8, "  Size",       text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 8, na(qty) ? "—" : str.tostring(qty, "#.#####") + "  (" + str.tostring(riskAmt, "#") + " Risiko)", text_color=color.white, bgcolor=bg, text_size=size.small)
 
     warn = timeframe.isintraday and timeframe.multiplier == 60 ? "validiert (1h)" : "⚠ nicht validiert — 1h nutzen"
-    table.cell(info, 0, 7, "Status",    text_color=color.white, bgcolor=bg, text_size=size.small)
-    table.cell(info, 1, 7, warn,        text_color=timeframe.isintraday and timeframe.multiplier == 60 ? cUp : color.orange, bgcolor=bg, text_size=size.small)
+    table.cell(info, 0, 9, "Status",       text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 9, "Serie " + str.tostring(runLen) + (runDir == 1 ? "▲" : "▼") + "  ·  " + warn, text_color=timeframe.isintraday and timeframe.multiplier == 60 ? cUp : color.orange, bgcolor=bg, text_size=size.small)
 
 // ----------------------------------------------------------------- Alarme
 alertcondition(sigLong,  "Renko: LONG-Reversal",  "Renko-Reversal LONG ausgelöst")
