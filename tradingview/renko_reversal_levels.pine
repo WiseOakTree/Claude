@@ -1,0 +1,193 @@
+//@version=6
+// =============================================================================
+//  Renko-Reversal Levels  —  Kraken-Prop-Strategie
+// =============================================================================
+//  Berechnet Renko-Bricks INTERN aus normalen Kerzen. Du brauchst dafuer KEINEN
+//  Renko-Chart (im Gratis-Plan eingeschraenkt) — leg den Indikator einfach auf
+//  einen normalen Kerzenchart im 1-Stunden-Timeframe.
+//
+//  Zeigt:
+//    * die kommenden TRIGGER-LEVEL im Voraus  -> dort Stop-Order platzieren
+//    * SL (2 Bricks) und TP-Ziele (R-Vielfache)
+//    * empfohlene Positionsgroesse
+//    * historische Signale als Marker
+//
+//  WICHTIG: Validiert wurde die Strategie auf 1-STUNDEN-Kerzen mit
+//  Brick = 0.75 x ATR(14). Auf Tages-Bricks ist es eine ANDERE, nicht
+//  getestete Strategie (viel groessere Bricks, weitere Stops, wenige Signale).
+//
+//  Kein Finanzrat. Signale sind Entscheidungshilfen.
+// =============================================================================
+
+indicator("Renko-Reversal Levels (Kraken Prop)", shorttitle="RenkoRev", overlay=true, max_lines_count=500, max_labels_count=500)
+
+// ---------------------------------------------------------------- Einstellungen
+grpS = "Strategie"
+atrLen     = input.int(14,   "ATR-Länge",             minval=2,             group=grpS)
+atrMult    = input.float(0.75,"Brick = ATR ×",        minval=0.05, step=0.05, group=grpS)
+revBricks  = input.int(2,    "Reversal nach N Bricks", minval=1,             group=grpS)
+stopBricks = input.float(2.0,"SL-Distanz (Bricks)",   minval=0.5,  step=0.5, group=grpS)
+allowLong  = input.bool(true, "Long erlaubt",                               group=grpS)
+allowShort = input.bool(true, "Short erlaubt",                              group=grpS)
+
+grpR = "Risiko"
+balance = input.float(50000, "Kontogröße",            minval=1,             group=grpR)
+riskPct = input.float(0.3,   "Risiko pro Trade (%)",  minval=0.01, step=0.05, group=grpR)
+tp1R    = input.float(2.0,   "TP1 (R-Vielfaches)",    minval=0,    step=0.5, group=grpR)
+tp2R    = input.float(4.0,   "TP2 (R-Vielfaches)",    minval=0,    step=0.5, group=grpR)
+
+grpV = "Anzeige"
+showGrid   = input.bool(true, "Brick-Gitter (Anker)",                       group=grpV)
+showLevels = input.bool(true, "Trigger-/SL-/TP-Level",                      group=grpV)
+showTable  = input.bool(true, "Info-Tabelle",                               group=grpV)
+showMarks  = input.bool(true, "Historische Signale",                        group=grpV)
+
+// ------------------------------------------------------------ Renko-Zustand
+var float anchor   = na   // Schlusskurs des letzten Bricks (Gitter-Anker)
+var float brickSz  = na   // aktuelle Brick-Groesse
+var int   runDir   = 0    // Richtung der laufenden Brick-Serie
+var int   runLen   = 0    // Laenge der Serie
+var int   position = 0    // Zielposition der Strategie (+1/-1/0)
+
+atrV = ta.atr(atrLen)
+
+// Signal-Flags dieses Bars (fuer Marker)
+bool sigLong  = false
+bool sigShort = false
+bool sigFlat  = false
+
+// Bricks nur auf GESCHLOSSENEN Kerzen fortschreiben -> kein Repainting.
+if barstate.isconfirmed
+    float size = atrV * atrMult
+    if not na(size) and size > 0
+        brickSz := size
+        if na(anchor)
+            anchor := close
+        else
+            int guard = 0
+            // Aufwaerts-Bricks
+            while close >= anchor + size and guard < 500
+                anchor  += size
+                runLen  := runDir == 1 ? runLen + 1 : 1
+                runDir  := 1
+                guard   += 1
+                if runLen >= revBricks
+                    int want = 1
+                    if not allowLong
+                        want := position == -1 ? 0 : position
+                    if want != position
+                        position := want
+                        if want == 1
+                            sigLong := true
+                        else
+                            sigFlat := true
+            // Abwaerts-Bricks
+            while close <= anchor - size and guard < 500
+                anchor  -= size
+                runLen  := runDir == -1 ? runLen + 1 : 1
+                runDir  := -1
+                guard   += 1
+                if runLen >= revBricks
+                    int want = -1
+                    if not allowShort
+                        want := position == 1 ? 0 : position
+                    if want != position
+                        position := want
+                        if want == -1
+                            sigShort := true
+                        else
+                            sigFlat := true
+
+// --------------------------------------------------- Kommende Trigger-Level
+// Die Renko-Level stehen im Voraus fest: naechster Brick bei Anker ± Brick.
+// Fuer ein Signal braucht es revBricks Bricks in eine Richtung.
+upNeeded = math.max(1, revBricks - (runDir ==  1 ? runLen : 0))
+dnNeeded = math.max(1, revBricks - (runDir == -1 ? runLen : 0))
+
+float upTrig = na
+float dnTrig = na
+if not na(anchor) and not na(brickSz)
+    upTrig := anchor + upNeeded * brickSz
+    dnTrig := anchor - dnNeeded * brickSz
+
+// Wuerde der Trigger die Position ueberhaupt aendern?
+wantUp   = allowLong  ? 1 : (position == -1 ? 0 : position)
+wantDn   = allowShort ? -1 : (position ==  1 ? 0 : position)
+upActive = showLevels and not na(upTrig) and wantUp != position
+dnActive = showLevels and not na(dnTrig) and wantDn != position
+
+// SL / TP / Size je Richtung
+stopDist = na(brickSz) ? na : stopBricks * brickSz
+riskAmt  = balance * riskPct / 100.0
+qty      = na(stopDist) or stopDist <= 0 ? na : riskAmt / stopDist
+
+upSL  = na(upTrig) ? na : upTrig - stopDist
+upTP1 = na(upTrig) or tp1R <= 0 ? na : upTrig + tp1R * stopDist
+upTP2 = na(upTrig) or tp2R <= 0 ? na : upTrig + tp2R * stopDist
+dnSL  = na(dnTrig) ? na : dnTrig + stopDist
+dnTP1 = na(dnTrig) or tp1R <= 0 ? na : dnTrig - tp1R * stopDist
+dnTP2 = na(dnTrig) or tp2R <= 0 ? na : dnTrig - tp2R * stopDist
+
+// ------------------------------------------------------------------ Plots
+cUp   = color.new(#26A69A, 0)
+cDn   = color.new(#EF5350, 0)
+cSL   = color.new(#EF5350, 30)
+cTP   = color.new(#42A5F5, 20)
+cGrid = color.new(color.gray, 60)
+
+plot(showGrid ? anchor : na, "Anker (letzter Brick)", color=cGrid, style=plot.style_stepline, linewidth=1)
+
+plot(upActive ? upTrig : na, "Buy-Stop",  color=cUp, style=plot.style_linebr, linewidth=2)
+plot(dnActive ? dnTrig : na, "Sell-Stop", color=cDn, style=plot.style_linebr, linewidth=2)
+plot(upActive ? upSL  : na, "SL (Long)",  color=cSL, style=plot.style_linebr, linewidth=1)
+plot(dnActive ? dnSL  : na, "SL (Short)", color=cSL, style=plot.style_linebr, linewidth=1)
+plot(upActive ? upTP1 : na, "TP1 (Long)", color=cTP, style=plot.style_linebr, linewidth=1)
+plot(upActive ? upTP2 : na, "TP2 (Long)", color=cTP, style=plot.style_linebr, linewidth=1)
+plot(dnActive ? dnTP1 : na, "TP1 (Short)",color=cTP, style=plot.style_linebr, linewidth=1)
+plot(dnActive ? dnTP2 : na, "TP2 (Short)",color=cTP, style=plot.style_linebr, linewidth=1)
+
+plotshape(showMarks and sigLong,  "Long-Signal",  style=shape.triangleup,   location=location.belowbar, color=cUp, size=size.tiny)
+plotshape(showMarks and sigShort, "Short-Signal", style=shape.triangledown, location=location.abovebar, color=cDn, size=size.tiny)
+plotshape(showMarks and sigFlat,  "Flat",         style=shape.xcross,       location=location.belowbar, color=color.gray, size=size.tiny)
+
+// ---------------------------------------------------------------- Tabelle
+var table info = table.new(position.top_right, 2, 8, border_width=1)
+
+f(v) => na(v) ? "—" : str.tostring(v, format.mintick)
+
+if showTable and barstate.islast
+    posTxt  = position ==  1 ? "LONG" : position == -1 ? "SHORT" : "keine"
+    posCol  = position ==  1 ? cUp : position == -1 ? cDn : color.gray
+    bg      = color.new(color.black, 20)
+    table.cell(info, 0, 0, "Renko-Reversal", text_color=color.white, bgcolor=color.new(#F0A13C, 10), text_size=size.small)
+    table.cell(info, 1, 0, timeframe.period + "  ·  " + str.tostring(atrMult, "#.##") + "×ATR", text_color=color.white, bgcolor=color.new(#F0A13C, 10), text_size=size.small)
+
+    table.cell(info, 0, 1, "Position",  text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 1, posTxt,      text_color=posCol,      bgcolor=bg, text_size=size.small)
+
+    table.cell(info, 0, 2, "Brick",     text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 2, f(brickSz) + "  (Serie " + str.tostring(runLen) + (runDir == 1 ? "▲" : "▼") + ")", text_color=color.white, bgcolor=bg, text_size=size.small)
+
+    // Aktive Order-Richtung(en)
+    string ordTxt = upActive ? "Buy-Stop " + f(upTrig) : ""
+    ordTxt += dnActive ? (ordTxt == "" ? "" : "\n") + "Sell-Stop " + f(dnTrig) : ""
+    table.cell(info, 0, 3, "Order",     text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 3, ordTxt == "" ? "—" : ordTxt, text_color=upActive ? cUp : cDn, bgcolor=bg, text_size=size.small)
+
+    table.cell(info, 0, 4, "SL",        text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 4, upActive ? f(upSL) : dnActive ? f(dnSL) : "—", text_color=color.white, bgcolor=bg, text_size=size.small)
+
+    table.cell(info, 0, 5, "TP1 / TP2", text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 5, upActive ? f(upTP1) + " / " + f(upTP2) : dnActive ? f(dnTP1) + " / " + f(dnTP2) : "—", text_color=color.white, bgcolor=bg, text_size=size.small)
+
+    table.cell(info, 0, 6, "Size",      text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 6, na(qty) ? "—" : str.tostring(qty, "#.#####") + "  (" + str.tostring(riskAmt, "#") + " Risiko)", text_color=color.white, bgcolor=bg, text_size=size.small)
+
+    warn = timeframe.isintraday and timeframe.multiplier == 60 ? "validiert (1h)" : "⚠ nicht validiert — 1h nutzen"
+    table.cell(info, 0, 7, "Status",    text_color=color.white, bgcolor=bg, text_size=size.small)
+    table.cell(info, 1, 7, warn,        text_color=timeframe.isintraday and timeframe.multiplier == 60 ? cUp : color.orange, bgcolor=bg, text_size=size.small)
+
+// ----------------------------------------------------------------- Alarme
+alertcondition(sigLong,  "Renko: LONG-Reversal",  "Renko-Reversal LONG ausgelöst")
+alertcondition(sigShort, "Renko: SHORT-Reversal", "Renko-Reversal SHORT ausgelöst")
+alertcondition(ta.change(upTrig) != 0 or ta.change(dnTrig) != 0, "Renko: Level verschoben", "Trigger-Level haben sich verschoben — Orders nachziehen")
