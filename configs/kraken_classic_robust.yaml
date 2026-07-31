@@ -11,7 +11,9 @@
 # Ehrlich: KEIN Setting besteht immer. ~9% der Fenster (die haertesten Crashs)
 # reissen auch hier das 6%-Limit. Nachhaltig != unfehlbar.
 
-initial_balance: 50000        # = deine Kraken-Prop-Kontogroesse
+initial_balance: 10000        # = deine Kraken-Prop-Kontogroesse
+# Groesse ist egal: die Strategie rechnet prozentual und liefert bei 5k/10k/25k/50k
+# identische Pass-Rate, Rendite und Drawdown. Bei 10k = 30 USD Risiko je Trade.
 
 renko:
   mode: atr

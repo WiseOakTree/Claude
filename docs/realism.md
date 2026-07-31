@@ -77,6 +77,53 @@ Pass-Rate. Das Modell rechnet mit 0,05 % Gebühr + 0,02 % halbem Spread +
 liquiden BTC-Markt plausibel — in schnellen Märkten, bei größeren Positionen
 oder schlechteren Konditionen aber schnell überschritten.
 
+## 2b. Welches Produkt? (Gebühren entscheiden)
+
+Die Strategie handelt ~1,2 mal täglich — die Gebühr pro Roundtrip wirkt daher
+direkt auf den Edge. Gemessen über dieselben 46 Fenster (Konto 10.000 $):
+
+| Taker-Gebühr | Pass-Rate | Median-Rendite | |
+|---|---|---|---|
+| 0,02 % | 93 % | +19,4 % | ideal |
+| **0,05 %** | **91 %** | **+16,5 %** | Futures/Perps — der Referenzfall |
+| 0,08 % | 78 % | +13,8 % | noch brauchbar |
+| 0,10 % | 76 % | +12,1 % | **Schmerzgrenze** |
+| 0,16 % | 46 % | +7,2 % | grenzwertig |
+| 0,20 % | 33 % | +3,9 % | kaum noch |
+| 0,25 % | 30 % | +0,1 % | Edge weg |
+
+**Regel: Die Taker-Gebühr muss ≤ 0,10 % sein, besser ≤ 0,05 %.**
+
+Konkret auf Kraken:
+
+| Produkt | Typische Taker-Gebühr | Ergebnis |
+|---|---|---|
+| Futures / Perpetuals | ~0,05 % | **91 % Pass-Rate** |
+| Kraken Pro **Spot-Margin** (bis 5×) | ~0,25 % + Rollover ~0,02 %/4 h | **30 % Pass-Rate, +0,1 %** |
+
+Spot-Margin auf Kraken Pro macht die Strategie also praktisch wertlos — nicht
+wegen des Hebels, sondern wegen Gebühren und Rollover-Kosten. Nötig sind
+**niedriggebührige Derivate**.
+
+> ⚠️ **Vor dem Kauf der Challenge klären:** Welche Instrumente und welche
+> Gebühren gelten im Kraken-Prop-Konto? Diese Zahlen sind nicht öffentlich
+> verifiziert worden und entscheiden über Erfolg oder Misserfolg. Liegt die
+> Taker-Gebühr über 0,10 %, ist diese Strategie dort nicht tragfähig.
+
+### Hebel wird nicht gebraucht
+
+Bei 0,3 % Risiko und ~2-Brick-Stop liegt der Nominalwert bei nur **0,2–0,5 ×**
+des Kontos. Die `max_leverage: 5.0` in der Config ist eine Obergrenze, die
+praktisch nie greift. Gebraucht wird die Fähigkeit zu **shorten**, nicht Hebel.
+
+### Kontogröße ist egal
+
+Die Strategie rechnet prozentual und skaliert exakt. Über dieselben 46 Fenster
+liefern 5.000 $, 10.000 $, 25.000 $ und 50.000 $ **identische** Werte
+(Pass-Rate 91 %, Median +16,5 %, Worst-DD 6,94 %) — es ändern sich nur die
+absoluten Beträge. Bei 10.000 $: 30 $ Risiko pro Trade, Ø-Order ~3.400 $,
+~0,05 BTC — weit über Krakens Mindestordergröße.
+
 ## 3. Was gut aussieht: kein Overfitting
 
 Parameter **nur auf 2022–2024 optimiert**, dann blind auf 2024–2026 angewendet:
