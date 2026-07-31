@@ -26,7 +26,7 @@ from .config import BacktestConfig
 from .engine import run_backtest
 from .renko import build_renko
 from .strategy import generate_signals
-from .prop import PRESETS, evaluate_challenge
+from .prop import PRESETS, evaluate_challenge, resolve_preset
 from .report import compute_metrics
 
 
@@ -129,6 +129,7 @@ def run_sweep(scenarios: Sequence[pd.DataFrame], param_grid: Dict[str, Sequence]
     dann hoechste Median-Rendite. So gewinnt die Einstellung, die am
     zuverlaessigsten *und* am schonendsten besteht.
     """
+    preset_key = resolve_preset(preset_key)
     if preset_key not in PRESETS:
         raise ValueError(f"Unbekanntes Preset: {preset_key!r} (siehe PRESETS)")
     base = (base_cfg or BacktestConfig()).validate()

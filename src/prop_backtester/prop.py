@@ -62,13 +62,17 @@ PRESETS: Dict[str, PropRules] = {
         drawdown_type="static",
         note="12% Target, 3% statischer Drawdown, 3% Daily Loss.",
     ),
+    # In der Kraken-App heisst dieser Plan "Starter" -- Werte am 2026-07-31 in der
+    # Evaluations-Maske bestaetigt (10k Wallet: Target 10%, Daily 3%, Drawdown 6%,
+    # Hebel bis 5x, Profit-Split bis 90%, Gebuehr 85 USD).
     "1step_classic": PropRules(
-        name="Kraken 1-Step Classic",
+        name="Kraken Starter (1-Step Classic)",
         profit_targets=[0.10],
         max_daily_loss_pct=0.03,
         max_total_drawdown_pct=0.06,
         drawdown_type="static",
-        note="10% Target, 6% statischer Drawdown, 3% Daily Loss.",
+        note="10% Target, 6% statischer Drawdown, 3% Daily Loss. "
+             "= Plan 'Starter' in der Kraken-App (bestaetigt).",
     ),
     "2step_classic": PropRules(
         name="Kraken 2-Step Classic",
@@ -81,6 +85,17 @@ PRESETS: Dict[str, PropRules] = {
 }
 
 DEFAULT_PRESET = "1step_classic"
+
+# Namen aus der Kraken-App -> interne Preset-Schluessel. Bewusst NICHT in PRESETS
+# aufgenommen, damit Berichte dasselbe Regelwerk nicht doppelt auswerten.
+ALIASES = {
+    "starter": "1step_classic",
+}
+
+
+def resolve_preset(key: str) -> str:
+    """Loest App-Namen wie 'starter' auf den internen Preset-Schluessel auf."""
+    return ALIASES.get(key, key)
 
 
 @dataclass

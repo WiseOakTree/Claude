@@ -52,7 +52,8 @@ def build_parser() -> argparse.ArgumentParser:
     sw.add_argument("--sweep", action="store_true",
                     help="Parameter-Sweep ueber Szenarien (Robustheit statt Einzellauf)")
     sw.add_argument("--preset", default="1step_classic",
-                    help="Preset, fuer das optimiert wird (siehe --list-presets)")
+                    help="Preset, fuer das optimiert wird (siehe --list-presets); "
+                         "App-Namen wie 'starter' werden aufgeloest")
     sw.add_argument("--scenarios", type=int, default=12,
                     help="Anzahl synthetischer Szenarien (ohne echte Daten)")
     sw.add_argument("--sweep-bars", type=int, default=6000,
@@ -161,6 +162,11 @@ def main(argv=None) -> int:
         for key, r in PRESETS.items():
             print(f"  {key:16s} {r.name}")
             print(f"  {'':16s} {r.note}")
+        from .prop import ALIASES
+        if ALIASES:
+            print("\n  Alias (Name in der Kraken-App):")
+            for a, target in ALIASES.items():
+                print(f"    {a:14s} -> {target}")
         return 0
 
     if args.download_kraken:
