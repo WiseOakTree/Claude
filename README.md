@@ -192,6 +192,10 @@ python -m prop_backtester.signals --config configs/signals.yaml --loop --mode si
 Der Bot meldet sich nur, wenn sich die Level ändern (kein Spam). Zieh die Orders
 stündlich nach — die Level wandern mit der ATR und dem Trend.
 
+📋 **Beim Handeln zur Hand:** [`docs/spickzettel.md`](docs/spickzettel.md) —
+eine Seite „Situation → Aktion" fürs Handy (inkl. Setup-Check, Positionsgrößen-
+Formel und den drei „Nie").
+
 > ⚠️ Signale sind Entscheidungshilfen, keine automatischen Orders — du platzierst
 > sie selbst. Kein Finanzrat. Vorher [`docs/realism.md`](docs/realism.md) lesen.
 
