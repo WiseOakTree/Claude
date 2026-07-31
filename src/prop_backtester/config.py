@@ -87,6 +87,11 @@ class RiskConfig:
     # Nur informativ fuer manuelles Teil-Mitnehmen -- der Backtest nutzt sie NICHT
     # (dort ist der Ausstieg immer das Gegensignal / Reversal).
     tp_r_multiples: list = field(default_factory=lambda: [2.0, 4.0])
+    # Anteil der URSPRUENGLICHEN Position, der am jeweiligen TP verkauft wird.
+    # Leer  = kein Teilverkauf (reines Stop-and-Reverse, Ausstieg erst beim Gegensignal)
+    # [0.75]      = 75% bei TP1 mitnehmen, 25% bis zum Reversal laufen lassen
+    # [0.5, 0.5]  = je die Haelfte bei TP1 und TP2
+    tp_take_fractions: list = field(default_factory=list)
 
     def validate(self) -> None:
         if not (0 < self.risk_per_trade_pct < 1):
@@ -97,6 +102,13 @@ class RiskConfig:
             raise ValueError("max_leverage muss > 0 sein")
         if any(m <= 0 for m in self.tp_r_multiples):
             raise ValueError("tp_r_multiples muessen > 0 sein")
+        if self.tp_take_fractions:
+            if len(self.tp_take_fractions) > len(self.tp_r_multiples):
+                raise ValueError("mehr tp_take_fractions als tp_r_multiples")
+            if any(not (0 < f <= 1) for f in self.tp_take_fractions):
+                raise ValueError("tp_take_fractions muessen zwischen 0 und 1 liegen")
+            if sum(self.tp_take_fractions) > 1.0 + 1e-9:
+                raise ValueError("Summe der tp_take_fractions darf 1 nicht ueberschreiten")
 
 
 @dataclass

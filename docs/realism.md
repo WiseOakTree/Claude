@@ -163,6 +163,45 @@ liefern 5.000 $, 10.000 $, 25.000 $ und 50.000 $ **identische** Werte
 absoluten Beträge. Bei 10.000 $: 30 $ Risiko pro Trade, Ø-Order ~3.400 $,
 ~0,05 BTC — weit über Krakens Mindestordergröße.
 
+## 2c. Teil-Gewinnmitnahmen (getestet — und verworfen)
+
+Naheliegende Idee: an TP1 einen Großteil mitnehmen, den Rest laufen lassen.
+Die Engine unterstützt das (`risk.tp_take_fractions`). Gemessen über dieselben
+46 Fenster mit den echten Prop-Gebühren:
+
+| Variante | Pass-Rate | Median | Worst-DD | Trefferquote |
+|---|---|---|---|---|
+| **Ohne TP (nur Reversal)** | **93 %** | **+17,5 %** | 6,80 % | 44,5 % |
+| 25 % @TP1 | 91 % | +15,8 % | 6,27 % | 47,2 % |
+| 50 % @TP1 | 76 % | +13,6 % | 5,85 % | 47,6 % |
+| 75 % @TP1 | 74 % | +11,9 % | 5,69 % | 47,7 % |
+| 50 % @TP1 + 50 % @TP2 | 74 % | +12,1 % | 5,85 % | 47,6 % |
+| 75 % @TP1 + 25 % @TP2 | 67 % | +11,0 % | 5,69 % | 47,7 % |
+
+Je mehr früh mitgenommen wird, desto schlechter — monoton. Der Grund ist
+strukturell: Es ist ein **Trendfolgesystem**. Der Ertrag kommt aus wenigen weit
+laufenden Gewinnern. Wer bei 2R drei Viertel abschneidet, deckelt genau diese
+Gewinner, während Verlierer weiter voll verlieren. Die Trefferquote *steigt*
+(fühlt sich besser an), die Erwartung sinkt.
+
+Teilmitnahmen senken den Drawdown (6,80 % → 5,69 %). Deshalb der faire
+Gegentest: freigewordenes Risikobudget in größere Positionen stecken.
+
+| Variante | Pass-Rate | Median | Worst-DD |
+|---|---|---|---|
+| **Ohne TP, Risiko 0,30 %** | **93 %** | +17,5 % | **6,80 %** |
+| 75 % @TP1, Risiko 0,40 % | 83 % | +16,1 % | 7,55 % |
+| 75 % @TP1, Risiko 0,50 % | 83 % | +20,5 % | 9,41 % |
+| 50/50, Risiko 0,40 % | 87 % | +16,4 % | 7,77 % |
+
+Auch mit mehr Risiko bleibt keine TP-Variante an die Basis heran — die gewinnt
+gleichzeitig bei Pass-Rate, Rendite **und** Drawdown.
+
+> **Fazit: Keine Teil-Gewinnmitnahmen.** Der Ausstieg bleibt das Gegensignal.
+> Die TP-Level in den Nachrichten sind Orientierung, keine Handlungsanweisung.
+> Wer sie dennoch nutzen will, zahlt ~19 Prozentpunkte Pass-Rate für eine
+> ruhigere Equity-Kurve.
+
 ## 3. Was gut aussieht: kein Overfitting
 
 Parameter **nur auf 2022–2024 optimiert**, dann blind auf 2024–2026 angewendet:

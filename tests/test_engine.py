@@ -81,3 +81,61 @@ def test_equity_curve_length_matches_data():
     result, _, _ = backtest(df)
     assert len(result.equity) == len(df)
     assert (result.equity["equity_low"] <= result.equity["equity_high"] + 1e-6).all()
+
+
+# --- Teil-Gewinnmitnahmen (tp_take_fractions) -------------------------------
+def _long_signal(df, bar=1, price=100.0, brick=1.0):
+    return pd.DataFrame({"time": [df.index[bar]], "src_index": [bar],
+                         "price": [price], "target": [1], "brick_size": [brick]})
+
+
+def test_partial_tp_realizes_fraction():
+    # Einstieg 100, Brick 1, Stop 2 Bricks -> R = 2, TP1 (2R) = 104
+    prices = [100, 100, 101, 102, 103, 104, 105, 105]
+    df = _df(prices)
+    cfg = BacktestConfig(costs=_zero_costs())
+    cfg.renko.mode = "fixed"; cfg.renko.fixed_brick = 1.0; cfg.renko.fixed_brick_pct = None
+    cfg.risk.tp_r_multiples = [2.0, 4.0]
+    cfg.risk.tp_take_fractions = [0.75]
+    res = run_backtest(df, _long_signal(df), cfg)
+    t = res.trades.iloc[0]
+    assert t["partials"] == 1                 # genau eine Teilmitnahme
+    assert res.final_balance > res.initial_balance
+
+
+def test_no_fractions_means_no_partials():
+    # Rueckwaertskompatibel: ohne tp_take_fractions gibt es keine Teilverkaeufe
+    df = _df([100, 100, 102, 104, 106, 108])
+    cfg = BacktestConfig(costs=_zero_costs())
+    cfg.renko.mode = "fixed"; cfg.renko.fixed_brick = 1.0; cfg.renko.fixed_brick_pct = None
+    cfg.risk.tp_take_fractions = []
+    res = run_backtest(df, _long_signal(df), cfg)
+    assert res.trades.iloc[0]["partials"] == 0
+
+
+def test_full_take_closes_position_early():
+    # Summe der Anteile = 1 -> Position ist nach TP1 komplett geschlossen
+    df = _df([100, 100, 102, 104, 106, 100, 95])
+    cfg = BacktestConfig(costs=_zero_costs())
+    cfg.renko.mode = "fixed"; cfg.renko.fixed_brick = 1.0; cfg.renko.fixed_brick_pct = None
+    cfg.risk.tp_r_multiples = [2.0]
+    cfg.risk.tp_take_fractions = [1.0]
+    res = run_backtest(df, _long_signal(df), cfg)
+    assert len(res.trades) == 1
+    t = res.trades.iloc[0]
+    assert t["partials"] == 1
+    assert t["pnl"] > 0            # bei 104 glattgestellt, spaeterer Absturz egal
+
+
+def test_invalid_fractions_rejected():
+    cfg = BacktestConfig()
+    cfg.risk.tp_take_fractions = [0.6, 0.6]      # Summe > 1
+    try:
+        cfg.validate(); assert False
+    except ValueError:
+        pass
+    cfg.risk.tp_take_fractions = [1.5]
+    try:
+        cfg.validate(); assert False
+    except ValueError:
+        pass

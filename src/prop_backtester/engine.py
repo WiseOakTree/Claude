@@ -6,17 +6,24 @@ die Equity-Kurve fuer die Prop-Regel-Pruefung realistisch ist:
   * Positionsgroesse per Risiko-%-vom-Kontostand (Stop = ``stop_bricks`` * Brick).
   * Realistische Kosten pro Fill: Gebuehr + halber Spread + fixe Slippage +
     **vola-abhaengige** Slippage (teurer in wilden Phasen).
-  * **Funding-Kosten** auf offene Positionen (Perp-Funding-Drag pro Bar).
+  * **Funding-Kosten** auf offene Positionen (pro Einheit akkumuliert, damit
+    Teilverkaeufe korrekt anteilig belastet werden).
+  * Optionale **Teil-Gewinnmitnahmen** an TP-Leveln (``tp_take_fractions``);
+    der Rest laeuft bis zum Gegensignal (Stop-and-Reverse).
   * Mark-to-Market inkl. **unrealisiertem** PnL -- Kraken Prop rechnet realized
     UND unrealized in Daily-Loss und Drawdown ein.
   * Fuer jede Bar werden zusaetzlich die intrabar Extrema (equity_low/high)
     geschaetzt (konservativ), damit Drawdown-Breaches nicht "durchrutschen".
+
+Reihenfolge innerhalb einer Bar: Liegt auf dieser Bar ein Reversal-Signal, wird
+**zuerst das Signal** verarbeitet (pessimistisch -- eine TP-Mitnahme derselben
+Bar wird verworfen). Nur auf signalfreien Bars werden TPs geprueft.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -26,19 +33,25 @@ from .config import BacktestConfig
 
 @dataclass
 class Position:
-    side: int              # +1 long, -1 short
-    size: float            # Einheiten des Basiswerts
-    entry_fill: float      # tatsaechlicher Einstiegskurs (inkl. Slippage/Spread)
-    entry_fee: float       # bezahlte Einstiegsgebuehr (Kontowaehrung)
+    side: int                  # +1 long, -1 short
+    initial_size: float        # Groesse beim Einstieg
+    size: float                # aktuell noch offene Groesse
+    entry_fill: float          # tatsaechlicher Einstiegskurs (inkl. Slippage)
+    entry_fee_per_unit: float  # Einstiegsgebuehr je Einheit
     entry_time: pd.Timestamp
     brick_size: float
-    funding_accrued: float = 0.0  # bis dato aufgelaufene Funding-Kosten
+    funding_per_unit: float = 0.0        # aufgelaufene Funding-Kosten je Einheit
+    tp_prices: List[float] = field(default_factory=list)
+    tp_fracs: List[float] = field(default_factory=list)
+    tp_done: List[bool] = field(default_factory=list)
+    realized: float = 0.0                # bereits realisierter PnL dieses Trades
+    partials: int = 0                    # Anzahl Teilverkaeufe
 
 
 @dataclass
 class BacktestResult:
     equity: pd.DataFrame          # index=Zeit, Spalten: equity_close/low/high
-    trades: pd.DataFrame          # ein Eintrag pro geschlossenem Trade
+    trades: pd.DataFrame          # ein Eintrag pro (vollstaendig) geschlossenem Trade
     initial_balance: float
     final_balance: float
     config: BacktestConfig
@@ -71,23 +84,26 @@ class Engine:
 
     # --- Bewertung ------------------------------------------------------
     def _unrealized(self, pos: Optional[Position], price: float) -> float:
-        """Unrealisierter PnL (Mark-to-Market): PnL - Gebuehren - Funding.
-
-        Slippage/Spread werden erst beim tatsaechlichen Fill realisiert, daher
-        hier nur die Exit-Gebuehr geschaetzt (so markiert auch eine Boerse).
-        """
+        """Mark-to-Market der noch offenen Restposition (inkl. bereits Realisiertem)."""
         if pos is None:
             return 0.0
-        exit_fee_est = self.fee * price * pos.size
-        return (pos.side * (price - pos.entry_fill) * pos.size
-                - pos.entry_fee - exit_fee_est - pos.funding_accrued)
+        if pos.size <= 0:
+            return pos.realized
+        per_unit_cost = pos.entry_fee_per_unit + pos.funding_per_unit + self.fee * price
+        return pos.realized + (pos.side * (price - pos.entry_fill) - per_unit_cost) * pos.size
 
-    def _realize(self, pos: Position, price: float) -> float:
-        """Realisierter PnL beim Schliessen (inkl. Spread/Slippage + Funding)."""
+    def _close_units(self, pos: Position, price: float, units: float) -> float:
+        """Schliesst ``units`` Einheiten zum Marktpreis und gibt den PnL zurueck."""
+        units = min(units, pos.size)
+        if units <= 0:
+            return 0.0
         exit_fill = price * (1 - pos.side * self._adverse(pos.brick_size, price))
-        exit_fee = self.fee * exit_fill * pos.size
-        return (pos.side * (exit_fill - pos.entry_fill) * pos.size
-                - pos.entry_fee - exit_fee - pos.funding_accrued)
+        per_unit = (pos.side * (exit_fill - pos.entry_fill)
+                    - pos.entry_fee_per_unit - self.fee * exit_fill - pos.funding_per_unit)
+        pnl = per_unit * units
+        pos.size -= units
+        pos.realized += pnl
+        return pnl
 
     def _open(self, side: int, price: float, brick_size: float,
               balance: float, time: pd.Timestamp) -> Optional[Position]:
@@ -102,8 +118,37 @@ class Engine:
         size = min(size, max_size)
         if size <= 0 or size * entry_fill < risk.min_notional:
             return None
-        entry_fee = self.fee * entry_fill * size
-        return Position(side, size, entry_fill, entry_fee, time, brick_size)
+
+        # TP-Level und Teilverkaufs-Anteile vorbereiten
+        tp_prices: List[float] = []
+        tp_fracs: List[float] = []
+        for m, frac in zip(risk.tp_r_multiples, risk.tp_take_fractions):
+            tp_prices.append(entry_fill + side * m * stop_dist)
+            tp_fracs.append(float(frac))
+
+        return Position(
+            side=side, initial_size=size, size=size, entry_fill=entry_fill,
+            entry_fee_per_unit=self.fee * entry_fill, entry_time=time,
+            brick_size=brick_size, tp_prices=tp_prices, tp_fracs=tp_fracs,
+            tp_done=[False] * len(tp_prices),
+        )
+
+    def _check_tps(self, pos: Position, high: float, low: float) -> float:
+        """Prueft TP-Level gegen die Bar-Extrema und nimmt Teilgewinne mit."""
+        realized = 0.0
+        for i, (tp, frac) in enumerate(zip(pos.tp_prices, pos.tp_fracs)):
+            if pos.tp_done[i] or pos.size <= 0:
+                continue
+            hit = high >= tp if pos.side == 1 else low <= tp
+            if not hit:
+                continue
+            pos.tp_done[i] = True
+            units = pos.initial_size * frac
+            pnl = self._close_units(pos, tp, units)
+            if pnl != 0.0 or units > 0:
+                pos.partials += 1
+            realized += pnl
+        return realized
 
     # --- Hauptlauf ------------------------------------------------------
     def run(self, df: pd.DataFrame, signals: pd.DataFrame) -> BacktestResult:
@@ -132,39 +177,43 @@ class Engine:
         for i in range(n):
             hi, lo, cl = highs[i], lows[i], closes[i]
 
-            # Funding auf die zu Beginn der Bar gehaltene Position (Nominalwert ~ size*close)
-            if pos is not None and self.funding_daily > 0:
-                pos.funding_accrued += self.funding_daily * dt_frac * pos.size * cl
+            # Funding auf die offene Restposition (je Einheit akkumuliert)
+            if pos is not None and pos.size > 0 and self.funding_daily > 0:
+                pos.funding_per_unit += self.funding_daily * dt_frac * cl
 
-            lows_cand = []
-            highs_cand = []
+            lows_cand: List[float] = []
+            highs_cand: List[float] = []
 
-            # 1) Bewertung mit der Position, die zu Beginn der Bar gehalten wird
-            if pos is not None:
-                lows_cand += [eq_at(lo), eq_at(hi)]
-                highs_cand += [eq_at(lo), eq_at(hi)]
-            else:
-                lows_cand.append(balance)
-                highs_cand.append(balance)
-
-            # 2) Signalverarbeitung (Fill am Gitter-Level des ausloesenden Bricks)
-            if i in sig_by_bar:
-                target, sig_price, bsize = sig_by_bar[i]
-                if pos is not None and pos.side != target:
-                    pnl = self._realize(pos, sig_price)
-                    balance += pnl
-                    trades.append(_trade_record(pos, sig_price, pnl, times[i]))
-                    pos = None
-                if pos is None and target != 0:
-                    pos = self._open(target, sig_price, bsize, balance, times[i])
-
-                # Bewertung mit der neuen Position ueber den Rest der Bar
+            def mark():
                 if pos is not None:
-                    lows_cand += [eq_at(lo), eq_at(hi)]
-                    highs_cand += [eq_at(lo), eq_at(hi)]
+                    lows_cand.extend([eq_at(lo), eq_at(hi)])
+                    highs_cand.extend([eq_at(lo), eq_at(hi)])
                 else:
                     lows_cand.append(balance)
                     highs_cand.append(balance)
+
+            # 1) Bewertung mit dem Zustand zu Beginn der Bar
+            mark()
+
+            if i in sig_by_bar:
+                # 2a) Reversal-Bar: Signal zuerst (pessimistisch, kein TP diese Bar)
+                target, sig_price, bsize = sig_by_bar[i]
+                if pos is not None and pos.side != target:
+                    self._close_units(pos, sig_price, pos.size)
+                    balance += pos.realized
+                    trades.append(_trade_record(pos, sig_price, times[i]))
+                    pos = None
+                if pos is None and target != 0:
+                    pos = self._open(target, sig_price, bsize, balance, times[i])
+                mark()
+            elif pos is not None and pos.size > 0 and pos.tp_prices:
+                # 2b) Signalfreie Bar: Teil-Gewinnmitnahmen pruefen
+                self._check_tps(pos, hi, lo)
+                if pos.size <= 1e-12:
+                    balance += pos.realized
+                    trades.append(_trade_record(pos, cl, times[i]))
+                    pos = None
+                mark()
 
             eq_low[i] = min(lows_cand)
             eq_high[i] = max(highs_cand)
@@ -172,9 +221,9 @@ class Engine:
 
         # Offene Position am Ende zum letzten Schlusskurs glattstellen
         if pos is not None:
-            pnl = self._realize(pos, closes[-1])
-            balance += pnl
-            trades.append(_trade_record(pos, closes[-1], pnl, times[-1]))
+            self._close_units(pos, closes[-1], pos.size)
+            balance += pos.realized
+            trades.append(_trade_record(pos, closes[-1], times[-1]))
             pos = None
 
         equity = pd.DataFrame(
@@ -191,18 +240,20 @@ class Engine:
         )
 
 
-def _trade_record(pos: Position, exit_price: float, pnl: float,
+def _trade_record(pos: Position, exit_price: float,
                   exit_time: pd.Timestamp) -> dict:
+    notional = pos.entry_fill * pos.initial_size
     return {
         "entry_time": pos.entry_time,
         "exit_time": exit_time,
         "side": "long" if pos.side == 1 else "short",
-        "size": pos.size,
+        "size": pos.initial_size,
         "entry_price": pos.entry_fill,
         "exit_price": exit_price,
-        "funding": pos.funding_accrued,
-        "pnl": pnl,
-        "return_pct": pnl / (pos.entry_fill * pos.size) if pos.size else 0.0,
+        "funding": pos.funding_per_unit * pos.initial_size,
+        "partials": pos.partials,
+        "pnl": pos.realized,
+        "return_pct": pos.realized / notional if notional else 0.0,
     }
 
 
