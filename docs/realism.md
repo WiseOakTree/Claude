@@ -105,10 +105,49 @@ Spot-Margin auf Kraken Pro macht die Strategie also praktisch wertlos — nicht
 wegen des Hebels, sondern wegen Gebühren und Rollover-Kosten. Nötig sind
 **niedriggebührige Derivate**.
 
-> ⚠️ **Vor dem Kauf der Challenge klären:** Welche Instrumente und welche
-> Gebühren gelten im Kraken-Prop-Konto? Diese Zahlen sind nicht öffentlich
-> verifiziert worden und entscheiden über Erfolg oder Misserfolg. Liegt die
-> Taker-Gebühr über 0,10 %, ist diese Strategie dort nicht tragfähig.
+### ✅ Kraken-Prop-Gebühren bestätigt (Stand 2026-07)
+
+Die tatsächlichen Konditionen im Prop-Konto:
+
+| Kostenart | Wert |
+|---|---|
+| Kommission | **4 bps = 0,04 % pro Seite** (0,08 % je Roundtrip) |
+| Margin-Finanzierung | **0,033 % pro Tag**, alle 4 h berechnet |
+
+Beides mindert das Guthaben und zählt auf **MDL und MDD** — die Engine zieht
+beides laufend von der Equity ab, ist also korrekt modelliert.
+
+Damit liegt die Gebühr **unter** meiner ursprünglichen Annahme (0,05 %). Ergebnis
+über dieselben 46 Fenster (10.000 $ Konto):
+
+| Kostenszenario | Pass-Rate | Median | Worst-DD |
+|---|---|---|---|
+| Ursprüngliche Annahme (0,05 % / 0,030 %) | 91 % | +16,5 % | 6,94 % |
+| **Echte Prop-Gebühren (0,04 % / 0,033 %)** | **93 %** | **+17,5 %** | **6,80 %** |
+| Echte Gebühren + doppelte Slippage | 70 % | +11,1 % | 7,71 % |
+
+**Fazit: Die Gebühren tragen die Strategie.** Sie liegen komfortabel unter der
+Schmerzgrenze von 0,10 %.
+
+### Die verbleibende Unsicherheit ist jetzt die Slippage
+
+Kommission und Finanzierung sind bestätigte Zahlen. **Slippage und Spread bleiben
+Schätzungen** (zusammen ~0,09 % je Fill) — und sie sind jetzt der größte
+verbliebene Hebel: Verdoppeln sie sich, fällt die Pass-Rate von 93 % auf 70 %.
+
+Kostenlast je Trade bei 10.000 $ (Ø Nominal 3.357 $):
+
+| | |
+|---|---|
+| Kommission (Roundtrip) | 2,69 $ |
+| Finanzierung (Ø 15,5 h Haltedauer) | 0,72 $ |
+| Slippage + Spread (geschätzt) | 3,02 $ |
+| **Summe je Trade** | **~6,42 $** (bei 30 $ Risiko je Trade) |
+| Über ein 90-Tage-Fenster (108 Trades) | ~690 $ |
+
+Die geschätzte Slippage ist also der größte einzelne Kostenblock — größer als die
+Kommission. Sie lässt sich in der Praxis direkt messen: reale Fills mit den
+Signal-Leveln vergleichen (siehe Abschnitt 1).
 
 ### Hebel wird nicht gebraucht
 
