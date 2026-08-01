@@ -1,5 +1,35 @@
 # Wie belastbar sind diese Backtest-Ergebnisse?
 
+> ## 🛑 KRITISCHE KORREKTUR (2026-08-01)
+>
+> **Die in diesem Dokument genannten Pass-Raten (91-93 %) sind NICHT gueltig.**
+> Der Backtest enthaelt einen Look-ahead-Bias: Er entscheidet anhand des
+> **Kerzenschlusses**, ob ein Signal vorliegt, fuellt aber zum **Brick-Level**,
+> das frueher innerhalb der Kerze lag. Zum Fill-Zeitpunkt ist real nicht
+> bekannt, ob der Schluss das Signal bestaetigt.
+>
+> Gemessener systematischer Fill-Vorteil: **0,34 % je Trade** in Handelsrichtung.
+> Bei ~108 Trades je Fenster ist das der gesamte vermeintliche Edge.
+>
+> **Look-ahead-freie Ergebnisse (4 Jahre BTC, 46 Fenster, echte Gebuehren):**
+>
+> | Variante | Pass-Rate | Median |
+> |---|---|---|
+> | Fill am Brick-Level (fehlerhaft) | 93 % | +17,5 % |
+> | Fill zum Schlusskurs der Signalkerze | **7 %** | **-5,3 %** |
+> | Ruhende Stop-Order (Fill auf Beruehrung) | **0 %** | -29,6 % |
+>
+> Bei ruhenden Stop-Orders sind **55,5 % aller Ausloesungen Fehlausloesungen**
+> (Dochte ohne Bestaetigung); die Handelsfrequenz liegt bei 2,25x des Backtests.
+> Kein Parameter rettet die Strategie: die beste look-ahead-freie Variante
+> erreicht 15 % Pass-Rate bei +1,4 % Median.
+>
+> **Fazit: Die Renko-Reversal-Strategie hat auf 1h-BTC keinen nachweisbaren
+> Edge. Nicht live handeln, keine Challenge darauf kaufen.**
+>
+> Die folgenden Abschnitte sind als Dokumentation des Analysewegs erhalten --
+> alle Zahlen darin unterliegen dem oben beschriebenen Bias.
+
 Ehrliche Bestandsaufnahme. Ein Backtest beschreibt die Vergangenheit unter
 Annahmen — er sagt nichts vorher. Diese Seite misst, **wie stark die Ergebnisse
 von jeder einzelnen Annahme abhängen**. Alle Zahlen stammen aus dem

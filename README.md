@@ -1,5 +1,13 @@
 # Krypto Prop Backtester — Renko-Reversal für die Kraken-Prop-Challenge
 
+> ## 🛑 WICHTIG: Ergebnisse zurueckgezogen
+>
+> Der Backtest enthielt einen **Look-ahead-Bias** (Signal-Entscheidung per
+> Kerzenschluss, Fill zum frueheren Brick-Level). Look-ahead-frei gemessen hat
+> die Strategie **keinen Edge**: 7 % Pass-Rate bei Fill zum Schlusskurs, 0 % mit
+> ruhenden Stop-Orders (55,5 % Fehlausloesungen durch Dochte).
+> **Nicht live handeln.** Details und Zahlen: [`docs/realism.md`](docs/realism.md).
+
 Ein **realistischer** Backtester, um eine manuell handelbare **Renko-Reversal-Strategie**
 gegen die Regeln der **Kraken-Prop-Challenge** zu testen — mit dem Ziel, die
 Challenge **nachhaltig** (nicht per Glück) zu bestehen.
