@@ -105,6 +105,45 @@ Das 10 %-Ziel bräuchte dann rund **39 Monate**.
 **Rendite und Drawdown skalieren gemeinsam.** Deshalb ist ihr Verhältnis die
 einzige Kennzahl, die für eine Prop-Challenge zählt — nicht die Rendite allein.
 
+
+## Liquidations-Level — getestet
+
+Die mechanisch überzeugendste Idee: Eine Liquidation ist eine **erzwungene**
+Marktorder. Der Verkäufer *muss* verkaufen, was den Kurs unter den fairen Wert
+drückt — dagegenzuhalten wäre ein echter ökonomischer Edge, kein Chartmuster.
+Und die Größenordnung stimmt: Kaskaden bewegen den Kurs um 100–500 bp, weit über
+der Kostenschwelle von 16 bp.
+
+**Datenlage:** Binance hat die Liquidations-Rohdaten eingestellt (404),
+Coinglass braucht einen Key. Rekonstruiert wurde die Kaskade deshalb aus den
+**Metrics-Daten**: ein 5-Minuten-Fenster mit großem Kursausschlag **und**
+einbrechendem Open Interest ist die Signatur erzwungener Schließungen.
+
+**Datensatz:** 156.887 Fünf-Minuten-Fenster, 2025-01 bis 2026-06 (18 Monate),
+5-Minuten-Volatilität 0,145 %.
+
+### Ergebnis: keine Rückkehr messbar
+
+| Kaskaden-Stärke | Fälle (down/up) | bestes Ergebnis | p |
+|---|---|---|---|
+| moderat (2σ, OI −0,3 %) | 369 / 306 | +0,090 % nach 1 h | 0,092 |
+| stark (3σ, OI −0,5 %) | 111 / 78 | +0,135 % nach 1 h | 0,212 |
+| extrem (4σ, OI −1,0 %) | 19 / 16 | zu wenige Fälle | — |
+
+Kein Wert erreicht Signifikanz (alle p > 0,08). Entscheidend: Selbst der beste
+Effekt (+0,135 %) liegt **unter der Kostenschwelle von 0,160 %** — er wäre
+selbst dann nicht handelbar, wenn er echt wäre.
+
+**Die These ist nicht einmal richtungskonsistent:** Nach Up-Kaskaden
+(Short-Liquidationen) sind die Folgerenditen ebenfalls positiv (+0,247 % nach
+1 h). Bei echter Mean-Reversion müssten sie negativ sein. Das Muster sieht nach
+allgemeinem Aufwärtsdrift im Zeitraum aus, nicht nach einem Kaskaden-Effekt.
+
+**Nicht testbar war die Heatmap** (wo künftige Liquidationen *liegen*) — das ist
+Coinglass' Schätzmodell aus Open Interest und Hebelannahmen, keine beobachtbare
+Größe, und nicht frei zugänglich. Getestet wurde die härtere, sauber messbare
+Variante: die Reaktion auf tatsächlich eingetretene Kaskaden.
+
 ## Fazit
 
 Zum ersten Mal ein messbares Signal (Coinbase-Premium, IC ~0,10 auf 5 Tage) —
@@ -113,5 +152,6 @@ entfernt, was ein 6-%-Drawdown-Limit verlangt.
 
 **Damit ist der zugängliche Ideenraum ausgeschöpft.** Klassische TA: nichts.
 Orderbuch: rechnerisch unerreichbar. Alternative Daten: ein Flüstern, das nicht
-trägt. Die ehrliche Schlussfolgerung: Mit dem, was hier gebaut werden kann, ist
+trägt. Liquidationskaskaden: kein messbarer Effekt, und selbst der beste
+Schätzwert liegt unter den Handelskosten. Die ehrliche Schlussfolgerung: Mit dem, was hier gebaut werden kann, ist
 diese Challenge nicht planbar zu gewinnen.
