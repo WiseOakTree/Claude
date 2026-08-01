@@ -7,6 +7,13 @@
 > die Strategie **keinen Edge**: 7 % Pass-Rate bei Fill zum Schlusskurs, 0 % mit
 > ruhenden Stop-Orders (55,5 % Fehlausloesungen durch Dochte).
 > **Nicht live handeln.** Details und Zahlen: [`docs/realism.md`](docs/realism.md).
+>
+> Die Engine ist inzwischen **strukturell gegen Look-ahead abgesichert**
+> (`ExecutionConfig`, Fill wird von der Engine aus den Bar-Daten abgeleitet).
+> Eine anschliessende saubere Suche ueber **120 Kombinationen** aus 5
+> Strategiefamilien und 3 Timeframes fand **keine** tragfaehige Strategie
+> (beste Pass-Rate 20 %, Median-Rendite ueber alle Kombis: 0,00 %) —
+> siehe [`docs/strategy_search.md`](docs/strategy_search.md).
 
 Ein **realistischer** Backtester, um eine manuell handelbare **Renko-Reversal-Strategie**
 gegen die Regeln der **Kraken-Prop-Challenge** zu testen — mit dem Ziel, die
