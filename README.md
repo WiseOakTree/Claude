@@ -14,6 +14,12 @@
 > Strategiefamilien und 3 Timeframes fand **keine** tragfaehige Strategie
 > (beste Pass-Rate 20 %, Median-Rendite ueber alle Kombis: 0,00 %) —
 > siehe [`docs/strategy_search.md`](docs/strategy_search.md).
+>
+> Auch **alternative Daten** wurden geprueft ([`docs/altdata_test.md`](docs/altdata_test.md)):
+> Orderbuch scheitert rechnerisch an der Kostenschwelle (Signal 1-5 bp vs.
+> 16 bp Kosten); der Coinbase-Premium als ETF-Fluss-Stellvertreter zeigt zwar
+> ein messbares Signal (IC +0,10 auf 5 Tage), ist aber out-of-sample instabil
+> und liegt um **Faktor 13** unter dem noetigen Verhaeltnis Rendite/Drawdown.
 
 Ein **realistischer** Backtester, um eine manuell handelbare **Renko-Reversal-Strategie**
 gegen die Regeln der **Kraken-Prop-Challenge** zu testen — mit dem Ziel, die
