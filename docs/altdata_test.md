@@ -144,6 +144,48 @@ Coinglass' Schätzmodell aus Open Interest und Hebelannahmen, keine beobachtbare
 Größe, und nicht frei zugänglich. Getestet wurde die härtere, sauber messbare
 Variante: die Reaktion auf tatsächlich eingetretene Kaskaden.
 
+
+## Tech-Kopplung (Nasdaq / NVIDIA) — getestet
+
+Beobachtung: BTC handelt wie ein High-Beta-Risikoasset; fällt Tech, fällt BTC.
+
+**Die Kopplung ist real:**
+
+| | Korrelation (gleicher Tag) |
+|---|---|
+| BTC ~ QQQ | **+0,384** (rollierend 60T: −0,08 .. +0,65, Median +0,42) |
+| BTC ~ NVDA | +0,282 |
+
+**Aber sie ist gleichzeitig, nicht vorlaufend.** Der entscheidende Test — sagt
+der Move der US-Aktiensitzung die BTC-Bewegung *danach* voraus? Sauber
+abgegrenzt: QQQ open→close am Tag D (bekannt 21:00 UTC) gegen BTC von 21:00 UTC
+bis 14:00 UTC am Folgetag, also während die Börsen geschlossen sind:
+
+| Ziel | r | p |
+|---|---|---|
+| BTC 21:00 → 14:00 (Aktien zu) | **−0,0006** | 0,985 |
+| BTC bis nächster Aktienschluss | −0,0232 | 0,464 |
+
+Quintil-Analyse (BTC übernacht je QQQ-Sitzungsquintil): +0,144 %, −0,115 %,
++0,088 %, −0,043 %, +0,114 % — reines Rauschen. Spread Q5−Q1 = **−0,029 %**,
+weit unter der Kostenschwelle von 0,160 %.
+
+(Ein schwacher Wert bei Tagesdaten — QQQ(t−1) → BTC(t), r = −0,091, p = 0,004 —
+hält dem schärferen, überlappungsfreien Test nicht stand.)
+
+**Interpretation:** BTC und Tech bewegen sich in Echtzeit gemeinsam, nicht
+nacheinander. Die Information ist eingepreist, bevor man reagieren kann —
+Markteffizienz bei einer breit beobachteten Beziehung.
+
+### Trotzdem nützlich — als Risikohinweis, nicht als Signal
+
+Eine Korrelation von +0,38 heißt: **Eine BTC-Position ist faktisch eine
+verkappte Tech-Wette.** Für eine Challenge mit 6 %-Drawdown-Limit ist das
+relevant: An Tagen mit großen Makro-/Tech-Ereignissen (Fed, CPI,
+NVIDIA-Quartalszahlen) steigt das Risiko eines gleichzeitigen Einbruchs.
+Argument für kleinere Positionen oder Pause an solchen Tagen — kein
+Handelssignal.
+
 ## Fazit
 
 Zum ersten Mal ein messbares Signal (Coinbase-Premium, IC ~0,10 auf 5 Tage) —
@@ -153,5 +195,6 @@ entfernt, was ein 6-%-Drawdown-Limit verlangt.
 **Damit ist der zugängliche Ideenraum ausgeschöpft.** Klassische TA: nichts.
 Orderbuch: rechnerisch unerreichbar. Alternative Daten: ein Flüstern, das nicht
 trägt. Liquidationskaskaden: kein messbarer Effekt, und selbst der beste
-Schätzwert liegt unter den Handelskosten. Die ehrliche Schlussfolgerung: Mit dem, was hier gebaut werden kann, ist
+Schätzwert liegt unter den Handelskosten. Tech-Kopplung: real, aber
+gleichzeitig statt vorlaufend — kein Signal, nur ein Risikohinweis. Die ehrliche Schlussfolgerung: Mit dem, was hier gebaut werden kann, ist
 diese Challenge nicht planbar zu gewinnen.
