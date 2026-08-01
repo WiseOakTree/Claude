@@ -51,6 +51,39 @@ Mehr ist es nicht. Kein TP, kein manuelles Schließen.
 
 ---
 
+## 2b. Die Flip-Order (Position drehen)
+
+Du bist in einer Position und das Gegensignal kommt. **Eine** Trigger-Order
+erledigt beides — Schließen und Drehen:
+
+```
+Flip-Menge = aktuelle Position + 30 $ / (2 x aktueller Brick)
+```
+
+Beispiel: short 0,095 BTC, Brick 157,72
+→ 0,095 + 30/315,44 = **0,1901 BTC** als Buy-Trigger.
+
+Danach im **Positions-Tab** prüfen: dort muss die Gegenposition stehen
+(hier: Long 0,0951), nicht „keine Position".
+
+### Die Schutzlücke — wichtig
+
+Zwischen dem Füllen der Einstiegs-Order und dem Platzieren der Flip-Order bist
+du **ohne Stop**. Zwei Wege:
+
+| Lage | Vorgehen |
+|---|---|
+| **Du bist erreichbar** | Warten bis gefüllt → sofort Flip-Order (doppelte Menge) setzen. Das ist die getestete Variante. |
+| **Du bist weg / schläfst** | Einstiegs-Order mit aktiviertem **TP/SL** platzieren, SL auf das Reversal-Level. Schutz ist garantiert. |
+
+Bei der zweiten Variante bist du nach dem Auslösen **flat statt gedreht** — der
+Verlust ist begrenzt, aber die Gegenrichtung fehlt. Den Einstieg dann bei der
+nächsten Gelegenheit nachholen; je später, desto schlechter der Kurs.
+
+> Merke: Schutz geht vor. Lieber flat und abgesichert als ungedeckt im Markt.
+
+---
+
 ## 3. Die drei „Nie"
 
 1. **Nie** den Stop in die falsche Richtung verschieben (Long tiefer, Short höher).
