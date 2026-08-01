@@ -112,6 +112,36 @@ class RiskConfig:
 
 
 @dataclass
+class ExecutionConfig:
+    """Ausfuehrungsmodell -- verhindert Look-ahead-Bias per Konstruktion.
+
+    Der frueherere Backtester hat den Fill-Preis vom Signal uebernommen. Damit
+    liess sich ein Preis fuellen, der VOR der signalausloesenden Information lag
+    (z.B. ein Renko-Brick-Level mitten in der Kerze, waehrend die Entscheidung
+    erst der Schlusskurs lieferte). Das ergab einen kuenstlichen Vorteil von
+    ~0,34 % je Trade.
+
+    Jetzt bestimmt die Engine den Fill selbst:
+
+    ``close``      -- Entscheidung faellt mit dem Schlusskurs der Signalbar,
+                      Ausfuehrung ebenfalls dort (Market-Order Sekunden spaeter).
+    ``next_open``  -- Ausfuehrung zur Eroeffnung der Folgebar (konservativer).
+    ``level``      -- Ausfuehrung auf einem VORAB bekannten Level (ruhende
+                      Stop-Order). Erlaubt nur, wenn das Signal eine Spalte
+                      ``level`` und ``known_at`` mitbringt und ``known_at`` echt
+                      vor der Fill-Bar liegt. Die Engine prueft zusaetzlich, dass
+                      das Level innerhalb der Bar-Spanne erreicht wurde.
+    """
+
+    mode: str = "close"
+    strict: bool = True   # bei Verstoessen hart fehlschlagen statt still korrigieren
+
+    def validate(self) -> None:
+        if self.mode not in ("close", "next_open", "level"):
+            raise ValueError(f"ExecutionConfig.mode ungueltig: {self.mode!r}")
+
+
+@dataclass
 class BacktestConfig:
     """Gesamtkonfiguration eines Backtest-Laufs."""
 
@@ -120,6 +150,7 @@ class BacktestConfig:
     strategy: StrategyConfig = field(default_factory=StrategyConfig)
     costs: CostConfig = field(default_factory=CostConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
+    execution: ExecutionConfig = field(default_factory=ExecutionConfig)
 
     def validate(self) -> "BacktestConfig":
         if self.initial_balance <= 0:
@@ -128,6 +159,7 @@ class BacktestConfig:
         self.strategy.validate()
         self.costs.validate()
         self.risk.validate()
+        self.execution.validate()
         return self
 
     def to_dict(self) -> Dict[str, Any]:
@@ -150,6 +182,7 @@ def config_from_dict(data: Dict[str, Any]) -> BacktestConfig:
         strategy=_sub(StrategyConfig, data, "strategy"),
         costs=_sub(CostConfig, data, "costs"),
         risk=_sub(RiskConfig, data, "risk"),
+        execution=_sub(ExecutionConfig, data, "execution"),
     )
     return cfg.validate()
 

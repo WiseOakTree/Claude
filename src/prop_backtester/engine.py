@@ -150,6 +150,47 @@ class Engine:
             realized += pnl
         return realized
 
+    # --- Ausfuehrungsmodell (Look-ahead-Schutz) --------------------------
+    def _resolve_fill(self, row, i, opens, highs, lows, closes, n):
+        """Bestimmt (Fill-Bar, Fill-Preis) gemaess Ausfuehrungsmodell.
+
+        Der vom Signal mitgelieferte ``price`` wird bewusst IGNORIERT (ausser im
+        Modus ``level``, wo er als vorab bekanntes Order-Level dient und geprueft
+        wird). So kann kein Preis gefuellt werden, der zeitlich vor der
+        signalausloesenden Information liegt.
+        """
+        ex = self.cfg.execution
+        if ex.mode == "close":
+            return i, float(closes[i])
+        if ex.mode == "next_open":
+            if i + 1 >= n:
+                return None          # kein Folgebar mehr -> Signal verfaellt
+            return i + 1, float(opens[i + 1])
+
+        # mode == "level": nur mit nachweislich vorab bekanntem Level zulaessig
+        level = getattr(row, "level", None)
+        known_at = getattr(row, "known_at", None)
+        if level is None or known_at is None:
+            raise ValueError(
+                "execution.mode='level' erfordert die Signal-Spalten 'level' und "
+                "'known_at' (Bar-Index, ab dem das Level bekannt war)."
+            )
+        known_at = int(known_at)
+        if known_at >= i:
+            msg = (f"Look-ahead: Level war erst ab Bar {known_at} bekannt, "
+                   f"soll aber auf Bar {i} gefuellt werden.")
+            if ex.strict:
+                raise ValueError(msg)
+            return None
+        level = float(level)
+        if not (lows[i] - 1e-12 <= level <= highs[i] + 1e-12):
+            msg = (f"Level {level} liegt ausserhalb der Bar-Spanne "
+                   f"[{lows[i]}, {highs[i]}] auf Bar {i} -- nicht ausfuehrbar.")
+            if ex.strict:
+                raise ValueError(msg)
+            return None
+        return i, level
+
     # --- Hauptlauf ------------------------------------------------------
     def run(self, df: pd.DataFrame, signals: pd.DataFrame) -> BacktestResult:
         n = len(df)
@@ -159,10 +200,17 @@ class Engine:
         times = df.index
         dt_frac = _infer_dt_hours(times) / 24.0  # Bruchteil eines Tages je Bar
 
-        # Signale pro Bar buendeln (netto: letztes Ziel je Bar gewinnt)
+        # Fill-Preise NICHT vom Signal uebernehmen, sondern aus den Bar-Daten
+        # ableiten -- verhindert Look-ahead-Bias per Konstruktion.
+        opens = df["open"].to_numpy(float)
         sig_by_bar: Dict[int, Tuple[int, float, float]] = {}
         for row in signals.itertuples(index=False):
-            sig_by_bar[int(row.src_index)] = (int(row.target), float(row.price), float(row.brick_size))
+            i = int(row.src_index)
+            fill = self._resolve_fill(row, i, opens, highs, lows, closes, n)
+            if fill is None:
+                continue
+            bar, price = fill
+            sig_by_bar[bar] = (int(row.target), price, float(row.brick_size))
 
         balance = self.cfg.initial_balance
         pos: Optional[Position] = None
