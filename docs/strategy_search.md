@@ -81,3 +81,54 @@ und ein enges Drawdown-Limit antritt.
 
 Die vollständige Tabelle aller 120 Kombinationen entsteht mit dem Suchlauf aus
 diesem Dokument; die Strategien liegen in `src/prop_backtester/strategies.py`.
+
+---
+
+## Nachtrag: Wochen-Swing (wenige Trades, große Bewegungen)
+
+Die logische Antwort auf das Kostenproblem: weniger Trades, größere Bewegungen,
+Wochenchart. Getestet — und die Arithmetik entscheidet.
+
+**Wochen-ATR bei BTC: 9,1 % vom Kurs** (Tages-ATR: 3,53 %). Ein 2-ATR-Stop
+bedeutet 18,2 % Kursbewegung. Daraus folgt die Falle:
+
+| Risiko/Trade | Position | für +10 % nötige Kursbewegung |
+|---|---|---|
+| 0,3 % | 1,6 % des Kontos | **607 %** |
+| 1,0 % | 5,5 % | 182 % |
+| 2,0 % | 11,0 % | **91 %** |
+
+Zum Vergleich: die beste 26-Wochen-Bewegung in vier Jahren war +167 %.
+
+**Gemessen** (Trendfolge auf Wochenkerzen, 26-Wochen-Fenster, 36 Kombinationen
+aus Strategie × Stop-Breite × Risiko): beste Pass-Rate **6 %**, Median-Rendite
+**+0,0 %**, **1 Trade** je Fenster. Die Drawdowns sind niedrig (0,5–10 %) — die
+Risikokontrolle funktioniert einwandfrei. Es passiert nur nichts.
+
+### Die Zwickmühle
+
+| Ansatz | Warum er scheitert |
+|---|---|
+| Viele Trades | 16 bp je Roundtrip fressen den Edge |
+| Wenige Trades | ~1 Gelegenheit je 180 Tage, Median +0,0 % |
+| Breite Stops | Position 1,6–11 % → 91–607 % Kursbewegung nötig |
+| Enge Stops | bei 9,1 % Wochen-ATR permanent ausgestoppt |
+
+### Der eigentliche Maßstab
+
+Wie gut ist **BTC selbst** über 90-Tage-Fenster (einfach halten, 138 Fenster)?
+
+| | |
+|---|---|
+| Rendite | median +6,8 %, bestes +81,8 % |
+| Drawdown | median 18,5 %, größter 38,1 % |
+| Verhältnis Rendite/Drawdown | **median 0,41** |
+
+Die Challenge verlangt ein Verhältnis von **1,67** *und* +10 % *und* Drawdown
+≤ 6 %. **BTC selbst erfüllt das in 1 % der Fenster (1 von 138).**
+
+Das ist die Kernaussage der gesamten Untersuchung: Nicht die Strategie ist das
+Problem, sondern die **Struktur der Aufgabe**. Ein 6-%-Drawdown-Limit auf einem
+Asset mit 18,5 % typischem 90-Tage-Drawdown verlangt, dass man viermal besser
+ist als der Markt selbst — dauerhaft, ohne Diversifikation, mit 16 bp Reibung
+je Trade.
