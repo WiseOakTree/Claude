@@ -132,3 +132,55 @@ Problem, sondern die **Struktur der Aufgabe**. Ein 6-%-Drawdown-Limit auf einem
 Asset mit 18,5 % typischem 90-Tage-Drawdown verlangt, dass man viermal besser
 ist als der Markt selbst — dauerhaft, ohne Diversifikation, mit 16 bp Reibung
 je Trade.
+
+---
+
+## Nachtrag 2: Diversifikation über 12 Coins (der Turtle-Hebel)
+
+Der einzige strukturelle Hebel, der bis dahin ungetestet war: Alle vorherigen
+Tests liefen auf **einem** Asset. Die Turtles verdankten ihren Edge einem
+Portfolio aus 20+ unkorrelierten Märkten — und Kraken Prop bietet 60+ Paare.
+Drawdown lässt sich durch Diversifikation senken, ohne die Rendite proportional
+mitzusenken; das ist der einzige Weg, das Verhältnis Rendite/Drawdown zu
+verbessern statt es nur zu skalieren.
+
+**Datensatz:** 12 Coins (BTC, ETH, SOL, XRP, ADA, DOGE, LINK, AVAX, DOT, LTC,
+BCH, ATOM), 1.636 gemeinsame Tage (2022-01 bis 2026-06).
+
+### Krypto ist kaum diversifizierbar
+
+| | |
+|---|---|
+| Paarweise Korrelation | **median 0,68** (Spanne 0,47–0,84) |
+| BTC gegen den Rest | median 0,70 |
+
+Bei dieser Kopplung senkt ein 12-Coin-Portfolio die Volatilität nur um ~17 %.
+
+### Einfach halten: schlechter als BTC allein
+
+| | Rendite p.a. | maxDD | Verhältnis |
+|---|---|---|---|
+| BTC allein | +4,7 % | 66,7 % | +0,07 |
+| Portfolio (12 Coins gleichgewichtet) | **−19,5 %** | **74,8 %** | −0,26 |
+
+Altcoins lieferten schlechtere risikoadjustierte Renditen — das Portfolio
+diversifiziert nach unten. Challenge-Test: BTC 1/155, Portfolio 0/155.
+
+### Long/Short-Trendfolge über alle 12 Coins (Turtle-Prinzip)
+
+Der faire Test — Beta entfernt, Positionsgröße nach ATR, Gesamthebel begrenzt,
+Kosten proportional zum Umsatz:
+
+| Strategie | Risiko | p.a. | maxDD | Verhältnis | Challenge |
+|---|---|---|---|---|---|
+| MA 20/50 | 0,2 % | **+1,1 %** | 22,7 % | +0,05 | 1 % |
+| Donchian 20 | 0,2 % | +0,2 % | 14,7 % | +0,01 | 1 % |
+| Donchian 50 | 0,5 % | −4,4 % | 45,6 % | −0,10 | 3 % |
+| (alle mit 1,0 % Risiko) | | −4 bis −13 % | 60–75 % | negativ | 0 % |
+
+Beste Jahresrendite über 4,5 Jahre: **+1,1 %**. Beste Pass-Rate: **3 %**.
+
+**Damit ist auch der letzte strukturelle Hebel geschlossen.** Der
+Diversifikationseffekt, der Trendfolge in Futures-Portfolios trägt, existiert in
+Krypto nicht — zwölf Coins verhalten sich wie ein Asset mit zusätzlichen
+Handelskosten.
