@@ -184,3 +184,40 @@ Beste Jahresrendite über 4,5 Jahre: **+1,1 %**. Beste Pass-Rate: **3 %**.
 Diversifikationseffekt, der Trendfolge in Futures-Portfolios trägt, existiert in
 Krypto nicht — zwölf Coins verhalten sich wie ein Asset mit zusätzlichen
 Handelskosten.
+
+---
+
+## Nachtrag 3: Golden Cross (SMA 50/200) mit dynamischem SMA-Stop
+
+Der bekannteste Trendfolge-Aufbau überhaupt, explizit nachgetestet — inklusive
+des dynamischen Stops unter dem kürzeren SMA. 72 Varianten
+(3 Timeframes × 3 SMA-Paare × Short an/aus × Stop an/aus × Hebel).
+
+| | |
+|---|---|
+| beste Pass-Rate | **5,3 %** (4h, SMA 20/100, long-only, mit Stop) |
+| Median-Rendite über alle 72 Varianten | **−7,78 %** |
+| Varianten mit Pass-Rate ≥ 50 % | **0** |
+
+SMA 50/200 auf Tageskerzen, die klassische Variante: **10 Trades in 4,5 Jahren**,
+Median-Rendite +0,0 %, Drawdown 20,8 %, Pass-Rate 0,0 %.
+
+### Der dynamische SMA-Stop: richtig gedacht, von den Kosten aufgefressen
+
+Er tut genau das, was er soll — halbiert den Drawdown:
+
+| SMA 50/200, Tageskerzen | Trades | Drawdown | Median |
+|---|---|---|---|
+| ohne Stop | 10 | 20,8 % | +0,0 % |
+| **mit SMA-Stop** | **107** | **12,8 %** | +0,0 % |
+
+Der Preis dafür ist die **zehnfache Trade-Zahl**. Bei 16 bp je Roundtrip
+kostet das rund 1,6 % zusätzlich pro Jahr — genau so viel, wie die gewonnene
+Risikoreduktion an Rendite hätte einbringen können. Netto bleibt +0,0 %.
+
+Out-of-Sample (zweite Hälfte): Pass-Rate 0,0 % mit und ohne Stop.
+
+Das bestätigt den Befund aus dem Hauptlauf über eine weitere, sehr bekannte
+Variante: **Trendfolge auf einem einzelnen Asset löst diese Aufgabe nicht.**
+Der Grund ist nicht die Wahl der Durchschnitte, sondern das Verhältnis von
+typischem Drawdown (13–21 %) zum Limit (6 %).

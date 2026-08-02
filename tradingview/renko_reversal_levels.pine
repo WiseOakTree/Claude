@@ -43,6 +43,7 @@ showLevels  = input.bool(true,  "Trigger-Level der nächsten Order",          gr
 showNextSLTP= input.bool(false, "…auch dessen SL/TP (mehr Linien)",          group=grpV)
 showTable   = input.bool(true,  "Info-Tabelle",                              group=grpV)
 showMarks   = input.bool(true,  "Historische Signale",                       group=grpV)
+showFills   = input.bool(true,  "Punkt, wo die Stop-Order füllt",            group=grpV)
 
 // ------------------------------------------------------------ Renko-Zustand
 var float anchor   = na   // Schlusskurs des letzten Bricks (Gitter-Anker)
@@ -59,6 +60,10 @@ atrV = ta.atr(atrLen)
 bool sigLong  = false
 bool sigShort = false
 bool sigFlat  = false
+// Kurs, auf dem der Marker sitzen soll = das ausgeloeste Brick-Level.
+// NICHT Hoch/Tief der Kerze -- dort wuerde der Pfeil je nach Kerzengroesse
+// hunderte Dollar neben dem echten Fill landen.
+float markPx  = na
 
 // Bricks nur auf GESCHLOSSENEN Kerzen fortschreiben -> kein Repainting.
 if barstate.isconfirmed
@@ -83,6 +88,7 @@ if barstate.isconfirmed
                         position := want
                         entryPx    := want == 0 ? na : anchor
                         entryBrick := want == 0 ? na : size
+                        markPx     := anchor
                         if want == 1
                             sigLong := true
                         else
@@ -101,6 +107,7 @@ if barstate.isconfirmed
                         position := want
                         entryPx    := want == 0 ? na : anchor
                         entryBrick := want == 0 ? na : size
+                        markPx     := anchor
                         if want == -1
                             sigShort := true
                         else
@@ -171,9 +178,21 @@ plot(showNextSLTP and upActive ? upTP2 : na, "TP2 (nächste Long)", color=color.
 plot(showNextSLTP and dnActive ? dnTP1 : na, "TP1 (nächste Short)",color=color.new(#42A5F5, 65), style=plot.style_circles, linewidth=1)
 plot(showNextSLTP and dnActive ? dnTP2 : na, "TP2 (nächste Short)",color=color.new(#42A5F5, 65), style=plot.style_circles, linewidth=1)
 
-plotshape(showMarks and sigLong,  "Long-Signal",  style=shape.triangleup,   location=location.belowbar, color=cUp, size=size.tiny)
-plotshape(showMarks and sigShort, "Short-Signal", style=shape.triangledown, location=location.abovebar, color=cDn, size=size.tiny)
-plotshape(showMarks and sigFlat,  "Flat",         style=shape.xcross,       location=location.belowbar, color=color.gray, size=size.tiny)
+// Marker sitzen auf dem ausgeloesten Brick-Level = dem Kurs, zu dem die
+// Stop-Order tatsaechlich fuellt. location.absolute statt below/abovebar.
+plotshape(showMarks and sigLong  ? markPx : na, "Long-Signal",  style=shape.triangleup,   location=location.absolute, color=cUp, size=size.tiny)
+plotshape(showMarks and sigShort ? markPx : na, "Short-Signal", style=shape.triangledown, location=location.absolute, color=cDn, size=size.tiny)
+plotshape(showMarks and sigFlat  ? markPx : na, "Flat",         style=shape.xcross,       location=location.absolute, color=color.gray, size=size.tiny)
+
+// Wo die Stop-Order WIRKLICH fuellt: der Trigger vom Vorbar wurde intrabar
+// beruehrt. Faellt meist mit dem Signalbar zusammen -- aber nicht immer:
+// Ein Docht durch das Level fuellt die Order, waehrend der Brick einen
+// Schlusskurs jenseits des Levels braucht. Genau diese Abweichung erklaert,
+// warum eine Order ausloest, bevor der Indikator das Signal zeigt.
+fillUp = showFills and not na(upTrig[1]) and upActive[1] and high >= upTrig[1]
+fillDn = showFills and not na(dnTrig[1]) and dnActive[1] and low  <= dnTrig[1]
+plotshape(fillUp ? upTrig[1] : na, "Stop gefüllt (Long)",  style=shape.circle, location=location.absolute, color=color.new(cUp, 40), size=size.tiny)
+plotshape(fillDn ? dnTrig[1] : na, "Stop gefüllt (Short)", style=shape.circle, location=location.absolute, color=color.new(cDn, 40), size=size.tiny)
 
 // ---------------------------------------------------------------- Tabelle
 var table info = table.new(position.top_right, 2, 10, border_width=1)
