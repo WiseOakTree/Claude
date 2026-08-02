@@ -126,10 +126,55 @@ def breakout_with_trend_filter(df: pd.DataFrame, lookback: int = 20,
     return _emit(df, target, _atr_unit(df, atr_period, atr_mult))
 
 
+def macd(df: pd.DataFrame, fast: int = 12, slow: int = 26, signal: int = 9,
+         atr_period: int = 14, atr_mult: float = 1.0,
+         allow_short: bool = True) -> pd.DataFrame:
+    """MACD-Trendfolge: long wenn die MACD-Linie ueber ihrer Signallinie liegt.
+
+    Alle drei EMAs duerfen den aktuellen Bar mitverwenden -- sie sind kausal
+    (nur Vergangenheit + Gegenwart), der Fill erfolgt zum Schlusskurs.
+    """
+    ema_f = df["close"].ewm(span=fast, adjust=False).mean()
+    ema_s = df["close"].ewm(span=slow, adjust=False).mean()
+    line = ema_f - ema_s
+    sig = line.ewm(span=signal, adjust=False).mean()
+    target = pd.Series(np.where(line > sig, 1, -1 if allow_short else 0), index=df.index)
+    target.iloc[:slow + signal] = np.nan   # Einschwingphase der EMAs verwerfen
+    return _emit(df, target, _atr_unit(df, atr_period, atr_mult))
+
+
+def breakout_volume(df: pd.DataFrame, lookback: int = 20, vol_lookback: int = 50,
+                    vol_mult: float = 1.5, atr_period: int = 14,
+                    atr_mult: float = 1.0, allow_short: bool = True) -> pd.DataFrame:
+    """Donchian-Ausbruch, aber nur mit Volumenbestaetigung.
+
+    Die These: Ausbrueche auf duennem Volumen sind Fehlausbrueche; erst
+    ueberdurchschnittliches Volumen zeigt echtes Interesse. Der Ausbruch zaehlt
+    nur, wenn das Volumen des Signalbars ``vol_mult`` mal ueber dem Mittel der
+    vorherigen ``vol_lookback`` Bars liegt.
+
+    Kanalgrenzen und Volumenmittel nutzen ``shift(1)`` -- der aktuelle Bar darf
+    seinen eigenen Vergleichsmassstab nicht mitbestimmen.
+    """
+    hi = df["high"].rolling(lookback).max().shift(1)
+    lo = df["low"].rolling(lookback).min().shift(1)
+    vbase = df["volume"].rolling(vol_lookback).mean().shift(1)
+    confirmed = df["volume"] > vol_mult * vbase
+    c = df["close"]
+    target = pd.Series(np.nan, index=df.index)
+    target[(c > hi) & confirmed] = 1
+    if allow_short:
+        target[(c < lo) & confirmed] = -1
+    target = target.ffill()
+    return _emit(df, target, _atr_unit(df, atr_period, atr_mult))
+
+
 REGISTRY = {
     "donchian": donchian,
     "ma_cross": ma_cross,
     "momentum": momentum,
     "bollinger": bollinger_reversion,
     "breakout_trend": breakout_with_trend_filter,
+    "macd": macd,
+    "breakout_volume": breakout_volume,
 }
