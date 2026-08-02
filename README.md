@@ -21,6 +21,41 @@
 > ein messbares Signal (IC +0,10 auf 5 Tage), ist aber out-of-sample instabil
 > und liegt um **Faktor 13** unter dem noetigen Verhaeltnis Rendite/Drawdown.
 
+---
+
+## Die Untersuchung im Ueberblick
+
+Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
+
+| # | Ansatz | Ergebnis | Dokument |
+|---|---|---|---|
+| 1 | Renko-Reversal (Ausgangspunkt) | Look-ahead-Bias; korrigiert **7 %** Pass | [`realism.md`](docs/realism.md) |
+| 2 | 120 TA-Kombinationen, 3 Timeframes | Median-Rendite **0,00 %** | [`strategy_search.md`](docs/strategy_search.md) |
+| 3 | Orderbuch, ETF-Fluesse, Liquidationen, Tech-Kopplung | Faktor **13** zu schwach | [`altdata_test.md`](docs/altdata_test.md) |
+| 4 | Vol-Targeting & Smart DCA | **20–25 %** Pass — bestes Ergebnis | [`volatility_targeting.md`](docs/volatility_targeting.md) |
+| 5 | Volatilitaets-Risikopraemie (Optionen) | **echter Edge, Sharpe 1,33** — bei Kraken nicht handelbar | [`volatility_premium.md`](docs/volatility_premium.md) |
+| 6 | Orderflow & Orderbuchtiefe (9,2 Mio. Snapshots) | real, aber **0,31×** der Kostenschwelle | [`orderflow_test.md`](docs/orderflow_test.md) |
+| 7 | On-Chain: MVRV, Puell, Hash Ribbons, NVT | MVRV wirkt **umgekehrt**; Pass **0,1–0,5 %** | [`onchain_test.md`](docs/onchain_test.md) |
+| 8 | Kombination aller Signale | Signale unkorreliert (ρ = 0,11), Kombi trotzdem **schlechter** | [`ensemble_test.md`](docs/ensemble_test.md) |
+| 9 | Welcher Edge waere noetig? | Sharpe **2,91** fuer 50 % Erfolgsquote | [`required_edge.md`](docs/required_edge.md) |
+| 10 | Obergrenze fuer Machine Learning | Vol-Prognose: **kein** Nutzen moeglich; Richtung: 60 % Treffer noetig fuer Gleichstand | [`ml_ceiling.md`](docs/ml_ceiling.md) |
+
+### Die zwei Ergebnisse, die bleiben
+
+**1. Ein echter Edge wurde gefunden** — die Volatilitaets-Risikopraemie:
+implizite Vol uebersteigt die danach realisierte bei BTC um 10,5 pp (Median),
+in 72 % der Faelle, t = 4,12 nach Ueberlappungskorrektur ueber 5,4 Jahre.
+Delta-gehedgter Short-Straddle: **Sharpe 1,33**, +149 % ueber 64 Monate.
+Er ist im Kraken-Prop-Konto **nicht erreichbar** (Kraken bietet 294 Futures
+und 0 Optionen) und wuerde die Challenge auch dann nicht bestehen
+(Rendite/Drawdown 0,69 statt der noetigen 1,67).
+
+**2. Positionsgroesse schlaegt Edge.** Ohne jeden Edge, aber mit 15 %
+Zielvolatilitaet: **8,2 %** Pass-Rate. Mit echtem Edge (Sharpe 1,33), aber
+30 % Volatilitaet: **1,5 %**. Die optimale Zielvolatilitaet liegt ueber alle
+Sharpe-Niveaus bei **15–16 % annualisiert** — eine Vorgabe, die keinerlei
+Prognose voraussetzt.
+
 Ein **realistischer** Backtester, um eine manuell handelbare **Renko-Reversal-Strategie**
 gegen die Regeln der **Kraken-Prop-Challenge** zu testen — mit dem Ziel, die
 Challenge **nachhaltig** (nicht per Glück) zu bestehen.
