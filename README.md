@@ -23,6 +23,24 @@
 
 ---
 
+## 🛑 Korrektur der Regelauslegung (betrifft alle Pass-Raten unten)
+
+Die Auswertung war zu streng: Sie verlangte, dass das Gewinnziel am **Ende**
+des 90-Tage-Fensters erreicht ist. Tatsaechlich ist eine Challenge bestanden,
+**sobald** das Ziel beruehrt wird. Zusaetzlich misst Kraken den Drawdown
+**statisch** vom Startguthaben, nicht vom laufenden Hoch.
+
+| Strategie | bisher berichtet | korrekt |
+|---|---|---|
+| BTC einfach halten | 0,0 % | **24,9 %** |
+| Vol-Targeting 15 % | 16,3 % | **24,8 %** |
+| S/R-Ausbruch | 17,0 % | **33,9 %** |
+
+Die *Rangfolge* der Ansaetze bleibt, die absoluten Zahlen in den aelteren
+Dokumenten sind zu pessimistisch. Details: [`prop_rules.md`](docs/prop_rules.md).
+
+---
+
 ## Die Untersuchung im Ueberblick
 
 Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
@@ -39,6 +57,10 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 8 | Kombination aller Signale | Signale unkorreliert (ρ = 0,11), Kombi trotzdem **schlechter** | [`ensemble_test.md`](docs/ensemble_test.md) |
 | 9 | Welcher Edge waere noetig? | Sharpe **2,91** fuer 50 % Erfolgsquote | [`required_edge.md`](docs/required_edge.md) |
 | 10 | Obergrenze fuer Machine Learning | Vol-Prognose: **kein** Nutzen moeglich; Richtung: 60 % Treffer noetig fuer Gleichstand | [`ml_ceiling.md`](docs/ml_ceiling.md) |
+| 11 | Order Blocks (Smart Money) | Reaktion **nicht** OB-spezifisch — Zufallskerze gleich gut | [`altdata_test.md`](docs/altdata_test.md) |
+| 12 | **S/R-Ausbruch nach Beruehrungszahl** | **erster Chartmuster-Befund, der standhaelt** — alle vier Kontrollen bestanden | [`sr_breakout.md`](docs/sr_breakout.md) |
+| 13 | Welches Regelwerk passt? | Tagesverlust-Limit ist der groesste Hebel, Drawdown-Limit **wirkungslos** | [`prop_rules.md`](docs/prop_rules.md) |
+| — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
 
