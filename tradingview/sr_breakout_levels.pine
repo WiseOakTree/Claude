@@ -1,0 +1,295 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0
+//@version=6
+// =============================================================================
+//  S/R-Ausbruch nach Beruehrungszahl  —  Kraken-Prop
+// =============================================================================
+//  These: Je oefter ein Level gehalten hat, desto bedeutsamer ist sein Bruch.
+//  Gemessen auf BTC 1h ueber 4,5 Jahre (docs/sr_breakout.md):
+//
+//    Beruehrungen |  1     3     4     5     6     8
+//    Effekt 24h   | +3.9  +9.5 +22.1 +29.9 +42.9 +107.8 bp
+//
+//  Ab 4 Beruehrungen liegt der Effekt ueber der Kostenschwelle von 16 bp.
+//  Vier Kontrollen bestanden: kein Drift-Artefakt (Shorts staerker als Longs),
+//  ueberlappungskorrigiert signifikant (p=0,0015 bei >=6), in allen sechs
+//  Jahren positiv, und deutlich besser als Zufallslevel.
+//
+//  ANWENDUNG (BTC, 1-Stunden-Chart):
+//    * Handle NUR Level mit >= 6 Beruehrungen
+//    * Einstieg beim Stundenschluss jenseits des Levels
+//    * 48 Stunden halten, dann raus — KEIN Stop, KEIN Take-Profit
+//    * Positionsgroesse: 50 % des Kontos als Nominalwert (nicht mehr!)
+//
+//  WARUM SO KLEIN: Ohne Zeitlimit kommen ueber 95 % aller Fehlschlaege vom
+//  3-%-Tagesverlustlimit, nicht vom Drawdown. Bei halber Groesse faellt die
+//  Haeufigkeit von -3-%-Tagen von 2,00 % auf 0,36 %. Groesser handeln senkt
+//  die Erfolgsquote von ~50 % auf ~40 %. Siehe docs/no_time_limit.md.
+//
+//  ABWEICHUNG ZUM BACKTEST: Dort wurden ueberlappende Signale summiert und auf
+//  +/-1 begrenzt. Hier wird immer nur EINE Position gehalten; Signale waehrend
+//  der 48 Stunden werden ignoriert. Nachgerechnet kostet das nichts:
+//
+//    Groesse | Backtest (ueberlappend) | diese Logik
+//    1,00x   |        39,5 %           |   47,6 %
+//    0,50x   |        47,2 %           |   44,0 %
+//    0,35x   |        48,6 %           |   47,7 %
+//    (konservative Untergrenze: unaufgeloeste Versuche als gescheitert gezaehlt)
+//
+//  Von 768 Rohsignalen bleiben 213 gehandelte -- rund 47 Trades im Jahr,
+//  also etwa einer pro Woche. Im Markt ist man 22 % der Zeit.
+//
+//  Kein Finanzrat. Erwartung: ~40-50 % Erfolgsquote je Versuch, rund vier
+//  Monate Dauer. Die Zahl stammt aus 24 geprueften Varianten und ist
+//  entsprechend optimistisch — rechne mit dem unteren Rand.
+// =============================================================================
+
+indicator("S/R-Ausbruch (Kraken Prop)", shorttitle="SR-Break", overlay = true,
+          max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
+
+// ---------------------------------------------------------------- Einstellungen
+grpS = "Strategie"
+pivLen   = input.int(8,    "Pivot-Weite (Bars je Seite)", minval = 2, group = grpS,
+                     tooltip = "Ein Hoch/Tief gilt als Pivot, wenn es das Extrem "
+                             + "ueber +/- N Bars ist. Bestaetigt wird es erst N Bars spaeter.")
+tolATR   = input.float(0.5, "Level-Toleranz (× ATR)",     minval = 0.05, step = 0.05, group = grpS,
+                     tooltip = "Pivots innerhalb dieses Abstands gelten als DASSELBE Level.")
+minTouch = input.int(6,    "Mindest-Beruehrungen",        minval = 1, group = grpS,
+                     tooltip = "Getestet: >=6 ist am staerksten (+42,9 bp auf 24h). "
+                             + "Ab 4 ueber der Kostenschwelle.")
+holdBars = input.int(48,   "Haltedauer (Bars)",           minval = 1, group = grpS)
+maxAge   = input.int(1000, "Level verfaellt nach (Bars)", minval = 50, group = grpS)
+atrLen   = input.int(14,   "ATR-Laenge",                  minval = 2, group = grpS)
+allowLong  = input.bool(true, "Long erlaubt",  group = grpS)
+allowShort = input.bool(true, "Short erlaubt", group = grpS)
+
+grpR = "Risiko"
+balance  = input.float(10000, "Kontogroesse",              minval = 1, group = grpR)
+notPct   = input.float(50,   "Nominal in % des Kontos",    minval = 1, maxval = 500, step = 5,
+                       group = grpR,
+                       tooltip = "50 % ist der getestete Wert (0,5x). Mehr senkt die "
+                               + "Erfolgsquote, weil das 3-%-Tageslimit greift.")
+
+grpV = "Anzeige"
+showLvl   = input.bool(true, "Level zeichnen",              group = grpV)
+minShow   = input.int(3,     "…ab dieser Beruehrungszahl",  minval = 1, group = grpV)
+showMarks = input.bool(true, "Signal-Marker",               group = grpV)
+showTable = input.bool(true, "Info-Tabelle",                group = grpV)
+
+// ------------------------------------------------------------------- Zustand
+// Parallele Arrays statt Objekten -- Pine hat keine benutzerdefinierten Typen
+// mit Arrays in dieser Form ohne Mehraufwand.
+var array<float> lvlPx    = array.new<float>()   // (gemittelter) Levelpreis
+var array<int>   lvlKind  = array.new<int>()     // +1 = Widerstand, -1 = Unterstuetzung
+var array<int>   lvlTouch = array.new<int>()     // Zahl der Beruehrungen
+var array<int>   lvlLast  = array.new<int>()     // bar_index der letzten Beruehrung
+
+var int   posDir   = 0     // +1 long, -1 short, 0 flat
+var float posEntry = na
+var int   posBar   = na    // bar_index des Einstiegs
+var int   posTouch = na    // Beruehrungszahl des ausgeloesten Levels
+
+atrV = ta.atr(atrLen)
+
+bool sigLong  = false
+bool sigShort = false
+bool sigExit  = false
+float sigPx   = na
+int   sigTch  = na
+
+// ------------------------------------------------------------------ Hauptlogik
+if barstate.isconfirmed and not na(atrV) and atrV > 0
+
+    // --- 1) Ausbruch gegen den Level-Stand des VORHERIGEN Bars pruefen ---
+    //     (erst danach werden neue Pivots eingearbeitet -- so nutzt die
+    //      Entscheidung nur Information, die vor diesem Bar bekannt war)
+    if posDir == 0
+        int i = 0
+        while i < array.size(lvlPx)
+            float p  = array.get(lvlPx, i)
+            int   k  = array.get(lvlKind, i)
+            int   tc = array.get(lvlTouch, i)
+            if tc >= minTouch
+                if k == 1 and close[1] <= p and close > p and allowLong
+                    sigLong := true
+                    sigPx   := close
+                    sigTch  := tc
+                else if k == -1 and close[1] >= p and close < p and allowShort
+                    sigShort := true
+                    sigPx    := close
+                    sigTch   := tc
+            i += 1
+
+    // --- 2) Position fuehren: nach holdBars schliessen ---
+    if posDir != 0 and not na(posBar) and bar_index - posBar >= holdBars
+        sigExit := true
+        posDir  := 0
+        posEntry := na
+        posBar   := na
+        posTouch := na
+
+    if sigLong and posDir == 0
+        posDir := 1
+        posEntry := close
+        posBar := bar_index
+        posTouch := sigTch
+    else if sigShort and posDir == 0
+        posDir := -1
+        posEntry := close
+        posBar := bar_index
+        posTouch := sigTch
+
+    // --- 3) Neue Pivots einarbeiten ---
+    //     ta.pivothigh(N, N) wird erst N Bars NACH dem Pivot ungleich na.
+    float ph = ta.pivothigh(pivLen, pivLen)
+    float pl = ta.pivotlow(pivLen, pivLen)
+    float tol = tolATR * atrV
+
+    if not na(ph)
+        int found = -1
+        int i = 0
+        while i < array.size(lvlPx)
+            if array.get(lvlKind, i) == 1 and math.abs(array.get(lvlPx, i) - ph) <= tol
+                found := i
+                i := array.size(lvlPx)
+            i += 1
+        if found >= 0
+            int   tc = array.get(lvlTouch, found)
+            float pv = array.get(lvlPx, found)
+            array.set(lvlPx,    found, (pv * tc + ph) / (tc + 1))
+            array.set(lvlTouch, found, tc + 1)
+            array.set(lvlLast,  found, bar_index)
+        else
+            array.push(lvlPx, ph)
+            array.push(lvlKind, 1)
+            array.push(lvlTouch, 1)
+            array.push(lvlLast, bar_index)
+
+    if not na(pl)
+        int found = -1
+        int i = 0
+        while i < array.size(lvlPx)
+            if array.get(lvlKind, i) == -1 and math.abs(array.get(lvlPx, i) - pl) <= tol
+                found := i
+                i := array.size(lvlPx)
+            i += 1
+        if found >= 0
+            int   tc = array.get(lvlTouch, found)
+            float pv = array.get(lvlPx, found)
+            array.set(lvlPx,    found, (pv * tc + pl) / (tc + 1))
+            array.set(lvlTouch, found, tc + 1)
+            array.set(lvlLast,  found, bar_index)
+        else
+            array.push(lvlPx, pl)
+            array.push(lvlKind, -1)
+            array.push(lvlTouch, 1)
+            array.push(lvlLast, bar_index)
+
+    // --- 4) Verfallene Level entfernen (von hinten, damit Indizes stimmen) ---
+    int j = array.size(lvlPx) - 1
+    while j >= 0
+        if bar_index - array.get(lvlLast, j) > maxAge
+            array.remove(lvlPx, j)
+            array.remove(lvlKind, j)
+            array.remove(lvlTouch, j)
+            array.remove(lvlLast, j)
+        j -= 1
+
+// ------------------------------------------------------------------- Groesse
+notional = balance * notPct / 100.0
+qty      = close > 0 ? notional / close : na
+// Was ein 3-%-BTC-Tag das Konto kostet -- der eigentliche Engpass
+dayRisk  = notPct / 100.0 * 3.0
+
+// -------------------------------------------------------------------- Plots
+cUp   = color.new(#26A69A, 0)
+cDn   = color.new(#EF5350, 0)
+
+plotshape(showMarks and sigLong  ? close : na, "Long-Ausbruch",  style = shape.triangleup,
+          location = location.absolute, color = cUp, size = size.small)
+plotshape(showMarks and sigShort ? close : na, "Short-Ausbruch", style = shape.triangledown,
+          location = location.absolute, color = cDn, size = size.small)
+plotshape(showMarks and sigExit  ? close : na, "Ausstieg (48h)", style = shape.xcross,
+          location = location.absolute, color = color.new(color.gray, 20), size = size.tiny)
+
+plot(posDir != 0 ? posEntry : na, "Einstieg", color = color.new(color.gray, 30),
+     style = plot.style_linebr, linewidth = 2)
+
+// Level zeichnen -- nur auf dem letzten Bar, sonst zu viele Objekte
+var array<line>  drawn  = array.new<line>()
+var array<label> tags   = array.new<label>()
+if barstate.islast and showLvl
+    while array.size(drawn) > 0
+        line.delete(array.pop(drawn))
+    while array.size(tags) > 0
+        label.delete(array.pop(tags))
+    int i = 0
+    while i < array.size(lvlPx)
+        int tc = array.get(lvlTouch, i)
+        if tc >= minShow
+            float p = array.get(lvlPx, i)
+            int   k = array.get(lvlKind, i)
+            bool strong = tc >= minTouch
+            color cc = k == 1 ? cDn : cUp
+            array.push(drawn, line.new(bar_index - math.min(bar_index, maxAge), p,
+                       bar_index + 10, p,
+                       color = color.new(cc, strong ? 0 : 70),
+                       width = strong ? 2 : 1,
+                       style = strong ? line.style_solid : line.style_dotted))
+            array.push(tags, label.new(bar_index + 12, p, str.tostring(tc) + "×",
+                       style = label.style_label_left, size = size.tiny,
+                       color = color.new(cc, strong ? 10 : 75),
+                       textcolor = color.white))
+        i += 1
+
+// ------------------------------------------------------------------- Tabelle
+if showTable and barstate.islast
+    var table t = table.new(position.top_right, 2, 8, border_width = 1)
+    bg  = color.new(#1E222D, 10)
+    sec = color.new(#2A2E39, 10)
+    f(x) => str.tostring(x, format.mintick)
+
+    posTxt = posDir == 1 ? "LONG" : posDir == -1 ? "SHORT" : "flat"
+    posCol = posDir == 1 ? cUp : posDir == -1 ? cDn : color.gray
+    left   = posDir != 0 and not na(posBar) ? holdBars - (bar_index - posBar) : na
+
+    table.cell(t, 0, 0, "S/R-AUSBRUCH", text_color = color.white, bgcolor = color.new(#F7931A, 10), text_size = size.small)
+    table.cell(t, 1, 0, ">=" + str.tostring(minTouch) + "× · " + str.tostring(holdBars) + "h",
+               text_color = color.white, bgcolor = color.new(#F7931A, 10), text_size = size.small)
+
+    table.cell(t, 0, 1, "Position", text_color = color.gray, bgcolor = bg, text_size = size.small)
+    table.cell(t, 1, 1, posTxt + (posDir != 0 ? "  @ " + f(posEntry) : ""),
+               text_color = posCol, bgcolor = bg, text_size = size.small)
+
+    table.cell(t, 0, 2, "Level-Staerke", text_color = color.gray, bgcolor = sec, text_size = size.small)
+    table.cell(t, 1, 2, posDir != 0 and not na(posTouch) ? str.tostring(posTouch) + " Beruehrungen" : "—",
+               text_color = color.white, bgcolor = sec, text_size = size.small)
+
+    table.cell(t, 0, 3, "Noch offen", text_color = color.gray, bgcolor = bg, text_size = size.small)
+    table.cell(t, 1, 3, na(left) ? "—" : str.tostring(left) + " Bars",
+               text_color = color.white, bgcolor = bg, text_size = size.small)
+
+    table.cell(t, 0, 4, "Positionsgroesse", text_color = color.gray, bgcolor = sec, text_size = size.small)
+    table.cell(t, 1, 4, str.tostring(qty, "#.#####") + "  (" + str.tostring(notional, "#") + " $)",
+               text_color = color.white, bgcolor = sec, text_size = size.small)
+
+    table.cell(t, 0, 5, "Verlust bei -3 % BTC", text_color = color.gray, bgcolor = bg, text_size = size.small)
+    table.cell(t, 1, 5, str.tostring(dayRisk, "#.##") + " % vom Konto",
+               text_color = dayRisk > 2.0 ? cDn : cUp, bgcolor = bg, text_size = size.small)
+
+    table.cell(t, 0, 6, "Aktive Level", text_color = color.gray, bgcolor = sec, text_size = size.small)
+    int strongCnt = 0
+    int ii = 0
+    while ii < array.size(lvlTouch)
+        strongCnt += array.get(lvlTouch, ii) >= minTouch ? 1 : 0
+        ii += 1
+    table.cell(t, 1, 6, str.tostring(strongCnt) + " stark / " + str.tostring(array.size(lvlPx)) + " gesamt",
+               text_color = color.white, bgcolor = sec, text_size = size.small)
+
+    table.cell(t, 0, 7, "Regel", text_color = color.gray, bgcolor = bg, text_size = size.small)
+    table.cell(t, 1, 7, "kein SL · kein TP · nach " + str.tostring(holdBars) + "h raus",
+               text_color = color.new(color.yellow, 20), bgcolor = bg, text_size = size.small)
+
+// -------------------------------------------------------------------- Alarme
+alertcondition(sigLong,  "S/R: LONG-Ausbruch",  "S/R-Ausbruch LONG — Level mit genug Beruehrungen gebrochen")
+alertcondition(sigShort, "S/R: SHORT-Ausbruch", "S/R-Ausbruch SHORT — Level mit genug Beruehrungen gebrochen")
+alertcondition(sigExit,  "S/R: Ausstieg",       "Haltedauer erreicht — Position schliessen")
