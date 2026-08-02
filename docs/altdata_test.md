@@ -198,3 +198,68 @@ trägt. Liquidationskaskaden: kein messbarer Effekt, und selbst der beste
 Schätzwert liegt unter den Handelskosten. Tech-Kopplung: real, aber
 gleichzeitig statt vorlaufend — kein Signal, nur ein Risikohinweis. Die ehrliche Schlussfolgerung: Mit dem, was hier gebaut werden kann, ist
 diese Challenge nicht planbar zu gewinnen.
+
+---
+
+## Nachtrag: Order Blocks (Smart-Money-Konzept) — getestet
+
+Getestet wurde exakt die Logik des verbreiteten Pine-Indikators
+*Order Block Finder*: Ein **bullischer Order Block** ist die letzte
+Abwärts-Kerze vor N aufeinanderfolgenden Aufwärts-Kerzen. These: Der Kurs
+kehrt zu diesem Level zurück und reagiert dort, weil dort institutionelle
+Orders liegen.
+
+**Datensatz:** BTC 1h, 4,5 Jahre. 932 Order Blocks (N = 5), Reaktion beim
+ersten Rücklauf in die Zone gemessen.
+
+### Vorab: eine optische Falle im Indikator
+
+Der Code ist technisch sauber — kein Repainting, alle Eingaben bei Bar *t*
+stammen aus *t−1* und älter. Aber er zeichnet mit `offset = -ob_period`
+**sechs Bars in die Vergangenheit**. Auf dem Chart wirkt es dadurch, als wäre
+das Level markiert worden, *bevor* die Bewegung kam. Tatsächlich erfährt man
+erst sechs Kerzen später davon.
+
+Das ist dieselbe optische Täuschung, die in diesem Projekt zum Look-ahead-Bias
+geführt hat ([`realism.md`](realism.md)) — mit dem Unterschied, dass dieser
+Code ehrlich rechnet und nur irreführend zeichnet.
+
+### Die Reaktion existiert — und ist nicht besonders
+
+| Variante | Ereignisse | Reaktion (6 h) | vs. 16 bp |
+|---|---|---|---|
+| N = 5, Schwelle 0 % | 932 | +8,45 bp | 0,53× |
+| N = 5, Schwelle 1 % | 633 | +13,29 bp | 0,83× |
+| N = 3, Schwelle 0 % | 5.255 | +2,96 bp | 0,19× |
+
+Kein Wert erreicht die Kostenschwelle. Aber der entscheidende Test ist die
+**Kontrollgruppe**: Der Kurs kehrt ständig zu irgendwelchen Levels zurück.
+
+| Horizont | Order Block | **beliebige Kerze** | Differenz | p |
+|---|---|---|---|---|
+| 6 h | +8,45 bp | −0,38 bp | +8,83 bp | 0,193 |
+| 24 h | +8,43 bp | +0,38 bp | +8,05 bp | 0,536 |
+| 72 h | +8,72 bp | **+16,78 bp** | −8,05 bp | 0,720 |
+| 168 h | +2,36 bp | **+27,57 bp** | −25,22 bp | 0,478 |
+
+**Auf längeren Horizonten schneidet eine zufällig gewählte Kerze besser ab als
+der Order Block.** Kein Horizont zeigt einen signifikanten Vorsprung.
+
+Die gemessene „Reaktion" ist also kein Order-Block-Effekt, sondern das, was
+jedes Level liefert, zu dem der Kurs zurückkehrt — allgemeiner Aufwärtsdrift
+plus ein Auswahleffekt: Wer wartet, bis der Kurs ein Level erreicht, wählt
+damit implizit Phasen aus, in denen sich der Kurs bewegt hat.
+
+### Gegen die Challenge-Regeln
+
+| Variante | Median-Rendite | Drawdown | Pass-Rate |
+|---|---|---|---|
+| Schwelle 0 %, 6 h halten | −10,4 % | 13,4 % | 0,3 % |
+| Schwelle 1 %, 24 h halten | −6,3 % | 15,8 % | 1,7 % |
+| Schwelle 1 %, 72 h halten | −3,4 % | 16,8 % | 0,0 % |
+
+Alle Varianten verlieren Geld. Die 8–13 bp Reaktion liegen unter den 16 bp
+Handelskosten — man zahlt mehr für den Einstieg, als die Bewegung hergibt.
+
+**Der Bollinger-Teil des Indikators** ist bereits im Hauptlauf enthalten
+(`bollinger_reversion`): beste Pass-Rate **0 %** über alle Timeframes.
