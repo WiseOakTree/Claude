@@ -39,6 +39,13 @@ des 90-Tage-Fensters erreicht ist. Tatsaechlich ist eine Challenge bestanden,
 Die *Rangfolge* der Ansaetze bleibt, die absoluten Zahlen in den aelteren
 Dokumenten sind zu pessimistisch. Details: [`prop_rules.md`](docs/prop_rules.md).
 
+**Zweite Korrektur:** Die 90-Tage-Fenster waren ebenfalls eine Modellannahme —
+**Kraken Prop hat keine begrenzte Laufzeit.** Ohne Frist ist die richtige Frage
+ein Erstpassage-Problem, und ueber **95 % aller Fehlschlaege kommen vom
+3-%-Tagesverlustlimit, nicht vom Drawdown**. Daraus folgt: kleiner handeln,
+laenger brauchen. Bestes belastbares Ergebnis: **~40-50 %** mit halber
+Positionsgroesse. Details: [`no_time_limit.md`](docs/no_time_limit.md).
+
 ---
 
 ## Die Untersuchung im Ueberblick
@@ -60,6 +67,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 11 | Order Blocks (Smart Money) | Reaktion **nicht** OB-spezifisch — Zufallskerze gleich gut | [`altdata_test.md`](docs/altdata_test.md) |
 | 12 | **S/R-Ausbruch nach Beruehrungszahl** | **erster Chartmuster-Befund, der standhaelt** — alle vier Kontrollen bestanden | [`sr_breakout.md`](docs/sr_breakout.md) |
 | 13 | Welches Regelwerk passt? | Tagesverlust-Limit ist der groesste Hebel, Drawdown-Limit **wirkungslos** | [`prop_rules.md`](docs/prop_rules.md) |
+| 14 | **Ohne Zeitlimit gerechnet** | **95 % der Fehlschlaege kommen vom Tageslimit** — halbe Groesse gibt ~40-50 % | [`no_time_limit.md`](docs/no_time_limit.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
