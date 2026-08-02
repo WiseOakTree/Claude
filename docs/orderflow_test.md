@@ -82,6 +82,63 @@ von 5 min auf 4 h). Bei ausreichend langem Horizont könnte er die Schwelle
 **Das Liquiditätsniveau selbst** (wie viel Tiefe insgesamt im Buch liegt) hat
 keine Vorhersagekraft (p > 0,05 auf allen Horizonten).
 
+### Nachtrag: der lange Horizont, auf 1.265 Tagen nachgeprüft
+
+Der offene Faden war die monoton mit dem Horizont wachsende Effektgröße. Auf
+den ersten 303 Tagen sah das so aus:
+
+| Horizont | Q5−Q1 | vs. 16 bp | p korrigiert |
+|---|---|---|---|
+| 4 h | +6,2 bp | 0,39× | **0,026** |
+| 1 T | +16,7 bp | 1,04× | 0,446 |
+| **3 T** | **+110,6 bp** | **6,92×** | 0,266 |
+
+Die +110 bp bei 3 Tagen wären das Vierfache dessen gewesen, was die Challenge
+braucht. Kontrollen sprachen dafür: 3,7× stärker als reine
+Preis-Mean-Reversion, nach Herausrechnen der Vergangenheitsrendite blieben
+108 von 109 bp übrig, und der Effekt war in allen drei Preisregimen da
+(+88 / +136 / +68 bp). Es fehlte nur die Signifikanz — 303 Tage geben bei
+3-Tage-Horizont nur 100 unabhängige Fenster.
+
+**Deshalb 973 weitere Tage geladen (2023-01 bis 2025-08), n_eff von 100 auf
+421 vervierfacht. Der Befund verschwindet:**
+
+| Zeitraum | imb3 | imb5 |
+|---|---|---|
+| 2025-09 .. 2026-06 (Erstbefund) | +110,6 bp | +104,0 bp |
+| **2023-01 .. 2025-08 (neu)** | **−33,4 bp** | **−9,7 bp** |
+| gesamt (1.265 Tage) | +17,8 bp (p = 0,57) | +42,9 bp (p = 0,33) |
+
+Auf den 973 zuvor ungetesteten Tagen ist der Effekt **nicht vorhanden und
+teilweise umgekehrt**. Die +110 bp waren ein Artefakt des Zehnmonatsfensters,
+in dem der Datensatz zufällig begann. Kein Horizont über 4 Stunden übersteht
+Signifikanz und Kostenschwelle gemeinsam.
+
+### Was bleibt: ein sehr stabiles, sehr kleines 4-Stunden-Signal
+
+| Jahr | IC | Q5−Q1 |
+|---|---|---|
+| 2023 | +0,063 | −5,9 bp |
+| 2024 | +0,057 | +8,7 bp |
+| 2025 | +0,037 | +9,3 bp |
+| 2026 | +0,056 | +5,1 bp |
+| **gesamt** | **+0,054** | **+5,0 bp** (p = 3·10⁻⁶) |
+
+Der IC ist über vier Jahre bemerkenswert konstant — und die Schätzung aus den
+ersten 303 Tagen (+5,04 bp) trifft die aus 1.265 Tagen (+5,0 bp) auf ein
+Zehntel Basispunkt genau. Das Signal ist echt und gut vermessen.
+
+Es ist nur **0,31× so groß wie die Kosten**. Und die Vorzeichen der
+Quintil-Spreads wechseln über die Jahre (2023 negativ), was selbst die
+Richtung des handelbaren Teils fragwürdig macht.
+
+**Der Faden ist damit geschlossen.** Die Lehre ist methodisch: Ein Effekt, der
+mit dem Horizont wächst, kann genau deshalb wachsen, weil die Zahl
+unabhängiger Beobachtungen schrumpft. Die Kontrollen (Preisbereinigung,
+Doppelsortierung, Regime-Konsistenz) waren alle bestanden — sie prüfen
+Konfundierung, nicht Zufall. Gegen Zufall hilft nur mehr Zeit, und die hat den
+Befund kassiert.
+
 ## 3. Ausbruch mit Volumenbestätigung und MACD
 
 Beide Familien fehlten im ursprünglichen 120er-Suchlauf
