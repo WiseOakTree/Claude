@@ -154,6 +154,82 @@ def test_bounce_needs_prior_bar_outside_zone():
     assert len(in_range) <= 2, f"zu viele Signale in der Seitwaertsphase: {len(in_range)}"
 
 
+def test_defaults_reproduce_original_behaviour(df):
+    """Die neuen Parameter duerfen die Vorgabe nicht veraendern.
+
+    Das ist die Rueckfallsicherung: Ohne ausdrueckliche Angabe muss
+    ``breakout_events`` genau die Logik liefern, mit der +42,88 bp gemessen
+    wurden.
+    """
+    by = levels.build_levels(df)
+    a = levels.breakout_events(by, df, min_touch=4)
+    b = levels.breakout_events(by, df, min_touch=4,
+                               min_pen_atr=0.0, role="fixed", cooldown=0)
+    assert a == b
+
+
+def test_min_penetration_filters_scratches():
+    """Ein Schlusskurs knapp jenseits des Levels zaehlt mit Schwelle nicht mehr."""
+    n = 90
+    highs, lows, closes = _baseline(n)
+    for b in (10, 35):
+        highs[b] = 120.0
+    closes[80] = 120.05        # 5 Cent darueber -- ein Kratzer
+    highs[80] = 121.0
+    d = _frame(highs, lows, closes)
+    by = levels.build_levels(d, width=5, tol_atr=1.0, max_age=1000)
+    assert any(t == 80 for (t, _, _, _) in
+               levels.breakout_events(by, d, min_touch=2))
+    assert not any(t == 80 for (t, _, _, _) in
+                   levels.breakout_events(by, d, min_touch=2, min_pen_atr=0.5))
+
+
+def test_role_position_adds_the_reverse_crossing():
+    """Der Fall aus dem Fehlerbericht.
+
+    Eine Unterstuetzung, unter die der Kurs gefallen ist, wird von unten nach
+    oben zurueckgekreuzt. ``fixed`` schweigt dabei (und meldet erst beim
+    spaeteren Rueckfall einen Short) -- ``position`` meldet sofort long.
+
+    Bewusst ruhiger, monotoner Kursverlauf: Plateaus wuerden dutzende Pivots
+    erzeugen und ein grosses ATR wuerde alle Level zusammenfassen.
+    """
+    n = 110
+    closes = []
+    for i in range(n):
+        if i < 45:
+            closes.append(100 - 0.01 * i)      # ruhig oberhalb des Levels
+        elif i < 70:
+            closes.append(100 - 0.6 * (i - 44))  # gleitet darunter
+        else:
+            closes.append(85 + 0.6 * (i - 70))   # kommt zurueck hoch
+    highs = [c + 0.4 for c in closes]
+    lows = [c - 0.4 for c in closes]
+    lows[10], lows[35] = 90.0, 90.15           # zwei Pivot-Tiefs auf ~90
+    d = _frame(highs, lows, closes)
+    by = levels.build_levels(d, width=5, tol_atr=0.5, max_age=1000)
+
+    cross = next(t for t in range(1, n) if closes[t - 1] <= 90 < closes[t])
+    fixed = levels.breakout_events(by, d, min_touch=2, role="fixed")
+    pos = levels.breakout_events(by, d, min_touch=2, role="position")
+    assert not any(t == cross for (t, _, _, _) in fixed)
+    assert any(t == cross and direction == 1 for (t, direction, _, _) in pos)
+
+
+def test_role_rejects_unknown_value(df):
+    by = levels.build_levels(df)
+    with pytest.raises(ValueError, match="role"):
+        levels.breakout_events(by, df, role="quatsch")
+
+
+def test_cooldown_suppresses_repeat_signals(df):
+    by = levels.build_levels(df)
+    plain = levels.breakout_events(by, df, min_touch=3)
+    cooled = levels.breakout_events(by, df, min_touch=3, cooldown=48)
+    assert len(cooled) < len(plain)
+    assert set(t for (t, _, _, _) in cooled) <= set(t for (t, _, _, _) in plain)
+
+
 def test_more_touches_is_subset():
     """Ereignisse mit hoher Schwelle sind eine Teilmenge der niedrigen."""
     d = data.generate_realistic(bars=900, seed=3)

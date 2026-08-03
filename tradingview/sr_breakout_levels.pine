@@ -20,6 +20,22 @@
 //    * 48 Stunden halten, dann raus — KEIN Stop, KEIN Take-Profit
 //    * Positionsgroesse: 50 % des Kontos als Nominalwert (nicht mehr!)
 //
+//  FARBEN — WICHTIG, das ist die haeufigste Verwechslung:
+//  Die Linien sind nach dem SIGNAL eingefaerbt, nicht nach der klassischen
+//  Chartkonvention.
+//
+//    ▲ GRUEN = Widerstand. Bricht der Kurs nach OBEN durch -> LONG.
+//    ▼ ROT   = Unterstuetzung. Faellt der Kurs darunter -> SHORT.
+//
+//  Klassisch waere Unterstuetzung gruen. Hier nicht: Eine Unterstuetzung ist
+//  in dieser Strategie ein SHORT-Ausloeser, also rot. Wer das verwechselt,
+//  kauft den Aufwaertsbruch eines "gruenen" Levels und wundert sich, dass der
+//  Indikator kurz darauf Short meldet.
+//
+//  ⏸ hinter der Beruehrungszahl heisst: Der Kurs steht auf der falschen Seite,
+//  dieses Level kann gerade gar nicht ausloesen. Gestrichelte, blasse Linien
+//  sind ebenfalls nicht scharf.
+//
 //  WARUM SO KLEIN: Ohne Zeitlimit kommen ueber 95 % aller Fehlschlaege vom
 //  3-%-Tagesverlustlimit, nicht vom Drawdown. Bei halber Groesse faellt die
 //  Haeufigkeit von -3-%-Tagen von 2,00 % auf 0,36 %. Groesser handeln senkt
@@ -233,21 +249,53 @@ if barstate.islast and showLvl
             float pd = array.get(lvlPx, id)
             int   kd = array.get(lvlKind, id)
             bool strong = td >= minTouch
-            color cc = kd == 1 ? cDn : cUp
+            // Farbe nach dem SIGNAL, nicht nach der klassischen Konvention:
+            // Widerstandsbruch nach oben = LONG (gruen)
+            // Unterstuetzungsbruch nach unten = SHORT (rot)
+            // Genau diese Umkehr hat frueher fuer Verwirrung gesorgt -- ein
+            // "gruenes" Unterstuetzungslevel ist in dieser Strategie ein
+            // Short-Ausloeser.
+            color cc = kd == 1 ? cUp : cDn
+            string arrow = kd == 1 ? "▲" : "▼"
+            // "scharf": Der Kurs steht auf der Seite, von der aus das Level
+            // ueberhaupt ausloesen kann. Sonst passiert dort nichts.
+            bool armed = kd == 1 ? close < pd : close > pd
+            int transp = strong ? (armed ? 0 : 55) : 75
             array.push(drawn, line.new(bar_index - math.min(bar_index, maxAge), pd,
                        bar_index + 10, pd,
-                       color = color.new(cc, strong ? 0 : 70),
-                       width = strong ? 2 : 1,
-                       style = strong ? line.style_solid : line.style_dotted))
-            array.push(tags, label.new(bar_index + 12, pd, str.tostring(td) + "×",
+                       color = color.new(cc, transp),
+                       width = strong and armed ? 2 : 1,
+                       style = strong and armed ? line.style_solid : line.style_dotted))
+            array.push(tags, label.new(bar_index + 12, pd,
+                       arrow + " " + str.tostring(td) + "×" + (armed ? "" : " ⏸"),
                        style = label.style_label_left, size = size.tiny,
-                       color = color.new(cc, strong ? 10 : 75),
+                       color = color.new(cc, strong ? (armed ? 10 : 60) : 75),
                        textcolor = color.white))
         id += 1
 
 // ------------------------------------------------------------------- Tabelle
+// Naechster scharfer Ausloeser: das nahegelegenste starke Level, von dem aus
+// der Kurs ueberhaupt ausloesen kann.
+float nextPx  = na
+int   nextDir = 0
+int   nextTch = 0
+if barstate.islast
+    float bestDist = 1e12
+    int it = 0
+    while it < array.size(lvlPx)
+        int   tt = array.get(lvlTouch, it)
+        float pp = array.get(lvlPx, it)
+        int   kk = array.get(lvlKind, it)
+        bool  ar = kk == 1 ? close < pp : close > pp
+        if tt >= minTouch and ar and math.abs(pp - close) < bestDist
+            bestDist := math.abs(pp - close)
+            nextPx   := pp
+            nextDir  := kk
+            nextTch  := tt
+        it += 1
+
 if showTable and barstate.islast
-    var table t = table.new(position.top_right, 2, 8, border_width = 1)
+    var table t = table.new(position.top_right, 2, 10, border_width = 1)
     bg  = color.new(#1E222D, 10)
     sec = color.new(#2A2E39, 10)
 
@@ -288,8 +336,19 @@ if showTable and barstate.islast
     table.cell(t, 1, 6, str.tostring(strongCnt) + " stark / " + str.tostring(array.size(lvlPx)) + " gesamt",
                text_color = color.white, bgcolor = sec, text_size = size.small)
 
-    table.cell(t, 0, 7, "Regel", text_color = color.gray, bgcolor = bg, text_size = size.small)
-    table.cell(t, 1, 7, "kein SL · kein TP · nach " + str.tostring(holdBars) + "h raus",
+    table.cell(t, 0, 7, "Nächster Trigger", text_color = color.gray, bgcolor = bg, text_size = size.small)
+    table.cell(t, 1, 7, na(nextPx) ? "—" :
+               (nextDir == 1 ? "▲ LONG über " : "▼ SHORT unter ") + f(nextPx)
+               + "  (" + str.tostring(nextTch) + "×)",
+               text_color = nextDir == 1 ? cUp : cDn, bgcolor = bg, text_size = size.small)
+
+    table.cell(t, 0, 8, "Abstand dorthin", text_color = color.gray, bgcolor = sec, text_size = size.small)
+    table.cell(t, 1, 8, na(nextPx) ? "—" :
+               str.tostring(math.abs(nextPx - close) / close * 100, "#.##") + " %",
+               text_color = color.white, bgcolor = sec, text_size = size.small)
+
+    table.cell(t, 0, 9, "Regel", text_color = color.gray, bgcolor = bg, text_size = size.small)
+    table.cell(t, 1, 9, "kein SL · kein TP · nach " + str.tostring(holdBars) + "h raus",
                text_color = color.new(color.yellow, 20), bgcolor = bg, text_size = size.small)
 
 // -------------------------------------------------------------------- Alarme

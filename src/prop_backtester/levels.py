@@ -118,23 +118,67 @@ def build_levels(df: pd.DataFrame, width: int = 8, tol_atr: float = 0.5,
     return by_bar
 
 
-def breakout_events(by_bar, df: pd.DataFrame, min_touch: int = 6
+def breakout_events(by_bar, df: pd.DataFrame, min_touch: int = 6,
+                    min_pen_atr: float = 0.0, role: str = "fixed",
+                    cooldown: int = 0, atr_period: int = 14
                     ) -> List[Tuple[int, int, int, float]]:
     """Schlusskurs durchbricht ein Level mit genug Beruehrungen.
 
     Rueckgabe: ``[(bar, richtung, beruehrungen, levelpreis), ...]``
-    Richtung +1 = Widerstand nach oben gebrochen, -1 = Unterstuetzung nach unten.
+
+    ``role`` steuert, welche Kreuzungen ueberhaupt zaehlen:
+
+    ``"fixed"`` (Vorgabe, das urspruenglich getestete Verhalten)
+        Nur zwei der vier moeglichen Kreuzungen: Widerstand nach oben (long),
+        Unterstuetzung nach unten (short). Die Art des Levels steht bei seiner
+        Entstehung fest und aendert sich nie.
+
+    ``"position"``
+        Richtung = Kreuzungsrichtung, die Art des Levels ist egal. Grund: Ein
+        aus Pivot-TIEFS entstandenes Level, unter dem der Kurs seit Tagen
+        liegt, wirkt faktisch als Widerstand -- sein Bruch nach oben ist ein
+        Long-Signal. Unter ``"fixed"`` blieb diese Kreuzung stumm, und erst
+        der spaetere Rueckfall loeste einen Short aus. Das betraf 23,4 % aller
+        Short-Signale.
+
+    ``min_pen_atr`` verlangt eine Mindest-Durchdringung: ``|close - level|``
+    muss mindestens ``min_pen_atr * ATR`` betragen. Ohne das zaehlt schon ein
+    Schlusskurs 5 Dollar jenseits des Levels als Bruch (19,6 % aller Signale
+    dringen weniger als 0,1 x ATR durch).
+
+    ``cooldown`` sperrt ein Level nach einem Bruch fuer N Bars, damit ein um
+    das Level pendelnder Kurs keine Signalketten erzeugt.
     """
+    if role not in ("fixed", "position"):
+        raise ValueError(f"role muss 'fixed' oder 'position' sein, nicht {role!r}")
     c = df["close"].to_numpy(dtype=float)
+    atr = (wilder_atr(df, atr_period).to_numpy(dtype=float)
+           if min_pen_atr > 0 else None)
+    last_fire: Dict[Tuple[int, int], int] = {}   # (gerundeter Preis, Art) -> Bar
     out = []
     for t in range(1, len(df)):
         for (price, kind, touches, _) in by_bar.get(t - 1, ()):
             if touches < min_touch:
                 continue
-            if kind == RESISTANCE and c[t - 1] <= price < c[t]:
-                out.append((t, 1, touches, price))
-            elif kind == SUPPORT and c[t - 1] >= price > c[t]:
-                out.append((t, -1, touches, price))
+            up = c[t - 1] <= price < c[t]
+            down = c[t - 1] >= price > c[t]
+            if role == "fixed":
+                direction = 1 if (up and kind == RESISTANCE) else (
+                    -1 if (down and kind == SUPPORT) else 0)
+            else:
+                direction = 1 if up else (-1 if down else 0)
+            if direction == 0:
+                continue
+            if atr is not None:
+                a = atr[t]
+                if not np.isfinite(a) or abs(c[t] - price) < min_pen_atr * a:
+                    continue
+            if cooldown > 0:
+                key = (int(round(price)), kind)
+                if t - last_fire.get(key, -10 ** 9) < cooldown:
+                    continue
+                last_fire[key] = t
+            out.append((t, direction, touches, price))
     return out
 
 
