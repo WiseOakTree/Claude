@@ -68,6 +68,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 12 | **S/R-Ausbruch nach Beruehrungszahl** | **erster Chartmuster-Befund, der standhaelt** — alle vier Kontrollen bestanden | [`sr_breakout.md`](docs/sr_breakout.md) |
 | 13 | Welches Regelwerk passt? | Tagesverlust-Limit ist der groesste Hebel, Drawdown-Limit **wirkungslos** | [`prop_rules.md`](docs/prop_rules.md) |
 | 14 | **Ohne Zeitlimit gerechnet** | **95 % der Fehlschlaege kommen vom Tageslimit** — halbe Groesse gibt ~40-50 % | [`no_time_limit.md`](docs/no_time_limit.md) |
+| 15 | **S/R-Bounce, Parametersuche, Liquiditaet** | Bounce **widerlegt** (Holdout p=0,002); Ausbruch **out-of-sample bestaetigt** (+66,8 bp) | [`sr_bounce.md`](docs/sr_bounce.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
