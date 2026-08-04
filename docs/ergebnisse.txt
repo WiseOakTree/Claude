@@ -81,6 +81,28 @@
   Kein Zeitlimit bei Kraken — Ungeduld ist der teuerste Fehler.
 
 ═══════════════════════════════════════════════════════════
+  DIE SPIELREGEL, DIE DIR GEHOERT: DIE ANZAHL DER VERSUCHE
+═══════════════════════════════════════════════════════════
+
+  Kraken hat kein Zeitlimit, ein Versuch kostet 85 $.
+  Damit ist die Challenge ein Wiederholungsspiel.
+
+  Versuche   BTC      ETH      SOL      XRP    Ø Einsatz
+  ---------------------------------------------------------
+     1      50,9%    27,5%    20,6%    23,2%      85 $
+     2      63,0%    54,4%    32,7%    35,4%     114 $
+     3      78,7%    88,9%    41,7%    51,8%     132 $
+
+  ~168 $ je gefundetem Konto (BTC).
+
+  ABER: Fehlschlaege clustern.
+  P(2. Versuch besteht | 1. gescheitert) = 35,9 % statt 60,1 %.
+  Die naive Formel 1-(1-p)^n ist zu optimistisch.
+
+  Gut fuer dich: Fehlschlaege sind SCHNELLER als Erfolge
+  (BTC 107 vs 133 Tage) -- das Tageslimit greift frueh oder gar nicht.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
