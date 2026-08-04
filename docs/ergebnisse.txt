@@ -33,16 +33,17 @@
 [x] Diversifikation ueber 12 Coins  Korrelation 0,68 — bringt nichts
 [x] Signal-Kombination (Ensemble)   verwaessert, 22% -> 2%
 [x] Timeframe 2h / 4h / 8h          brechen out-of-sample ein
-[x] Session-Filter (Asien/US)       nur suggestiv, kein Holdout
 [x] Smart DCA                       11% Pass-Rate
 
-── FILTER AUF DAS SIGNAL (alle sechs durchgefallen) ─────
+── FILTER AUF DAS SIGNAL (alle acht durchgefallen) ──────
 [x] Mindest-Durchbruch (x ATR)      schlechter auf jeder Stufe
 [x] Rollenlogik nach Kurslage       -65% Effekt
 [x] Cooldown nach Bruch             Pass-Rate faellt
 [x] XGBoost-Filter                  in-sample 1,1 SD, OOS zerfaellt
 [x] Heikin-Ashi-Richtungsfilter     inkonsistent
+[x] Session-Filter (Asien/US)       nur suggestiv, kein Holdout
 [x] Tagesbremse (-2,5% Stopp)       BTC-Holdout: +/-0,0 pp
+[x] Wochenendfilter (Fr22-So22)     Praemisse stimmt, Holdout = Muenzwurf
 [x] Stop-Loss                       bessere Erwartung, schlechtere Pass-Rate
 
 ── MACHINE LEARNING ─────────────────────────────────────

@@ -75,6 +75,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 19 | Tageszeit / Sessions | Bewegung liegt in der **US-Session** (+14 %), nicht in Asien (-7 %); US einzige Session mit 4/4 positivem Effekt, als Filter aber nur suggestiv | [`sessions.md`](docs/sessions.md) |
 | 20 | **Cross-Sectional Relative Strength (14 Coins)** | echtes Brutto-Alpha (+82 % p.a.), von Reibung gefressen; Holdout **-20,3 %**; Rendite/DD 0,67 statt 1,67 | [`cross_sectional.md`](docs/cross_sectional.md) |
 | 21 | **Open-Interest-Squeeze** | Vorgeschlagene Kombination feuert **0-mal in 3,2 Jahren**; OI allein auf BTC +111 bp, aber **0 von 24 Zellen** im Holdout | [`oi_squeeze.md`](docs/oi_squeeze.md) |
+| 22 | **Wochenend-Saisonalitaet als Filter** | Praemisse **bestaetigt** (Volumen 0,60-0,69x); im Suchzeitraum +6,9 pp ueber Zufallsfilter (Perzentil 77 %), im **Holdout Muenzwurf** (Perzentil 53 %) — **achter** gescheiterter Filter | [`weekend.md`](docs/weekend.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
