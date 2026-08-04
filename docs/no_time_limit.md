@@ -99,3 +99,63 @@ Praktisch: **etwa die Hälfte der Positionsgröße handeln, die eine
   besserer Bestand — und bei kleiner Positionsgröße dauert auch das Verdienen
   entsprechend lange.
 - Alles gemessen auf BTC 1h über 4,5 Jahre, mit 16 bp Kosten je Roundtrip.
+
+---
+
+## Nachtrag: selbst gesetzte Tagesbremse — Mechanismus echt, Nutzen nicht
+
+Da über 95 % der Fehlschläge vom 3-%-Tagesverlustlimit kommen, liegt eine
+Regel nahe, die nichts prognostiziert: **Bei X % Tagesverlust flach stellen
+und den Rest des Tages pausieren.** Geprüft auf allen vier Assets.
+
+### In-sample sieht es gut aus
+
+BTC-Suchzeitraum, S/R-Ausbruch, 0,5×:
+
+| Bremse | Pass-Rate |
+|---|---|
+| keine | 49,3 % |
+| **−2,50 %** | **60,4 %** |
+| −2,00 % | 60,1 % |
+| −1,50 % | 57,0 % |
+| −1,00 % | 54,3 % |
+
+Über alle vier Assets gemittelt verbessert **jede** Bremsenhöhe das Ergebnis
+(29,6 % ohne, 32,7–36,8 % mit).
+
+### Out-of-sample nicht
+
+Höhe auf dem BTC-Suchzeitraum gewählt (2,50 %), unverändert angewandt:
+
+| Datensatz | ohne | mit Bremse | Änderung |
+|---|---|---|---|
+| **BTC-Holdout** | 56,5 % | 56,5 % | **±0,0 pp** |
+| ETH (ungesehen) | 26,7 % | 40,8 % | +14,1 pp |
+| SOL (ungesehen) | 20,0 % | 18,1 % | −1,9 pp |
+| XRP (ungesehen) | 22,5 % | 20,2 % | −2,3 pp |
+
+Der positive Mittelwert (+2,5 pp) kommt **allein von ETH**. Auf dem
+BTC-Holdout ist der Effekt exakt null, auf SOL und XRP leicht negativ. Das
+Muster hält über alle geprüften Bremsenhöhen.
+
+**Damit ist der sechste Filter dieser Untersuchung out-of-sample gescheitert**
+(nach Mindest-Durchbruch, Rollenlogik, XGBoost, Heikin-Ashi-Richtung und
+Session-Filter).
+
+### Was trotzdem bleibt: der Mechanismus ist nachweisbar
+
+| Asset | Tage mit −3 % ohne Bremse | mit 2 % Bremse |
+|---|---|---|
+| BTC | 0,36 % | **0,05 %** |
+| ETH | 0,56 % | 0,31 % |
+| SOL | 2,02 % | 1,06 % |
+| XRP | 1,62 % | 0,86 % |
+
+Die Bremse tut messbar, was sie soll: Sie halbiert bis verzehnfacht den
+Abstand zum harten Limit. Sie erhöht nur nicht die **Pass-Rate**, weil sie
+ebenso Erholungstage abschneidet.
+
+**Das sind zwei verschiedene Ziele.** Wer eine Challenge bereits bezahlt hat
+und den Versuch nicht vorzeitig verlieren will, bekommt von der Bremse genau
+das — nur eben nicht mehr Bestehenswahrscheinlichkeit. Der Preis ist eine
+längere Dauer (BTC 113 → 123 Tage).
