@@ -103,6 +103,38 @@
   (BTC 107 vs 133 Tage) -- das Tageslimit greift frueh oder gar nicht.
 
 ═══════════════════════════════════════════════════════════
+  DIE FORMEL, DIE ALLES ERKLAERT
+═══════════════════════════════════════════════════════════
+
+  REINER ZUFALL, richtig dimensioniert, besteht mit
+
+        P = Drawdown / (Drawdown + Ziel)
+
+  Kraken: 6/(6+10) = 37,5 %.  Gemessen: 36,7 % bei 15 % Jahresvol.
+  Null Koennen. Null Indikator. Nur die richtige Groesse.
+
+  Regelwerk                      Zufall besteht
+  ------------------------------------------------
+  Kraken Starter 10/6/3               36,6 %
+  6 % Ziel / 6 % DD                   49,8 %
+  6 % Ziel / 10 % DD / 5 %            61,4 %
+
+  -> Eine Challenge sucht man nach DEM VERHAELTNIS,
+     nicht nach "grosszuegigem Drawdown".
+
+  ABER: Zufall GEHANDELT (16 bp, Frequenz wie S/R) = 13,9 %.
+  Das Handeln selbst kostet 23 Prozentpunkte.
+  Wer keinen Edge hat, darf nicht traden.
+
+  BTC halten 0,25x: Suchzeitraum 60,6 %, Holdout 9,5 %.
+  Halten ist keine Strategie, sondern eine Richtungswette.
+  Drift +10 % p.a. -> 54,9 % | -10 % -> 21,6 %.
+
+  EHRLICHE BILANZ: 35 Ansaetze, 8 Filter, XGBoost
+  ergeben rund 12 Prozentpunkte ueber einem korrekt
+  dimensionierten Muenzwurf (36,7 % -> 49 %).
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 

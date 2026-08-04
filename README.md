@@ -77,6 +77,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 21 | **Open-Interest-Squeeze** | Vorgeschlagene Kombination feuert **0-mal in 3,2 Jahren**; OI allein auf BTC +111 bp, aber **0 von 24 Zellen** im Holdout | [`oi_squeeze.md`](docs/oi_squeeze.md) |
 | 22 | **Wochenend-Saisonalitaet als Filter** | Praemisse **bestaetigt** (Volumen 0,60-0,69x); im Suchzeitraum +6,9 pp ueber Zufallsfilter (Perzentil 77 %), im **Holdout Muenzwurf** (Perzentil 53 %) — **achter** gescheiterter Filter | [`weekend.md`](docs/weekend.md) |
 | 23 | **Die Spielregeln aendern statt die Strategie** | **Mehrfachantritt ist der groesste Hebel ueberhaupt**: 50,9 % → 63,0 % (2 Versuche) → 78,7 % (3) fuer ~132 $ Gesamteinsatz. Aber Fehlschlaege clustern: P(2. besteht \| 1. fiel) = 35,9 % statt 60,1 % | [`spielregeln.md`](docs/spielregeln.md) |
+| 24 | **Reiner Zufall und die Regelwerk-Formel** | **P(bestehen) = DD/(DD+Ziel)** — Kraken 37,5 %, gemessen 36,7 % **ohne jedes Koennen**. Zufall *gehandelt*: 13,9 %. BTC halten 0,25x: Suchzeitraum 60,6 %, Holdout **9,5 %** (reine Richtungswette). Gesamtertrag des Projekts: **~12 pp ueber einem korrekt dimensionierten Muenzwurf** | [`zufall.md`](docs/zufall.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
