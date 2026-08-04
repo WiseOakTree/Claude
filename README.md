@@ -70,6 +70,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 14 | **Ohne Zeitlimit gerechnet** | **95 % der Fehlschlaege kommen vom Tageslimit** — halbe Groesse gibt ~40-50 % | [`no_time_limit.md`](docs/no_time_limit.md) |
 | 15 | **S/R-Bounce, Parametersuche, Liquiditaet** | Bounce **widerlegt** (Holdout p=0,002); Ausbruch **out-of-sample bestaetigt** (+66,8 bp) | [`sr_bounce.md`](docs/sr_bounce.md) |
 | 16 | **XGBoost als Signalfilter** | in-sample +1,1 SD ueber Zufall, out-of-sample **zerfaellt** (-21 bis +39 bp) | [`xgboost_filter.md`](docs/xgboost_filter.md) |
+| 17 | Timeframe-Vergleich (1h/2h/4h/8h) | **1h bleibt** — 4h/8h brechen im Holdout ein oder sind auf ETH am schlechtesten | [`sr_bounce.md`](docs/sr_bounce.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben

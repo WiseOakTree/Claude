@@ -255,3 +255,43 @@ liefert ETH nur 19,5 % statt 48,3 %.
 Das ist die ehrliche Einordnung des Gesamtbefunds: Der Mechanismus ist
 wahrscheinlich real, aber ein Teil der BTC-Zahlen dürfte assetspezifisch oder
 Glück sein. Wer die Regel handelt, sollte mit dem unteren Rand rechnen.
+
+---
+
+## Nachtrag 3: Welcher Timeframe? — 1h bleibt
+
+Frage aus der Praxis: Wäre der 4-Stunden-Chart besser?
+
+**Erster Versuch war unfair.** Hält man die Parameter in *Bars* konstant, ist
+Pivot-Weite 8 auf 1h acht Stunden, auf 4h aber zweiunddreißig — man vergleicht
+verschiedene Marktstrukturen. Auf 4h blieben so nur 45 Ereignisse (gegen 474)
+und die Pass-Rate fiel auf 0,4 %.
+
+Fair ist der Vergleich mit **wanduhr-gleichen** Parametern: Weite und
+Level-Alter werden auf gröberen Bars entsprechend heruntergerechnet.
+
+| Variante | Weite | Alter | Suchzeitraum | **BTC-Holdout** | **ETH** |
+|---|---|---|---|---|---|
+| **1h** | 8 | 1000 | +37,9 bp · **49,3 %** | **+66,8 bp** (p=0,002) · **56,5 %** | +33,5 bp · **26,7 %** |
+| 2h | 4 | 500 | +35,6 bp · 45,0 % | +7,1 bp (p=0,65) · 1,8 % | +15,0 bp · 28,8 % |
+| 4h | 2 | 250 | +16,4 bp · 45,0 % | +31,9 bp (p=0,05) · 1,5 % | +23,8 bp · 32,5 % |
+| 4h (Weite 4) | 4 | 250 | +42,5 bp · 19,2 % | **+74,0 bp** (p=0,004) · 35,0 % | +37,4 bp · **5,9 %** |
+| 8h | 2 | 125 | +39,6 bp · 17,2 % | +11,3 bp (p=0,67) · 0,0 % | +25,4 bp · 23,9 % |
+
+*(Pass-Raten bei halber Positionsgröße, konservative Untergrenze.)*
+
+**1h ist die einzige Variante, die überall trägt** — stark im Suchzeitraum,
+stark im Holdout, und die beste auf ETH.
+
+Die 4h-Variante mit Weite 4 sieht im Holdout mit +74,0 bp (p = 0,004)
+verlockend aus, war im Suchzeitraum aber nur mittelmäßig (p = 0,186) und
+liefert auf ETH die **schlechteste** Pass-Rate der ganzen Tabelle (5,9 %). 2h
+und 8h brechen im Holdout vollständig ein. Diese Sprunghaftigkeit zwischen den
+Zeiträumen ist das Erkennungszeichen von Rauschen.
+
+**Einschränkung, die ich deutlich machen muss:** Der BTC-Holdout wurde
+inzwischen viermal benutzt. Sein Schutzwert ist weitgehend aufgebraucht — jede
+weitere Zahl von dort ist nur noch schwach belastbar. **ETH ist ab jetzt der
+verlässlichere Maßstab**, und dort liegt 1h mit 26,7 % vorn.
+
+Praktische Folge: **beim 1-Stunden-Chart bleiben.**
