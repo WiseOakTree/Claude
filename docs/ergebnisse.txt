@@ -1,0 +1,93 @@
+═══════════════════════════════════════════════════════════
+  WAS GETESTET WURDE — UND WAS DURCHGEFALLEN IST
+  BTC/ETH/SOL/XRP, 1h, 2021-2026, 16 bp Kosten je Roundtrip
+═══════════════════════════════════════════════════════════
+
+── KLASSISCHE CHARTTECHNIK ──────────────────────────────
+[x] Renko-Reversal (Ausgangspunkt)  Look-ahead-Bug: 93% -> 7%
+[x] Donchian-Ausbruch               Median-Rendite 0,00%
+[x] EMA-Kreuzung                    beste Pass-Rate 20%
+[x] Momentum                        Median -2,5%
+[x] Bollinger-Reversion             Pass-Rate 0%
+[x] Golden Cross SMA 50/200         Pass-Rate 0,0%, 10 Trades in 4,5 J.
+[x] MACD                            Pass-Rate 7,2%, Median -2,85%
+[x] Volumen-Bestaetigung            bessere Trades, schlechtere Pass-Rate
+[x] Order Blocks (Smart Money)      Zufallskerze genauso gut
+[x] S/R-Bounce (an Support kaufen)  systematisch NEGATIV, -16 bp
+[x] Wochen-Swing                    1 Trade je Fenster, Median 0,0%
+[x] Heikin Ashi                     nichts; Falle: HA-Preise sind nicht handelbar
+
+── ALTERNATIVE DATEN ────────────────────────────────────
+[x] Orderbuch-Imbalance             1-5 bp gegen 16 bp Kosten
+[x] Orderbuchtiefe (9,2 Mio Snaps)  5 bp = 0,31x Kostenschwelle
+[x] Orderflow (Taker-Volumen)       0,3 bp — statistisch massiv, unhandelbar
+[x] ETF-Fluesse (Coinbase-Premium)  IC 0,10, out-of-sample instabil
+[x] Liquidations-Kaskaden           kein messbarer Effekt
+[x] Tech-Kopplung (NVIDIA/QQQ)      gleichzeitig, nicht vorlaufend
+[x] On-Chain MVRV                   wirkt UMGEKEHRT zur Lehrmeinung
+[x] On-Chain Puell / Hash Ribbons   nichts
+[x] On-Chain NVT / Adressen         nichts
+[x] Funding-Raten                   IC ~0
+
+── PORTFOLIO & TIMING ───────────────────────────────────
+[x] Diversifikation ueber 12 Coins  Korrelation 0,68 — bringt nichts
+[x] Signal-Kombination (Ensemble)   verwaessert, 22% -> 2%
+[x] Timeframe 2h / 4h / 8h          brechen out-of-sample ein
+[x] Session-Filter (Asien/US)       nur suggestiv, kein Holdout
+[x] Smart DCA                       11% Pass-Rate
+
+── FILTER AUF DAS SIGNAL (alle sechs durchgefallen) ─────
+[x] Mindest-Durchbruch (x ATR)      schlechter auf jeder Stufe
+[x] Rollenlogik nach Kurslage       -65% Effekt
+[x] Cooldown nach Bruch             Pass-Rate faellt
+[x] XGBoost-Filter                  in-sample 1,1 SD, OOS zerfaellt
+[x] Heikin-Ashi-Richtungsfilter     inkonsistent
+[x] Tagesbremse (-2,5% Stopp)       BTC-Holdout: +/-0,0 pp
+[x] Stop-Loss                       bessere Erwartung, schlechtere Pass-Rate
+
+── MACHINE LEARNING ─────────────────────────────────────
+[x] Vol-Prognose                    perfektes Orakel = heutiger Stand
+[x] Richtungsprognose               60% Trefferquote noetig fuer Gleichstand
+
+═══════════════════════════════════════════════════════════
+  WAS UEBRIG GEBLIEBEN IST
+═══════════════════════════════════════════════════════════
+
+[+] VOLATILITAETS-RISIKOPRAEMIE
+    Sharpe 1,33 ueber 64 Monate, t=4,12 nach Korrektur.
+    ECHTER EDGE — aber Kraken hat 0 Optionen. Nicht handelbar.
+
+[+] S/R-AUSBRUCH NACH BERUEHRUNGSZAHL
+    BTC +45,7 bp | ETH +33,5 | SOL +18,8 | XRP -11,3
+    Traegt nur auf BTC und ETH. BTC-Zahl ist der OBERE Rand.
+
+[+] POSITIONSGROESSE
+    0,5x statt 1,0x: 39,6% -> 49,4% Pass-Rate.
+    Reine Arithmetik, keine Prognose noetig. Der zuverlaessigste Hebel.
+
+═══════════════════════════════════════════════════════════
+  DIE REGEL, DIE BLEIBT
+═══════════════════════════════════════════════════════════
+
+  Asset    BTC (bestes von vier)
+  Chart    1 Stunde
+  Signal   Level mit >=6 Beruehrungen, Einstieg beim Bruch
+  Halten   24-48 Stunden, dann raus
+  Stop     KEINER
+  Groesse  5.000 $ Nominal bei 10.000 $ Konto (~0,08 BTC)
+
+  Erwartung: ~49% je Versuch, Median ~119 Tage.
+  Kein Zeitlimit bei Kraken — Ungeduld ist der teuerste Fehler.
+
+═══════════════════════════════════════════════════════════
+  DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
+═══════════════════════════════════════════════════════════
+
+  1. Look-ahead      Fill zu einem Preis vor der Entscheidung   93% -> 7%
+  2. Ueberlappung    naives p=10^-240 -> korrigiert p=0,27
+  3. Multiples Testen  2 von 347 "signifikant" = UNTER Zufall
+  4. Bestes von N    54,7% -> 31,9% out-of-sample
+  5. Falscher Preis  HA-Preise statt echter: Vorzeichen kippt
+
+  Wer diese fuenf nicht kontrolliert, findet garantiert
+  eine funktionierende Strategie.
