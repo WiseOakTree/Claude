@@ -73,6 +73,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 17 | Timeframe-Vergleich (1h/2h/4h/8h) | **1h bleibt** — 4h/8h brechen im Holdout ein oder sind auf ETH am schlechtesten | [`sr_bounce.md`](docs/sr_bounce.md) |
 | 18 | **Heikin Ashi + zwei frische Assets** | HA bringt nichts; **Abrechnungsfalle** kippt auf allen 4 Assets das Vorzeichen. **S/R-Ausbruch traegt nur auf BTC/ETH, nicht auf SOL/XRP** | [`heikin_ashi.md`](docs/heikin_ashi.md) |
 | 19 | Tageszeit / Sessions | Bewegung liegt in der **US-Session** (+14 %), nicht in Asien (-7 %); US einzige Session mit 4/4 positivem Effekt, als Filter aber nur suggestiv | [`sessions.md`](docs/sessions.md) |
+| 20 | **Cross-Sectional Relative Strength (14 Coins)** | echtes Brutto-Alpha (+82 % p.a.), von Reibung gefressen; Holdout **-20,3 %**; Rendite/DD 0,67 statt 1,67 | [`cross_sectional.md`](docs/cross_sectional.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
