@@ -71,6 +71,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 15 | **S/R-Bounce, Parametersuche, Liquiditaet** | Bounce **widerlegt** (Holdout p=0,002); Ausbruch **out-of-sample bestaetigt** (+66,8 bp) | [`sr_bounce.md`](docs/sr_bounce.md) |
 | 16 | **XGBoost als Signalfilter** | in-sample +1,1 SD ueber Zufall, out-of-sample **zerfaellt** (-21 bis +39 bp) | [`xgboost_filter.md`](docs/xgboost_filter.md) |
 | 17 | Timeframe-Vergleich (1h/2h/4h/8h) | **1h bleibt** — 4h/8h brechen im Holdout ein oder sind auf ETH am schlechtesten | [`sr_bounce.md`](docs/sr_bounce.md) |
+| 18 | **Heikin Ashi + zwei frische Assets** | HA bringt nichts; **Abrechnungsfalle** kippt auf allen 4 Assets das Vorzeichen. **S/R-Ausbruch traegt nur auf BTC/ETH, nicht auf SOL/XRP** | [`heikin_ashi.md`](docs/heikin_ashi.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
