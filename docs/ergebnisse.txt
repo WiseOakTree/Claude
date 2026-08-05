@@ -189,6 +189,49 @@
      Deshalb funktioniert kein Filter: es gibt nichts zu filtern.
 
 ═══════════════════════════════════════════════════════════
+  "ABER DIE FIRMEN TRADEN MIT BOTS" — STIMMT. GEMESSEN.
+═══════════════════════════════════════════════════════════
+
+  Bester Bot-Edge, den ich finden konnte:
+  Orderbuch-Ungleichgewicht +-5 %, 4h
+  110.786 Trades, 2,7 Jahre, out-of-sample STAERKER geworden.
+
+  Groesse: +0,87 Basispunkte je Trade.
+  Deine Kostenschwelle: 16 Basispunkte.
+
+  AB WELCHEN KOSTEN TRAEGT WAS?
+  Signal                        brutto/Trade  max. Kosten
+  --------------------------------------------------------
+  S/R-Ausbruch (deins)             +45,70 bp    45,70 bp  <-- einziges
+  Orderbuch-Imbalance 4h            +0,87 bp     0,87 bp      ueber 16
+  Orderflow OFI 1h (p=10^-173)      +1,26 bp     1,26 bp
+  Orderflow OFI 5min                +0,29 bp     0,29 bp
+
+  DERSELBE EDGE, JE NACHDEM WER DU BIST:
+  Du bei Kraken (Taker, 16 bp)      -331 % p.a.
+  Maker ohne Gebuehr (2 bp)          -25 % p.a.
+  Market Maker mit Rebate (0 bp)     +19 % p.a.
+  MM + Rebate + Colocation (-1 bp)   +41 % p.a.
+
+  DER VERGLEICH, DER ALLES ERKLAERT:
+                    je Trade  Trades/J  brutto p.a.  Sharpe
+  Dein S/R          +45,7 bp        40      +18,3 %    0,36
+  Bot-Orderbuch     +0,87 bp     2.190      +19,1 %    0,85
+
+  -> Der Bot verdient pro Jahr NICHT MEHR als du.
+     Dein Edge je Trade ist 130x groesser, seiner 55x haeufiger.
+     Der Unterschied ist der SHARPE -- und den kann man hebeln.
+     Die Bots sind nicht schlauer. Sie sind ruhiger.
+
+  UND: Der Orderflow-IC ist NEGATIV. Aggressives Kaufen sagt
+  fallende Kurse voraus. Das ist die Bezahlung des Market Makers.
+  Als Taker kannst du das Signal nicht ernten -- du ERZEUGST es.
+
+  -> Der Einwand ist richtig UND er erklaert die 35 Fehlschlaege.
+     Was uebrig bleibt, ist was fuer Bots zu langsam und zu
+     klein ist: 40 Trades im Jahr, 48h halten, 5.000 $ Nominal.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
