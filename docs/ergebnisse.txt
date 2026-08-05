@@ -285,6 +285,63 @@
   - Taeglich hedgen = echte Arbeit.
 
 ═══════════════════════════════════════════════════════════
+  ZIEL: 20-30 % P.A. AUF 100.000 $
+═══════════════════════════════════════════════════════════
+
+  DIE EINE REGEL, DIE ALLES ENTSCHEIDET:
+
+  Tageslimit      Ø Rendite (S/R)   Jahre >=20 %
+  ------------------------------------------------
+  3 % (Kraken)          +1,4 %          21,1 %
+  5 %                   +9,8 %          31,5 %
+  keins                +13,6 %          36,6 %
+  keins + 10 % DD      +19,9 %          42,3 %
+
+  -> MIT 3 % TAGESLIMIT IST DAS ZIEL UNMOEGLICH.
+     Nicht wegen der Strategie -- wegen der Regel.
+
+  ARITHMETIK DAHINTER:
+  25 % Rendite bei Sharpe 1,8 = 14 % Jahresvol = 0,7 % Tagesvol.
+  Ein -3 %-Tag ist dann 4 Sigma -> passiert ~2x im Jahr.
+  Wer klein genug fuer NIE -3 % handelt: 8 % Vol = 14 % Rendite.
+  -> 3 % Tageslimit und 25 % Jahresziel schliessen sich AUS.
+
+  EINKAUFSLISTE FUER DIE CHALLENGE:
+  1. KEIN Tagesverlustlimit oder >=5 %   <-- DAS Kriterium
+  2. Drawdown >=10 % NACH dem Funding
+  3. Niedriges Gewinnziel (nur fuer den Einstieg)
+  4. Keine Konsistenzregel
+  5. Drawdown-Art: egal
+
+  EHRLICHE ERWARTUNG (ohne Tageslimit, 10 % DD):
+  Ø 14-20 % p.a. | 42 % der Jahre ueber 20 % | 13 % Kontoverlust
+  Auf 100k = 11.000-16.000 $ fuer dich (bei 80 % Split).
+  20-30 % ist das GUTE Jahr, nicht der Durchschnitt.
+
+═══════════════════════════════════════════════════════════
+  WAR DIE ACHTERBAHN PECH? NEIN.
+═══════════════════════════════════════════════════════════
+
+  Simulation: 2.000 $, 51 % Trefferquote, Einsatz als Kontoanteil.
+
+  Hebel  Einsatz  erreicht 100k  endet unter 1k  BEIDES
+  ---------------------------------------------------------
+   10x     50%          3,0%          95,5%       1,2%
+   20x     50%          2,8%         100,0%       2,7%
+
+  -> Von denen, die mit 20x die 100k erreichen,
+     verlieren 96 % danach ALLES.
+
+  Das ist kein Ausstiegsfehler. Ein gehebelter Prozess mit
+  winzigem Edge MUSS diesen Pfad produzieren. Die 100k waren
+  nie ein Ergebnis, sondern eine Durchgangsstation.
+
+  Die Achterbahn kommt nicht vom Markt. Sie kommt vom Hebel.
+  Bei 0,35-0,75x gibt es keine Achterbahn.
+  Ein Jahr mit 15 % fuehlt sich langweilig an.
+  Genau daran erkennt man, dass es richtig laeuft.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
