@@ -1,5 +1,14 @@
 # Vanquish, mit den echten Regeln durchgerechnet
 
+> ## 🛑 ZAHLEN UEBERHOLT
+>
+> Die Iron-Condor-Zahlen in diesem Dokument beruhen auf einer **Naeherung**
+> (gekappte Straddle-Reihe, Praemienanteil 40-55 %). Ein echtes Condor-Modell
+> mit Strikes, Skew und Verfallsabrechnung ohne Hedge ergibt **4-11 %** der
+> Straddle-Praemie und **+2,4 % statt +6,2 %** Rendite je Einheit Nominal.
+> Der Sharpe haelt (2,38 gegen 2,55), die Ertragsdichte nicht.
+> **Massgeblich sind die Zahlen in [`condor.md`](condor.md).**
+
 Die fünf Antworten haben einen **strukturellen Fehler** in meiner vorherigen
 Rechnung aufgedeckt. Punkt 4 ist der wichtigste, den jemand in diesem Projekt
 beigetragen hat.

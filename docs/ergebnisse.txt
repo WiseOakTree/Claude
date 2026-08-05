@@ -520,6 +520,69 @@
   - 10 Jahre Daten.
 
 ═══════════════════════════════════════════════════════════
+  ECHTES CONDOR-MODELL — MEINE NAEHERUNG WAR ZU GUT
+═══════════════════════════════════════════════════════════
+
+  Naeherung ersetzt durch: explizite Strikes, Black-Scholes
+  mit VIX, linearer Skew, Abrechnung am Verfall aus der
+  TATSAECHLICHEN Bewegung (Delta-Drag vollstaendig drin).
+
+  PRAEMIENANTEIL: nicht 40 % (meine Zahl),
+  nicht 20-25 % (Einwand), sondern 4-11 %.
+
+  ABER DER SKEW IST NICHT DER GRUND:
+  Skew 0,0 -> 8,3 %  |  Skew 1,0 -> 7,7 %
+  Nur 0,6 Prozentpunkte. Der Condor ist SYMMETRISCH --
+  teurer verkaufter Put gegen noch teureren gekauften Put,
+  die Effekte heben sich auf.
+  DER KILLER IST DIE FLUEGELBREITE. Ein 0,8-%-Fluegel liegt
+  so nah, dass die gekaufte Option fast so viel kostet wie
+  die verkaufte.
+
+  DELTA-DRAG GEMESSEN (ohne Hedge):
+  Strangle  Fluegel   p.a.   Sharpe  Trefferq.
+   +-2,0 %    0,8 %  -0,24%   -0,18     42,0%
+   +-3,0 %    0,8 %  +0,13%   +0,11     57,1%
+   +-5,0 %    1,5 %  +1,52%   +1,01     85,7%
+  -> Enge Strangles sind ohne Hedge VERLUSTBRINGEND.
+
+  FRUEHER STOP IST DIE LOESUNG:
+  kein Stop        +1,52%  Sharpe 1,01
+  50 % vom Max     +2,14%  Sharpe 1,92
+  35 % vom Max     +2,36%  Sharpe 2,38
+  (35 % ist bester von fuenf -> Bestes-von-N-Falle.
+   Rechne mit dem 50-%-Wert.)
+
+  NAEHERUNG GEGEN ECHT:
+                          Naeherung    echt
+  Anteil Straddle-Praemie   40-55 %   4-11 %
+  Rendite p.a. auf Nominal   +6,2 %   +2,4 %
+  Sharpe                       2,55     2,38
+  Delta-Drag drin              NEIN       ja
+  Skew drin                    NEIN       ja
+  -> Der SHARPE haelt. Die ERTRAGSDICHTE halbiert sich.
+
+  KORRIGIERTE ENDRECHNUNG (Strangle +-5 %, Fluegel 1,5 %,
+  Stop 35 %, Kredit 0,323 % je Zyklus):
+  Nominal  Stopp-Verlust  Puffer-Anteil  ueberlebt   Ø p.a.
+     4x         1,65 %         27 %       100,0%    +9,7%
+     6x         2,47 %         41 %        99,1%   +14,8%
+     8x         3,29 %         55 %        99,1%   +20,2%
+    10x         4,12 %         69 %        97,2%   +25,5%
+
+  Margin bei 8x: ~9.400 $ auf 100k -- NICHT die Bremse.
+  Die Bremse ist der Puffer.
+
+  GROESSTE SCHWAECHE JETZT:
+  10 Jahre = ~119 Monatszyklen, 12-Monats-Fenster ueberlappen
+  stark -> effektiv ~ZEHN unabhaengige Jahre.
+  Die "99,1 % Ueberlebensrate" ruht auf zehn Beobachtungen.
+
+  EMPFEHLUNG: 6x Nominal, ~14.800 $ im Jahr auf 100k.
+  Nicht 8x -- dort kostet EIN gestoppter Zyklus 55 % des
+  gesamten Risikokapitals.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
