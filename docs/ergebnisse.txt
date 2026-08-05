@@ -232,6 +232,59 @@
      klein ist: 40 Trades im Jahr, 48h halten, 5.000 $ Nominal.
 
 ═══════════════════════════════════════════════════════════
+  KORREKTUR: KOSTEN WAREN DOPPELT VERRECHNET
+═══════════════════════════════════════════════════════════
+
+  Der Code zog 16 bp bei JEDER Positionsaenderung ab.
+  Ein Roundtrip hat zwei -> 32 bp statt der genannten 16 bp.
+  ALLE Zahlen dieses Projekts sind unter doppelten Kosten
+  gemessen. Fehler zu Ungunsten der Strategie.
+
+  Pass-Rate BTC 0,35x:   48,4 %  ->  53,8 %
+  (Suchzeitraum 53,4 % | Holdout 57,0 %)
+
+  Was sich NICHT aendert: kein Fehlschlag wird zum Erfolg.
+  Alternativdaten (0,3-6 bp) bleiben unter jeder Schwelle,
+  die acht Filter bleiben durchgefallen.
+
+═══════════════════════════════════════════════════════════
+  MIT EIGENEM KAPITAL — DA GEWINNT ETWAS ANDERES
+═══════════════════════════════════════════════════════════
+
+  Ohne Tageslimit zaehlt nicht Pass-Rate, sondern SHARPE.
+
+                        p.a.     Vol  Sharpe  max.DD   bei 2x
+  ---------------------------------------------------------
+  Short-Straddle (VRP) +26,3%  17,0%    1,47   -9,9%  +53%/-20%
+  S/R-Ausbruch BTC     +26,5%  25,0%    1,07  -30,4%  +53%/-61%
+  BTC einfach halten    +3,2%  55,6%    0,34  -76,6%   +6%/-153%
+
+  Gleiche Rendite, EIN DRITTEL des Drawdowns.
+  Die VRP war nur ausgeschlossen, weil Kraken keine
+  Optionen hat. Deribit hat sie.
+
+  GEBUEHREN — deine Frage:
+  Bruttoertrag 45,7 bp je Trade. Was ankommt:
+  32 bp/RT -> 30 % des Edge -> +19,0 % p.a. -> Sharpe 0,82
+  16 bp/RT -> 65 %          -> +26,5 %      -> Sharpe 1,07
+   8 bp/RT -> 82 %          -> +30,4 %      -> Sharpe 1,19
+   0 bp/RT -> 100 %         -> +34,5 %      -> Sharpe 1,31
+
+  -> Tot erst bei 45,7 bp je Roundtrip.
+  -> Bei 39 Trades im Jahr beherrschbar. Bei 2.190 (Bot) toedlich.
+     Deine niedrige Frequenz IST der Gebuehrenschutz.
+  -> LIMIT-Orders statt Market: halbe Gebuehr, kein Spread.
+
+  WARNUNGEN ZUM STRADDLE:
+  - Short Gamma = Versicherung verkaufen. Datensatz enthaelt
+    KEIN Ereignis vom Typ Maerz 2020 (-50 % in zwei Tagen).
+  - Kelly (8,67x) gilt NICHT: fetter linker Rand.
+    Hoechstens ein Viertel Kelly, also ~2x.
+  - Margin steigt mit Vol -> Zwangsschliessung im schlechtesten
+    Moment ist das reale Ausfallszenario.
+  - Taeglich hedgen = echte Arbeit.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
