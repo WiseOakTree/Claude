@@ -148,6 +148,47 @@
   dimensionierten Muenzwurf (36,7 % -> 49 %).
 
 ═══════════════════════════════════════════════════════════
+  DIE VIER GRUNDFRAGEN — GEMESSEN
+═══════════════════════════════════════════════════════════
+
+  1. RAUF ODER RUNTER?
+     50,4 % ueber 47.000 Stunden. Im Holdout 50,0 %.
+     Auf Wochensicht kippt der Drall sogar: 48,6 %.
+     Fuer blosse Kostendeckung braeuchtest du 50,8 %.
+
+  2. UHRZEIT?
+     Nach Bonferroni (24 Tests): KEINE Stunde signifikant.
+     20-21 UTC (22-23 Uhr bei uns) sind die einzigen, die
+     in beiden Zeitraeumen gleich aussehen: +3,0 bp.
+     Groesster Unterschied im Tag: 5,0 bp gegen 16 bp Kosten.
+     -> Kein Handelsgrund. Nur Tiebreaker.
+
+  3. WIE VIEL RISIKO?  (10.000 $ Konto)
+     Groesse   Nominal   schlecht. Tag   Tage < -3 %
+     0,25x      2.500$        -3,70%        0,10%
+     0,35x      3.500$        -5,16%        0,10%
+     0,50x      5.000$        -7,31%        0,36%
+     1,00x     10.000$       -14,21%        1,69%
+     Selbst 0,25x hatte einen -3,70%-Tag.
+     ES GIBT KEINE SICHERE GROESSE. Nur zu klein
+     (5 % Vol = 4,9 % Pass) oder zu gross (fliegst raus).
+     0,35x = ~1 zu 1.000 pro Tag, sofort auszuscheiden.
+
+  4. WARUM WAR ICH FALSCH?
+     213 Trades, 7 Merkmale geprueft. KEINES signifikant.
+     Richtung p=0,68 | Trend p=0,37 | Vol p=0,09
+     Beruehrungen p=0,10 | Uhrzeit p=0,36 | WE p=0,71
+     Die 6 groessten Verluste: long UND short, mit UND
+     gegen Trend, hohe UND niedrige Vol. Kein Muster.
+     Groesster Einzelverlust: 08.11.2022 = FTX-Kollaps.
+     Der stand am 07.11. in keinem Chart.
+
+  -> VERLIERER SEHEN AUS WIE GEWINNER.
+     Der Edge liegt in +308 gegen -238 bp bei 55,9 %
+     Trefferquote -- nicht in einem erkennbaren Merkmal.
+     Deshalb funktioniert kein Filter: es gibt nichts zu filtern.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
