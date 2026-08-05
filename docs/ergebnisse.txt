@@ -342,6 +342,58 @@
   Genau daran erkennt man, dass es richtig laeuft.
 
 ═══════════════════════════════════════════════════════════
+  RAUS AUS KRYPTO — 24 REIHEN, TEILS SEIT 1971
+═══════════════════════════════════════════════════════════
+
+  WAS SICH SOFORT AENDERT: DIE KORRELATION
+  Krypto (BTC/ETH/SOL/XRP)          +0,68
+  20 Maerkte quer ueber Klassen     +0,001
+  Diversifikationsgewinn: Faktor 3,5 auf den Sharpe.
+
+  DAS NEGATIVE: TRENDFOLGE IST SEIT 2008 TOT
+  Horizonte         1990-2007  2008-2016  2017-2026
+  252 Tage               0,92       0,10       0,14
+  63/126/252 komb.       0,80       0,39      -0,17
+  Sektoren 2017-2026: Aktien -0,13 | Rohstoffe -0,19
+                      FX     -0,29 | Anleihen  -0,23
+  Jeder Horizont, jeder Sektor, letztes Jahrzehnt: null.
+
+  DER FUND: DIE VOL-PRAEMIE GIBT ES IN AKTIEN AUCH
+                    VRP    positiv     t        p
+  S&P/VIX 16-26  +4,65pp     83,4%   4,67  <0,00001
+  BTC/DVOL 21-26 +10,47pp    72,3%   4,12   0,0001
+
+  -> ZWEI UNABHAENGIGE MAERKTE, DERSELBE MECHANISMUS.
+     Die einzige Bestaetigung dieser Art im ganzen Projekt.
+
+  S&P-500-SHORT-STRADDLE (delta-gehedgt, monatlich):
+  Rendite p.a. +8,6 % | Vol 5,5 % | Sharpe 1,52
+  groesster Drawdown -13,7 % (16.03.2020)
+  Tage unter -3 %: 0,16 %
+  2010er Sharpe 1,68 | 2020er Sharpe 1,48
+  -> Enthaelt Volmageddon 2018, COVID 2020, Baermarkt 2022.
+     XIV ging an genau dem Tag auf null. Unterschied:
+     der taegliche Delta-Hedge.
+
+  AUF DEM GEFUNDETEN KONTO (100k):
+  Regelwerk                 Hebel  ueberlebt  Ø p.a.  >=20 %
+  3 % Tag / 6 % DD (Kraken)    1x     74,8%   +5,3%    6,8%
+  5 % Tag / 10 % DD            2x     60,3%   +8,6%   23,6%
+  KEIN Tageslimit / 10 % DD    3x     78,2%  +22,3%   42,5%
+  eigenes Kapital              3x    100,0%  +27,3%   49,0%
+
+  -> ZIEL ZUM ERSTEN MAL GETROFFEN. Aber nur ohne Tageslimit.
+
+  WARNUNGEN:
+  - S&P-Test nur 2016-2026 (FRED liefert nicht laenger).
+  - Bei 4x waere Maerz 2020 ein -55 %-Drawdown gewesen.
+    Der Datensatz enthaelt EINEN COVID-Crash.
+  - Hoechstens 2x, bis ein Jahr live gehandelt.
+    Bei 2x: +15,0 % p.a., 86 % Ueberlebensrate.
+  - Erster Nasdaq/VIX-Test ergab t=-1,19: FALSCHE PAARUNG
+    (VIX misst den S&P, nicht den Nasdaq). Kein Gegenbeleg.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
