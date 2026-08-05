@@ -462,6 +462,64 @@
   5. Kosten je Evaluierung, zweiter Versuch einpreisen.
 
 ═══════════════════════════════════════════════════════════
+  VANQUISH MIT DEN ECHTEN REGELN — UND EINE KORREKTUR
+═══════════════════════════════════════════════════════════
+
+  KORREKTUR: Mein Hebel-Sweep war STRUKTURELL falsch.
+  Bindend ist nicht das Nominal (100.000 $), sondern der
+  Maximalverlust gegen den Puffer (6.000 $).
+
+  Kappe   Hebel   Verlust je Ereignis   Anteil Puffer
+   1,2 %     3x           3,6 %              60 %
+   1,2 %     6x           7,2 %             120 %  KONTO WEG
+   2,0 %     3x           6,0 %             100 %  KONTO WEG
+
+  -> "6x -> +29 % p.a." beschrieb ein Konto, das nach dem
+     ersten Vol-Schub nicht mehr existiert.
+
+  NEU GERECHNET (statischer DD 6 %, kein Tageslimit):
+  Kappe  Hebel  Einzelverl.  ueberlebt   Ø p.a.  >=20 %
+  0,8 %   2,5x     2,0 %       100,0%   +13,0%   16,7%
+  0,8 %   3,0x     2,4 %       100,0%   +15,9%   23,6%
+  0,8 %   4,0x     3,2 %        98,5%   +21,0%   33,9%
+  2,0 %   4,0x     8,0 %        77,2%   +22,9%   46,2%
+
+  DIE NICHT OFFENSICHTLICHE ERKENNTNIS:
+  Kappe 0,8 % bei 4x -> +21,0 % bei 98,5 % Ueberleben
+  Kappe 2,0 % bei 4x -> +22,9 % bei 77,2 % Ueberleben
+  Fast gleiche Rendite, 21 Punkte mehr Ueberlebensrate.
+  -> ENGE FLUEGEL, MEHR KONTRAKTE schlaegt das Gegenteil.
+
+  KONSISTENZREGEL: KEIN PROBLEM
+  Bester Tag am Jahresgewinn: Median 10,1 %
+  Jahre ueber 30 %: 3,1 % | ueber 40 %: 0,7 %
+  Theta verdient gleichmaessig -- genau das Profil,
+  fuer das die Regel gemacht ist.
+
+  EVALUIERUNG (Ziel 8 %, EOD-DD 6 %, Kappe 0,8 %):
+  Hebel  bestanden  Median Dauer
+   2,0x     57,9 %      184 T
+   3,0x     90,9 %      142 T
+   4,0x     96,1 %      105 T
+  Erwartete Kosten bei 400 $/Versuch: ~440 $.
+
+  ENDRECHNUNG (100 % Split, brutto = netto):
+  3,0x -> +15,9 % p.a. = 15.861 $  (100 % ueberlebt)
+  4,0x -> +21,0 % p.a. = 21.036 $  (98,5 %, aber ein
+          Ereignis frisst 53 % des Puffers)
+
+  -> ZIEL ERREICHBAR BEI 4x, ROBUST BEI 3x.
+
+  WAS WEITERHIN SCHWACH IST:
+  - Iron Condor ist Naeherung, keine echten Optionsketten.
+  - Praemien-Annahme (40 % bei 0,8 % Kappe) ist MEINE,
+    nicht gemessen. An echten Ketten pruefen!
+  - GROESSTER MODELLFEHLER: Reihe stammt aus einem
+    delta-gehedgten Straddle. Ein Condor wird ueblicherweise
+    NICHT gehedgt -> meine Zahlen sind eher zu gut.
+  - 10 Jahre Daten.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
