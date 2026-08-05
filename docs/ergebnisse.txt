@@ -394,6 +394,74 @@
     (VIX misst den S&P, nicht den Nasdaq). Kein Gegenbeleg.
 
 ═══════════════════════════════════════════════════════════
+  VIER PROP-ANBIETER DURCHGERECHNET
+═══════════════════════════════════════════════════════════
+
+  PUNKT 1: DREI VON VIER KOENNEN ES GAR NICHT TRADEN
+  Vanquish = Index-Optionen  -> ja
+  MFF / TradeDay / Apex = Futures -> nein
+  Die Vol-Praemie braucht OPTIONEN. Die einzige Futures-
+  Strategie mit Evidenz (Trendfolge) liegt seit 2017 bei
+  Sharpe -0,17.
+
+  PUNKT 2: TRAILING GEGEN STATISCH -- NICHT EOD GEGEN INTRADAY
+  S&P-Straddle, 3x Hebel, kein Tageslimit bei beiden:
+
+  Drawdown   STATISCH ueberlebt   EOD-TRAILING ueberlebt
+     2 %          44,9 %                 0,0 %
+     3 %          54,5 %                 0,0 %
+     5 %          62,8 %                10,7 %
+    10 %          78,2 %                36,8 %
+
+  -> Trailing bestraft den ERFOLG. Jedes neue Hoch hebt
+     den Boden mit. Weniger Hebel rettet nichts:
+     bei 0,5x ueberlebst du 82-100 % und erreichst
+     in 0 % der Jahre dein Ziel.
+
+  RANGFOLGE (umgekehrt zum Berater-Fazit):
+  1. Vanquish   statisch + Optionen   <-- einziger Fit
+  2. TradeDay   statisch WAEHLBAR
+  3. MFF        EOD-trailing
+  4. Apex       intraday-trailing
+
+  PUNKT 3: DIE ZAHL, DIE NIRGENDS STEHT
+  Futures-Props: 2.000-4.000 $ auf 100k = 2-4 % Drawdown.
+  Kraken: 6 % statisch.
+  -> Futures-Props sind ENGER als Kraken, nicht weiter.
+
+  PUNKT 4: NACKTE OPTIONEN SIND MEIST VERBOTEN
+  Ein Short-Straddle ist eine nackte Short-Option.
+  Erlaubt sind definierte Risiken (Iron Condor).
+  UND DIE SIND BESSER:
+
+  Variante                p.a.    Vol  Sharpe  schlecht.Tag
+  Straddle (nackt)       +8,6%   5,5%    1,52       -5,58%
+  Iron Condor (70 %)     +7,0%   3,3%    2,03       -1,40%
+  Iron Condor (55 %)     +6,2%   2,4%    2,55       -0,66%
+  Iron Condor (40 %)     +5,1%   1,6%    3,11       -0,32%
+
+  IRON CONDOR AUF STATISCHEM DRAWDOWN:
+  DD    Hebel  ueberlebt   Ø p.a.   >=20 %
+   3 %     6x     68,6%    +29,0%    58,6%
+   6 %     8x     78,2%    +47,7%    73,0%
+
+  -> BESTES ERGEBNIS DES GESAMTEN PROJEKTS.
+     Und es ist die Variante, die ein Prop-Konto erlaubt.
+
+  SCHWACHSTELLEN:
+  - Iron Condor ist eine NAEHERUNG, kein Backtest.
+    Keine echten Optionsketten, keine Skew, keine Fluegel-Spreads.
+  - Margin bei 6-8x Hebel NICHT geprueft. Daran kann alles scheitern.
+  - 68,6 % Ueberleben heisst: ein Drittel der Jahre Konto weg.
+
+  VOR DEM KAUF BEI VANQUISH KLAEREN:
+  1. Nackte Short-Optionen erlaubt oder nur definierte Risiken?
+  2. Wie GROSS ist der statische Drawdown live, in Prozent?
+  3. Consistency Rule auf dem LIVE-Konto?
+  4. Margin je Spread -- traegt das Konto 6-8x?
+  5. Kosten je Evaluierung, zweiter Versuch einpreisen.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
