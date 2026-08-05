@@ -67,18 +67,31 @@
     Reine Arithmetik, keine Prognose noetig. Der zuverlaessigste Hebel.
 
 ═══════════════════════════════════════════════════════════
-  DIE REGEL, DIE BLEIBT
+  DIE REGEL, DIE BLEIBT  (vereinfachte Endfassung)
 ═══════════════════════════════════════════════════════════
 
-  Asset    BTC (bestes von vier)
-  Chart    1 Stunde
+  Asset    NUR BTC. 1-Stunden-Chart.
   Signal   Level mit >=6 Beruehrungen, Einstieg beim Bruch
-  Halten   24-48 Stunden, dann raus
+  Position EINE. Bist du drin, ignorierst du jedes neue Signal.
+  Halten   48 Stunden. Dann raus. Egal was.
   Stop     KEINER
-  Groesse  5.000 $ Nominal bei 10.000 $ Konto (~0,08 BTC)
+  Groesse  3.500 $ Nominal bei 10.000 $ Konto (0,35x)
+  Frequenz ~40 Trades im Jahr
 
-  Erwartung: ~49% je Versuch, Median ~119 Tage.
+  Erwartung: ~48% (Such 47,4% / Holdout 53,9%), ~4 Monate.
   Kein Zeitlimit bei Kraken — Ungeduld ist der teuerste Fehler.
+
+  GEGEN DIE ALTE FASSUNG: gleiche Pass-Rate,
+  ein VIERTEL der Trades, keine gestapelten Positionen.
+
+  WARUM NICHT SELEKTIVER:
+  >=10 Beruehrungen statt >=6  ->  0,0 % Pass-Rate.
+  1 % Zeit im Markt = 3 % Jahresvol = Ziel nie erreicht.
+  Mit 3x Hebel repariert: 10,4 % -- 25 Punkte UNTER Zufall,
+  weil dieselbe Vol in Schueben das Tageslimit reisst.
+
+  -> Viel Zeit klein im Markt schlaegt wenig Zeit gross im Markt.
+  -> Die Groesse zwischen 0,35x und 0,5x ist Rauschen. Nicht optimieren.
 
 ═══════════════════════════════════════════════════════════
   DIE SPIELREGEL, DIE DIR GEHOERT: DIE ANZAHL DER VERSUCHE
