@@ -35,7 +35,7 @@
 [x] Timeframe 2h / 4h / 8h          brechen out-of-sample ein
 [x] Smart DCA                       11% Pass-Rate
 
-── FILTER AUF DAS SIGNAL (alle acht durchgefallen) ──────
+── FILTER AUF DAS SIGNAL (alle neun durchgefallen) ──────
 [x] Mindest-Durchbruch (x ATR)      schlechter auf jeder Stufe
 [x] Rollenlogik nach Kurslage       -65% Effekt
 [x] Cooldown nach Bruch             Pass-Rate faellt
@@ -44,6 +44,7 @@
 [x] Session-Filter (Asien/US)       nur suggestiv, kein Holdout
 [x] Tagesbremse (-2,5% Stopp)       BTC-Holdout: +/-0,0 pp
 [x] Wochenendfilter (Fr22-So22)     Praemisse stimmt, Holdout = Muenzwurf
+[x] Marktphase (Efficiency Ratio)   Orakel waere 348 bp wert -- nicht prognostizierbar
 [x] Stop-Loss                       bessere Erwartung, schlechtere Pass-Rate
 
 ── MACHINE LEARNING ─────────────────────────────────────
@@ -882,6 +883,58 @@
 
   -> Ein einzelner Gegentrade, der aufgeht, ist keine Widerlegung.
      Er ist das, was in 44 % der Faelle passiert.
+
+═══════════════════════════════════════════════════════════
+  "MARKTPHASEN UND PRICE ACTION SIND DAS WICHTIGSTE"
+═══════════════════════════════════════════════════════════
+
+  MIT PERFEKTEM ORAKEL (Blick in die naechsten 48h):
+  Phase          n    Ø netto   positiv        p
+  Seitwaerts    71    -80,5bp    19,7 %   <0,001
+  gemischt      71    +13,8bp    69,0 %    0,610
+  Trend         71   +268,1bp    78,9 %   <0,001
+
+  348 BASISPUNKTE SPANNE -- der groesste Einzeleffekt des
+  ganzen Projekts. Der Guru hat also RECHT.
+
+  ABER: KANN MAN DIE PHASE KENNEN?
+  Korrelation Vergangenheit <-> naechste 48h:
+   24h -0,077 | 48h +0,023 | 96h +0,026
+  168h -0,138 | 336h -0,015     alle p>0,26 ausser 168h
+  -> NULL. Und der einzige Wert nahe Signifikanz ist NEGATIV.
+     Marktphasen PERSISTIEREN NICHT.
+
+  DER NEUNTE FILTER: Ausbruch nach ruhiger Phase
+  BTC-Suchzeitraum +115,5 bp | BTC-Holdout +233,0 bp
+  Auf ungesehenen Daten gepoolt: +41,9 bp
+    p roh                       0,380
+    p ueberlappungskorrigiert   0,586
+    p nach Bonferroni (9)       1,000   FAELLT DURCH
+    Quintile: +37,7 / -21,1 / +18,5 / +10,7 / -83,0
+    Spearman -0,063  -> keine Monotonie
+  ETH-Holdout kippt auf -210 bp, SOL-Holdout auf +12,6 bp.
+  (Immerhin: NICHT dasselbe wie Volatilitaet, Korrelation +0,029.)
+
+  PRICE ACTION -- was davon haelt:
+  S/R-Ausbruch nach Beruehrungszahl  +45,7 bp  <-- einziges
+  Order Blocks ("Smart Money")       Zufallskerze gleich gut
+  Heikin Ashi                        nichts
+  Bollinger / Donchian / EMA / MACD  Median 0,00 %
+  -> Price Action ist ~12 Punkte ueber einem korrekt
+     dimensionierten Muenzwurf wert. Nicht null, nicht "das Wichtigste".
+
+  WAS TATSAECHLICH WIRKT (nach Nutzbarkeit):
+  1. Regelwerk DD/(DD+Ziel)      37,5 % geschenkt   fix
+  2. Positionsgroesse            39,6 -> 49,4 %     kontrollierbar
+  3. Zeitversatz der Versuche    70,9 -> ~100 %     kontrollierbar
+  4. Price Action (S/R)          ~12 pp             teilweise
+  5. MARKTPHASE                  348 bp             NEIN
+
+  -> Die Marktphase ist Platz 1 nach WIRKUNG und letzter Platz
+     nach NUTZBARKEIT. Genau das macht sie zum perfekten
+     Lehrinhalt: im Rueckblick erklaert sie jedes Chart restlos.
+     Die drei Faktoren, die wirklich helfen, sind Arithmetik --
+     und in zehn Minuten erklaert.
 
 ═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
