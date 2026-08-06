@@ -648,6 +648,61 @@
   Arithmetik zwischen Stopverlust und Puffer.
 
 ═══════════════════════════════════════════════════════════
+  MEHRERE KONTEN STATT MEHR HEBEL
+═══════════════════════════════════════════════════════════
+
+  DER SATZ, DER ALLES ERKLAERT:
+  Bei N Konten waechst der PUFFER mit N mit. Bei Hebel nicht.
+
+  GLEICHES GESAMT-NOMINAL, ANDERS VERTEILT:
+  Aufbau            Nominal  Stopverl.  %Puffer  ueberl.   $/Jahr
+  1 Konto  4x           4x     4,02 %     67 %   100,0%   14.405
+  1 Konto 12x          12x    12,06 %    201 %    79,4%   39.322
+  3 Konten je 4x       12x     4,02 %     67 %   100,0%   43.214
+  3 Konten je 6x       18x     6,03 %    100 %    93,5%   62.880
+
+  -> Zeile 2 gegen Zeile 3: identische Marktposition.
+     MEHR GELD UND BESSERE UEBERLEBENSRATE.
+     Bei 12x auf einem Konto ist es nach EINEM Stopp weg.
+
+  DER HAKEN: PERFEKTE KORRELATION
+  P(ein Konto ueberlebt)     = 100,0 %
+  P(alle drei ueberleben)    = 100,0 %  <- IDENTISCH
+  P(mindestens eins)         = 100,0 %  <- IDENTISCH
+  Parallele Konten schuetzen vor der GROESSE,
+  nicht vor dem EREIGNIS.
+
+  ECHTE DIVERSIFIKATION: VERFALLSZYKLEN VERSETZEN
+                     Vol p.a.  Sharpe  schlecht. Zyklus
+  1 Zyklus synchron     1,65%    2,07        -1,09 %
+  3 versetzte Zyklen    1,14%    2,69        -0,92 %
+  -> Vol -31 %, und der schlechteste Zyklus faellt von
+     73 % auf 61 % des Puffers. Das kauft eine Hebelstufe.
+
+  DIE KOMBINIERTE BAUFORM:
+  KONSERVATIV  3 Konten, 3 Tranchen, 4x
+               39.285 $/Jahr, 100 % Ueberleben, 61 % Puffer
+  AUSGEWOGEN   3 Konten, 3 Tranchen, 5x
+               49.025 $/Jahr, 98,1 % Ueberleben, 76 % Puffer
+  (6x gaebe 57.897 $ -- aber 92 % Puffer je Stopp. Das ist
+   wieder die Kante von 2024.)
+
+  KOSTEN: 3 Evaluierungen ~1.320 $, parallel ~142 Tage.
+  Erwartungswert 1. Jahr: 41.600 - 47.700 $.
+
+  DERSELBE MECHANISMUS WIE GANZ AM ANFANG:
+  spielregeln.md -> Mehrfachantritt war der staerkste Hebel.
+  Hier dasselbe, auf gefundete Konten statt auf Versuche.
+  Die einzige Idee im Projekt, die ZWEIMAL unabhaengig wirkt.
+
+  VOR DEM KAUF KLAEREN:
+  1. Erlaubt Vanquish IDENTISCHE Strategien auf mehreren
+     Konten -- oder gilt das als "Shotgunning"?
+     Werden Konten fuer Risikozwecke ZUSAMMENGEFASST?
+  2. Konsistenzregel je Konto oder ueber alle Konten?
+  3. Obergrenze fuer das gesamte gefundete Kapital?
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
