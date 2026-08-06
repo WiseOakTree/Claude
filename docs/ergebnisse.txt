@@ -1144,3 +1144,71 @@
 
   Wer diese fuenf nicht kontrolliert, findet garantiert
   eine funktionierende Strategie.
+
+
+═══════════════════════════════════════════════════════════
+  44. 4h MACD + STOCHASTIK + BOLLINGER  -- direkt gemessen
+═══════════════════════════════════════════════════════════
+
+  DAS LEHRBUCH-SETUP GIBT ES NICHT
+  Long-Konfluenz: Kurs <= unteres Band + Stoch < 20 + MACD-Hist steigt
+
+    Kurs <= unteres Band       508 Bars   6,0 %
+    Stochastik < 20           1109 Bars  13,2 %
+    MACD-Histogramm steigt    4185 Bars  49,8 %
+    zwei davon                 278 Bars   3,3 %
+    ALLE DREI                    0 Bars   0,0 %   <-- NULL
+
+  Grund: Wenn Kurs am unteren Band und Stoch < 20, dann FAELLT er
+  gerade -- und dann faellt auch das MACD-Histogramm. Die dritte
+  Bedingung widerspricht den ersten beiden per Konstruktion.
+
+  DIE DREI EINZELN AUF 4h (bp je Trade, BTC 2021-24)
+                      4h      24h      48h     120h
+    MACD           -14,3    -28,5    -28,0     -7,5
+    Stochastik     -18,8    -24,5    -22,9    -13,4
+    Bollinger      -21,7    -37,3    -43,4    -75,9
+  Alle zwoelf Zellen negativ. Bei 4h sogar signifikant (t = -2,9 / -3,3 / -3,3)
+
+  LIEGT ES AN DEN GEBUEHREN? NEIN
+    MACD       24h  ohne Kosten -10,6 bp | mit Kosten -26,6 bp
+    Stochastik 24h  ohne Kosten  -9,0 bp | mit Kosten -25,0 bp
+    Bollinger  24h  ohne Kosten -12,9 bp | mit Kosten -28,9 bp
+
+  TRENDLESART (MACD>Signal, ueber Mittelband, Stoch kreuzt hoch)
+    BTC  Suche 21-24   +30,0 bp  t= 0,20  ->  HOLDOUT  -15,0 bp  t=-0,10
+    ETH  Suche 21-24   +69,4 bp  t= 0,39  ->  HOLDOUT  -93,0 bp  t=-0,34
+    SOL  Suche 21-24   -10,3 bp  t=-0,04  ->  HOLDOUT  +23,4 bp  t= 0,09
+  Alle sechs t-Werte zwischen -0,34 und +0,39. Signifikanz braucht ~2,0
+
+  GITTER AUS 324 VARIANTEN
+    54 % positiv im Suchzeitraum, Median +3,3 bp
+    Beste 8:  Suche +61,2 bp  ->  HOLDOUT -359,7 bp
+    Vorzeichenwechsel: 8 von 8
+
+  PASS-RATE UNTER DEN ECHTEN KRAKEN-REGELN (5 Tage halten)
+                            0,25x   0,35x   0,50x   1,00x
+    long+short              63,8%   50,5%   37,4%   30,2%
+    nur long                62,3%   44,2%   41,4%   28,1%
+    JEDES SIGNAL (1 Bar)     0,0%    0,0%    0,0%    0,5%
+
+  ABER GETRENNT NACH ZEITRAUM:
+    Suchzeitraum 2021-24    57,8 %  (270 Starts)
+    HOLDOUT 2025-26          9,3 %  ( 43 Starts)
+    Zufall bei diesen Regeln 37,5 %
+  -> Der Holdout liegt WEIT UNTER dem Wuerfel.
+
+  UND DIE KONTROLLEN, DIE GUT AUSSAHEN
+    Richtung gewuerfelt (500x)   echt 50,5 % vs Median 23,0 %  p=0,028
+    Signale verschoben  (500x)   echt 50,5 % vs Median 23,9 %  p=0,004
+  Beide WERTLOS: 270 von 325 Startpunkten liegen im Suchzeitraum.
+  Der p-Wert war nie das Problem -- der Zeitraum war es.
+
+  HANDELSFREQUENZ IST DER KILLER
+    jede MACD-Kreuzung 4h        170 Trades/J  = 27,2 % Gebuehren p.a.
+    Konfluenz, sofort raus       180 Trades/J  = 28,9 % Gebuehren p.a.
+    Konfluenz, 5 Tage halten      56 Trades/J  =  9,0 % Gebuehren p.a.
+
+  FAZIT
+  Positionsgroesse bewegt die Pass-Rate um 34 Punkte.
+  Die Indikator-Parameter bewegen sie um ~0.
