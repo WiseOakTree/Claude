@@ -1,5 +1,14 @@
 # Der echte Iron Condor — Näherung ersetzt, Zahlen korrigiert
 
+> ## 🛑 HINFAELLIG — DIE ECHTEN REGELN WIDERLEGEN DIESES DOKUMENT
+>
+> Das Vanquish-Regelwerk-PDF sagt woertlich: **„SPX, XSP and VIX can only be
+> traded long as single-leg calls/puts. No spreads, no selling to open."**
+> Dazu **Intraday Trailing Drawdown** (nicht statisch) und **keine
+> Overnight-Positionen**.
+> Damit ist jede Rechnung in diesem Dokument gegenstandslos.
+> **Siehe [`vanquish_regeln.md`](vanquish_regeln.md).**
+
 Zwei Einwände haben meine Näherung erledigt:
 
 1. **Delta-Drag / negatives Gamma** — der Condor blutet durch die

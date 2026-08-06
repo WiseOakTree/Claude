@@ -767,6 +767,60 @@
      (Falls nein, faellt die Loesung fuer Punkt 2 weg.)
 
 ═══════════════════════════════════════════════════════════
+  DIE ECHTEN VANQUISH-REGELN — DER PLAN IST TOT
+═══════════════════════════════════════════════════════════
+
+  WOERTLICH AUS DEM REGELWERK-PDF:
+  "SPX, XSP and VIX can only be traded long as single-leg
+   calls/puts. No spreads, no selling to open."
+  "Drawdown Type: Intraday Trailing"
+  "No overnight positions. All trades must be closed by
+   3:59pm EST or they will be auto liquidated."
+
+  Beide Kontotypen, identische Beschraenkungen.
+  Gewinnziel 10 % | Konsistenz 30 % | Verlustlimit 5 %
+  Konten bis 150.000 $ | Reset 250 $
+
+  WAS DAS ZERSTOERT:
+  1. NO SELLING TO OPEN
+     Die Vol-Praemie kassiert nur, wer VERKAUFT.
+     Vanquish erlaubt nur KAUFEN. Damit ist dort ausschliesslich
+     die VERLIERERSEITE des einzigen gemessenen Edges erlaubt.
+     Short-Straddle +8,6 % p.a. -> Gegenposition ca. -8,6 %.
+  2. NO SPREADS -> kein Iron Condor. Die gesamte Rechnung
+     aus condor.md und validierung.md beschreibt eine Position,
+     die das System nicht ausfuehrt.
+  3. INTRADAY TRAILING (nicht statisch, wie recherchiert)
+     Bei 6x: statisch 86,1 % ueberlebt, trailing 15,9 % bei -1,0 %.
+     Intraday-Trailing ist noch schaerfer als EOD.
+  4. NO OVERNIGHT -> Wochen- und Monatszyklen unmoeglich.
+     Die Loesung fuer die Konsistenzregel faellt auch weg.
+     Uebrig: 0DTE-Intraday mit gekauften Einzeloptionen --
+     schnellster Theta-Verfall, falsche Seite der Praemie.
+
+  IM GESAMTEN PDF KOMMEN NICHT VOR:
+  "credit", "condor", "strangle", "straddle", "multi", "static".
+  "advanced options strategies" steht EINMAL -- im Werbetext.
+
+  MEIN FEHLER:
+  Ich habe fuenf Dokumente auf zwei unverifizierte Recherche-
+  zusammenfassungen gebaut, obwohl das Primaerdokument einen
+  Download entfernt war. Dieselbe Falle wie am Anfang mit der
+  angenommenen 90-Tage-Frist bei Kraken, die es nie gab.
+
+  DIE UNBEQUEME SCHLUSSFOLGERUNG:
+  Der einzige zweifach bestaetigte Edge verlangt, Optionen zu
+  VERKAUFEN. Das erlaubt kein Prop-Konto -- weil es genau das
+  Risiko ist, das Prop-Firmen nicht tragen wollen.
+  Prop-Firmen verkaufen Zugang zu HEBEL, nicht zu RISIKOPRAEMIEN.
+
+  WAS NOCH STEHT:
+  Vanquish            tot
+  MFF/TradeDay/Apex   Trendfolge Sharpe -0,17 seit 2017
+  Kraken (bezahlt)    S/R-Ausbruch BTC 1h, 0,35x -> ~53,8 %
+  Eigenes Kapital     VRP real und handelbar, Sharpe 1,52
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 

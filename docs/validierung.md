@@ -1,5 +1,14 @@
 # Validierung an einer echten SPX-Kette — kostenlos, und sie hält
 
+> ## 🛑 HINFAELLIG — DIE ECHTEN REGELN WIDERLEGEN DIESES DOKUMENT
+>
+> Das Vanquish-Regelwerk-PDF sagt woertlich: **„SPX, XSP and VIX can only be
+> traded long as single-leg calls/puts. No spreads, no selling to open."**
+> Dazu **Intraday Trailing Drawdown** (nicht statisch) und **keine
+> Overnight-Positionen**.
+> Damit ist jede Rechnung in diesem Dokument gegenstandslos.
+> **Siehe [`vanquish_regeln.md`](vanquish_regeln.md).**
+
 Die drei genannten Quellen (OptionVue, Cboe LiveVol, Tastytrade) sind
 kostenpflichtig. Es gibt aber eine **kostenlose**, die für die entscheidende
 Frage reicht: die öffentliche CBOE-Schnittstelle für verzögerte Quotes.

@@ -1,5 +1,14 @@
 # Mehrere Konten statt mehr Hebel — richtig, und zwar strukturell
 
+> ## 🛑 HINFAELLIG — DIE ECHTEN REGELN WIDERLEGEN DIESES DOKUMENT
+>
+> Das Vanquish-Regelwerk-PDF sagt woertlich: **„SPX, XSP and VIX can only be
+> traded long as single-leg calls/puts. No spreads, no selling to open."**
+> Dazu **Intraday Trailing Drawdown** (nicht statisch) und **keine
+> Overnight-Positionen**.
+> Damit ist jede Rechnung in diesem Dokument gegenstandslos.
+> **Siehe [`vanquish_regeln.md`](vanquish_regeln.md).**
+
 Der Gedanke ist nicht nur besser, er ist **mathematisch strikt besser**. Und
 zwar aus einem Grund, der sich in einer Zeile sagen lässt:
 
