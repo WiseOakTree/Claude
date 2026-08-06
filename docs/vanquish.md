@@ -8,6 +8,12 @@
 > Straddle-Praemie und **+2,4 % statt +6,2 %** Rendite je Einheit Nominal.
 > Der Sharpe haelt (2,38 gegen 2,55), die Ertragsdichte nicht.
 > **Massgeblich sind die Zahlen in [`condor.md`](condor.md).**
+>
+> **Zusaetzlich falsch:** Der Abschnitt „Die Konsistenzregel ist kein Problem"
+> misst den besten **TAG** (10,1 %). Vanquish misst laut Recherche „Best
+> **Trade** / Total Profits" — dort sind es **22,6 % im Median und 38,3 % der
+> Jahre ueber 30 %**. Die Entwarnung gilt nicht.
+> Loesung und Zahlen: [`regelfragen.md`](regelfragen.md).
 
 Die fünf Antworten haben einen **strukturellen Fehler** in meiner vorherigen
 Rechnung aufgedeckt. Punkt 4 ist der wichtigste, den jemand in diesem Projekt

@@ -703,6 +703,70 @@
   3. Obergrenze fuer das gesamte gefundete Kapital?
 
 ═══════════════════════════════════════════════════════════
+  ZWEI REGELFRAGEN — EINE ENTSCHEIDET ALLES
+═══════════════════════════════════════════════════════════
+
+  WIDERSPRUCH 1: STATISCH ODER TRAILING?
+  Recherche A: "Live wechselt auf Static Drawdown."
+  Recherche B: "5 % Trailing auf Basis High-Water-Mark."
+  BEIDES KANN NICHT STIMMEN. Gemessen (Wochen-Condor):
+
+  Nominal  %Puffer  STATISCH ueberl./p.a.  TRAILING ueberl./p.a.
+     4x      38 %      95,1 % / +19,9 %      77,2 % / +16,2 %
+     6x      56 %      86,1 % / +29,5 %      15,9 % /  -1,0 %
+     8x      75 %      81,4 % / +39,9 %      13,1 % /  -0,6 %
+    10x      94 %      76,1 % / +49,9 %       5,8 % /  -4,3 %
+
+  -> STATISCH: funktioniert. TRAILING: bei KEINER Groesse.
+     Das zuerst klaeren, alles andere ist danach.
+
+  KORREKTUR 2: KONSISTENZREGEL FALSCH GEMESSEN
+  Ich hatte den besten TAG gemessen: 10,1 % -> Entwarnung.
+  Vanquish misst "Best TRADE / Total Profits". Neu:
+    Median 22,6 % | 90. Perzentil 63,5 %
+    JAHRE UEBER 30 %: 38,3 %
+  Meine Entwarnung war FALSCH.
+
+  Und je frueher die Auszahlung, desto schlimmer:
+    3 Monate sammeln  -> 100,0 % der Faelle ueber 30 %
+    6 Monate          ->  50,0 %
+   12 Monate          ->  38,3 %
+   24 Monate          ->   3,2 %
+
+  DIE LOESUNG: KUERZERE ZYKLEN, NICHT LAENGER WARTEN
+  Laufzeit  Zyklen/J  Strikes   p.a.  Sharpe  best.Trade  >30%
+  1 Woche        50    +-2,4%  +4,90%   2,59      11,5%   9,1%
+  2 Wochen       25    +-3,5%  +3,84%   2,09      15,7%  27,4%
+  1 Monat        12    +-5,0%  +3,47%   2,08      22,6%  38,3%
+  2 Monate        6    +-7,1%  +1,81%   1,07      41,2%  69,0%
+
+  -> Wochenzyklen sind auf JEDER Dimension besser.
+     Theta 50x im Jahr statt 12x, gleiche Trefferquote je Zyklus.
+
+  WO DIE RECHERCHE IRRT:
+  "Konsistenzproblem multipliziert sich ueber Konten" -- NEIN.
+  Der Anteil ist ein VERHAELTNIS, also skaleninvariant.
+  Drei Konten haben jeweils 23 %, nicht zusammen 69 %.
+  Schlimmer wird es nur bei ZUSAMMENFASSUNG -- und dann waere
+  auch der Puffer-Vorteil weg. Dieselbe Frage.
+
+  ENDSTAND (Wochenzyklen, statischer Boden, 3 Konten):
+    4x je Konto -> 95,1 % ueberlebt, +19,9 %, 59.797 $/Jahr
+    6x je Konto -> 86,1 % ueberlebt, +29,5 %, 88.355 $/Jahr
+  95,1 % heisst: etwa jedes 20. Jahr sind ALLE DREI weg
+  (perfekt korreliert). Preis tragbar, weil eine neue
+  Evaluierung 1.320 $ kostet und nicht 300.000 $.
+
+  DIE FRAGEN AN VANQUISH, IN DIESER REIHENFOLGE:
+  1. Drawdown live STATISCH oder TRAILING?
+  2. Konsistenzregel je TRADE oder je TAG? Ueber welchen Zeitraum?
+  3. Mehrere Konten mit identischer Strategie erlaubt --
+     oder Zusammenfassung fuer Risiko/Konsistenz/Auszahlung?
+  4. Obergrenze gefundetes Gesamtkapital je Person?
+  5. Sind SPX-Wochenoptionen zugelassen? Mindesthaltedauer?
+     (Falls nein, faellt die Loesung fuer Punkt 2 weg.)
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
