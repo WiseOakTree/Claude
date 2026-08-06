@@ -937,6 +937,69 @@
      und in zehn Minuten erklaert.
 
 ═══════════════════════════════════════════════════════════
+  "WIE MACHEN DAS FIRMEN?" — ZWEI VERSCHIEDENE ANTWORTEN
+═══════════════════════════════════════════════════════════
+
+  A) PROP-FIRMEN: KEIN HANDELS-EDGE
+  Gewinn je Challenge = Gebuehr - P(besteht) x Auszahlung
+
+  Ø Auszahlung   kritische Bestehensquote
+       500 $              17,0 %
+     1.000 $               8,5 %
+     2.000 $               4,2 %
+     4.000 $               2,1 %
+
+  -> Bei realistischen 1.000-2.000 $ liegt die Grenze bei 4-9 %.
+     Deshalb: Konsistenzregeln, Tageslimits, trailende Drawdowns,
+     Mindesthandelstage. Gemessene Wirkung:
+       trailing statt statisch   54,5 % -> 0,0 %
+       3 % Tageslimit            78,1 % -> 40,2 %
+       Ziel 10 % statt 6 %       49,3 % -> 33,1 %
+     DIESE REGELN SIND KEIN RISIKOMANAGEMENT. SIE SIND DAS PRODUKT.
+
+  B) HANDELSFIRMEN: FUENF ECHTE EDGES, ALLE HIER GEMESSEN
+  Market Making        Orderflow-IC -0,041, p=3e-173   0,3-1,3 bp
+  Vol-Praemie          BTC t=4,12 | S&P t=4,67         Sharpe 1,5-1,9
+  Orderbuch-Imbalance  +0,87 bp, 110.786 Trades        +19 % als MM
+  Diversifikation      Korrelation +0,001, 20 Maerkte  Sharpe x3,5
+  Kostenstruktur       -331 % Taker / +41 % MM         Faktor 18
+
+  DER VERGLEICH:
+                     je Trade  Trades/J  brutto p.a.  Sharpe
+  Dein S/R           +45,7 bp        40      +18,3 %    0,36
+  Bot-Orderbuch      +0,87 bp     2.190      +19,1 %    0,85
+  -> Die Firma verdient NICHT MEHR. Ihr Edge ist 53x KLEINER
+     und kommt 55x haeufiger. Unterschied: der SHARPE.
+
+  WARUM KAPITAL DIE FOLGE IST, NICHT DIE URSACHE:
+  Bei GLEICHEM 10-%-Drawdown ueber 10 Jahre simuliert:
+  Sharpe 0,36 -> tragbare Vol  4 % -> Rendite  +1,5 % p.a.
+  Sharpe 0,85 ->               6 % ->          +4,7 %
+  Sharpe 1,50 ->               7 % ->         +11,1 %
+  Sharpe 3,00 ->              12 % ->         +35,2 %
+  Sharpe 5,00 ->              17 % ->         +84,6 %
+  -> Zwanzigfache Rendite bei identischem Risiko.
+     Nicht groesserer Edge -- RUHIGERER Edge.
+
+  WIE VIELE EDGES BRAUCHT MAN FUER SHARPE 3?
+  Sharpe waechst mit sqrt(N). Gemessen: 20 Maerkte -> Faktor 3,5
+  statt 4,47, also 78 % Effizienz.
+  Ziel 1,0 ->  13 Strategien
+  Ziel 2,0 ->  50
+  Ziel 3,0 -> 113
+  Ziel 5,0 -> 315
+
+  -> KEINE FIRMA HAT EINEN GROSSARTIGEN EDGE.
+     Sie haben siebzig mittelmaessige, die nicht korrelieren --
+     und jeder einzelne ist KLEINER als der hier gefundene.
+
+  WAS DAS KOSTET:
+  Dieses Projekt: ~40 Ansaetze, 2 haltbar = 5 % Trefferquote.
+  Fuer 70 Edges also ~1.400 Ansaetze -- mit Look-ahead-Kontrolle,
+  Ueberlappungskorrektur, Holdout und Bonferroni.
+  Das ist kein Wissensvorsprung. Das ist eine FABRIK.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
