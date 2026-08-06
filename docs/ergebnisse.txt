@@ -583,6 +583,71 @@
   gesamten Risikokapitals.
 
 ═══════════════════════════════════════════════════════════
+  VALIDIERUNG AN EINER ECHTEN SPX-KETTE
+═══════════════════════════════════════════════════════════
+
+  Kostenlose CBOE-Schnittstelle: 32.168 SPX-Optionen mit
+  echten Bid/Ask, IV und Greeks. Spot 7.723,55.
+
+  SELBSTKORREKTUR ZUERST:
+  Erster Vergleich sah nach einem Modellfehler aus
+  (Straddle 4,23 % Modell gegen 3,05 % real). Ich hatte
+  schon eine "Korrektur um 0,721" gerechnet.
+  BEIDES FALSCH -- ich hatte iv30=13,211 als 1321 % gelesen.
+  Modell bei HEUTIGER Vol: 3,09 % | real: 3,06 %
+  Abweichung 0,03 pp. Die 4,23 % waren der DURCHSCHNITT
+  ueber 2016-2026 (VIX 18,6 %), heute steht er bei 13,2 %.
+  -> Kein Modellfehler. Ein ruhiger Tag.
+  -> Die sechste Falle: eine Korrektur, die selbst der Fehler ist.
+
+  MODELL GEGEN ECHTE KETTE (Condor-Anteil am Straddle):
+  Konfiguration   Modell   real    Abweichung
+  +-2 % / 0,8 %    10,6%   12,5%     +1,9 pp
+  +-3 % / 0,8 %     8,0%    8,8%     +0,8 pp
+  +-5 % / 0,8 %     4,1%    4,3%     +0,2 pp
+  -> Modell trifft, leicht KONSERVATIV.
+  -> Die 4-11 % sind an echten Preisen bestaetigt.
+     20-25 % gelten nur fuer BREITE Fluegel:
+     +-2 % / 2,5 % liefert real 30,1 %.
+
+  DIE 4-LEG-SLIPPAGE, GEMESSEN:
+  ATM-Option Spanne 0,7 % vom Mid
+  Long Call +6,5 %  Spanne 9,1 %
+  Vier Legs, halbe Spannen: 1,05 Punkte = 0,014 % des Spot
+  Kompletter Roundtrip:     0,027 % des Nominals
+  = 14 % des Kredits.
+  Mein Modell rechnete 0,04 % -- also 1,5x zu VIEL.
+
+  ICH HATTE DIE FALSCHE KONFIGURATION OPTIMIERT:
+  Kredit/Risiko  +-2 %/0,8 %: 1,29 | +-5 %/1,5 %: 0,27
+  (meine bisherige Wahl war die kapitalineffizienteste)
+
+  ENDSTAND GEGEN DEN 6-%-PUFFER:
+  Konfig        Nom.  Stopverl.  Puffer  ueberlebt   Ø p.a.
+  +-5 %/3,5 %    4x     5,77 %     96 %    98,1 %   +19,0%
+  +-5 %/2,5 %    4x     4,02 %     67 %   100,0 %   +14,4%
+  +-5 %/1,5 %    6x     3,53 %     59 %    98,1 %   +13,1%
+  +-5 %/1,5 %   10x     5,88 %     98 %    90,7 %   +21,3%
+
+  -> Alle 20-%-Zeilen verlangen, dass EIN Stop-Ereignis
+     96-98 % des Risikokapitals frisst.
+
+  FREIGABE:
+  +-5 % Strangle, 2,5 % Fluegel, 4x Nominal, Stop bei 50 %.
+  +14,4 % p.a., 100 % Ueberlebensrate, Stop = 67 % des Puffers.
+  Auf 100k bei vollem Split: ~14.400 $.
+
+  WARUM BELASTBAR: nicht die Zahl, sondern die STABILITAET.
+  Vier Modellierungswege -- gekappte Naeherung, echtes
+  Condor-Modell, Kalibrierung an realer Kette, voller Sweep --
+  landen alle zwischen 13 % und 16 %. Zum ersten Mal in
+  diesem Projekt bleibt eine Zahl unter Methodenwechsel stabil.
+
+  20-30 % bleiben ausser Reichweite, solange der Puffer
+  6.000 $ betraegt. Nicht wegen der Strategie -- wegen der
+  Arithmetik zwischen Stopverlust und Puffer.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
