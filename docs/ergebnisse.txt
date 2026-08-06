@@ -1268,3 +1268,75 @@
   fuer die Positionsgroesse -- nicht fuer die Richtung.
     Baender eng  -> kommende Vol 35-45 %  -> normale Groesse
     Baender weit -> kommende Vol 55-75 %  -> Groesse halbieren
+
+
+═══════════════════════════════════════════════════════════
+  46. GIBT ES BESSERES ALS DIE BOLLINGER-BAENDER FUER RISIKO?
+═══════════════════════════════════════════════════════════
+
+  RANGLISTE -- BTC HOLDOUT 2025-26 (Spearman mit der Zukunft)
+                              Vol 5T   groesster    Tag <= -3 %
+                                       Rueckgang   (Tageslimit)
+    DVOL (implizite Vol)       0,348      0,110        0,210
+    Abwaerts-Semivol 20 T      0,323      0,190        0,166
+    EWMA (lambda 0,94)         0,322      0,112        0,155
+    ATR(14)/Preis              0,281      0,144        0,143
+    realisierte Vol 20 T       0,276      0,128        0,129
+    groesster Rueckgang 10 T   0,267      0,126        0,110
+    Parkinson (H-T)            0,229      0,112        0,107
+    realisierte Vol 5 T        0,221      0,160        0,110
+    BOLLINGER-BREITE           0,210      0,143        0,078  <- Platz 9/14
+    Garman-Klass               0,209      0,106        0,095
+    Spanne H/T gestern         0,205      0,160        0,147
+    Rogers-Satchell            0,200      0,109        0,089
+    |Rendite| gestern          0,134      0,115        0,128
+    Volumen / Ø20              0,063      0,114        0,122
+
+  Beim Kraken-Tageslimit: DVOL 0,210 gegen Bollinger 0,078 = Faktor 2,7
+
+  EINSCHRAENKUNG 1: AUF ETH ALLES SCHWAECHER
+    DVOL             BTC 0,348  ->  ETH 0,132
+    Abwaerts-Semivol BTC 0,323  ->  ETH 0,127
+    Bollinger        BTC 0,210  ->  ETH 0,078
+    realisierte Vol  BTC 0,276  ->  ETH 0,043
+
+  EINSCHRAENKUNG 2: NUR DER RANG, NICHT DAS NIVEAU
+  Out-of-Sample-R2 (Koeffizienten aus 2021-24 auf 2025-26):
+    DVOL + HAR              +0,103
+    EWMA                    +0,043
+    ATR                     -0,003
+    realisierte Vol 20 T    -0,033
+    BOLLINGER-BREITE        -0,134
+  Fast alles negativ = schlechter als den Mittelwert raten.
+  BTC-Vol fiel 51,8 -> 39,0 %, alte Eichung sagt zu hohe Werte voraus.
+  -> KEINE FESTEN VOL-SCHWELLEN. Nur Quantile der letzten 6-12 Monate.
+
+  DER ZAHLTAG-TEST -- UND ER DREHT DAS ERGEBNIS UM
+  BTC long-only, GLEICHER durchschnittlicher Einsatz 0,35x,
+  echte Kraken-Regeln:
+    feste Groesse 0,35x        41,4 %      --        max DD -36,6 %
+    EWMA-gesteuert             32,3 %   -9,1 Pp      max DD -31,4 %
+    ATR-gesteuert              32,3 %   -9,1 Pp      max DD -32,3 %
+    DVOL-gesteuert             32,2 %   -9,2 Pp      max DD -31,0 %
+    Abwaerts-Semivol           31,2 %  -10,2 Pp      max DD -32,1 %
+    realisierte Vol            30,5 %  -10,9 Pp      max DD -31,5 %
+    Bollinger-gesteuert        26,1 %  -15,4 Pp      max DD -29,5 %
+
+  JEDE Vol-Steuerung senkt die Pass-Rate um 9-15 Punkte -- obwohl
+  sie den Drawdown wie beabsichtigt senkt.
+
+  GRUND: Das Regelwerk hat ein ZIEL (+10 %), nicht nur eine Grenze.
+  Vol-Steuerung macht die Position genau dann klein, wenn grosse
+  Bewegungen moeglich sind. Volatilitaet ist hier nicht nur Gefahr,
+  sie ist der einzige Weg zum Ziel.
+
+  Die Rangfolge bleibt aber intakt: die schlechteste Risikomessung
+  (Bollinger) richtet den groessten Schaden an, die besten den kleinsten.
+
+  EMPFEHLUNG
+    Bollinger-Breite  ->  Abwaerts-Semivol 20 T (eine Zeile Code)
+    zusaetzlich       ->  DVOL von Deribit (einziger Wert, der nicht
+                          aus dem Chart kommt)
+    ABER NICHT zur Positionssteuerung -- nur um zu wissen, wann man
+    der laufenden Position nicht trauen sollte. Groesse bleibt fest
+    und klein.
