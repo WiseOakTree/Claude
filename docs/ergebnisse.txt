@@ -1212,3 +1212,59 @@
   FAZIT
   Positionsgroesse bewegt die Pass-Rate um 34 Punkte.
   Die Indikator-Parameter bewegen sie um ~0.
+
+
+═══════════════════════════════════════════════════════════
+  45. DIESELBEN DREI ALS INFORMATIONSQUELLE (nicht als Signal)
+═══════════════════════════════════════════════════════════
+
+  RICHTUNG -- LEER
+  Transinformation ueber 5 Tage voraus (max. moeglich = 1,0 Bit):
+                          Richtung   Kontrolle
+    MACD-Histogramm         0,0017      0,0014
+    MACD-Linie              0,0020      0,0025   <- unter Kontrolle
+    Stochastik %K           0,0026      0,0011
+    Bollinger %B            0,0025      0,0009
+    Bollinger-Breite        0,0012      0,0020   <- unter Kontrolle
+
+  Das einzige monotone Muster (Stoch %K: Anteil + faellt 53,2 -> 48,4 %)
+  als Long-Short geprueft, unterstes gegen oberstes Quintil:
+    BTC  Suche -0,17 Pp (t=-0,34)  ->  HOLDOUT +0,53 Pp (t=+0,15)
+    ETH  Suche -0,70 Pp (t=-0,58)  ->  HOLDOUT +1,21 Pp (t=+0,35)
+    SOL  Suche -0,37 Pp (t=-0,25)  ->  HOLDOUT +0,59 Pp (t=+0,11)
+  Vorzeichen kippt in ALLEN DREI Maerkten.
+
+  RISIKO -- HAELT
+  Bollinger-Breite -> realisierte Vol der naechsten 5 Tage:
+    Markt  Zeitraum        engstes 20%   weitestes 20%   Faktor
+    BTC    Suche 21-24          39 %          72 %       1,85x
+    BTC    HOLDOUT 25-26        35 %          54 %       1,55x
+    ETH    Suche 21-24          45 %          96 %       2,15x
+    ETH    HOLDOUT 25-26        56 %          75 %       1,33x
+    SOL    Suche 21-24          77 %         147 %       1,89x
+    SOL    HOLDOUT 25-26        57 %          90 %       1,59x
+  Sechs von sechs gleiche Richtung. Erste Indikator-Aussage des
+  Projekts, die den Holdout auf drei Maerkten uebersteht.
+
+  ABER: KEINE ENTDECKUNG UND DIE SCHLECHTERE MESSUNG
+  Volatilitaetsclustering ist Lehrbuchwissen (Engle, Nobelpreis 2003).
+  R² fuer die Vol der naechsten 5 Tage:
+    Bollinger-Breite                 Suche 0,228   Holdout 0,194
+    realisierte Vol 20 Bars (direkt) Suche 0,315   Holdout 0,222
+    beide zusammen                   Suche 0,323   Holdout 0,239
+    Zuwachs durch die Breite               +0,009          +0,017
+  Die Breite IST die realisierte Vol (Korrelation +0,747), nur verrauscht.
+
+  DREI INDIKATOREN = ZWEI GROESSEN
+    MACD-Linie   <-> Momentum 20 Bars    +0,88
+    Bollinger %B <-> Stochastik %K       +0,85
+    BB-Breite    <-> realisierte Vol     +0,75
+  Hauptkomponenten: 4 von 6 erklaeren 90 %, die erste allein 48,9 %
+
+  WAS FOLGT
+  Positionsgroesse bewegt die Pass-Rate um 34 Punkte (63,8 -> 30,2 %).
+  Richtungswahl bewegt sie um ~0.
+  Die einzige nachweisbare Information der drei ist genau der Input
+  fuer die Positionsgroesse -- nicht fuer die Richtung.
+    Baender eng  -> kommende Vol 35-45 %  -> normale Groesse
+    Baender weit -> kommende Vol 55-75 %  -> Groesse halbieren
