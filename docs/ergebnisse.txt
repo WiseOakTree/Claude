@@ -1067,6 +1067,72 @@
   statt aus einem Versprechen.
 
 ═══════════════════════════════════════════════════════════
+  WARUM ALLE OEFFENTLICHEN STRATEGIEN SHARPE ~0 HABEN
+═══════════════════════════════════════════════════════════
+
+  DIE RAUSCHDECKE: bester Sharpe aus N Strategien OHNE Edge
+  Zeitraum    N=1    N=50   N=200  N=1000  N=5000
+   1 Jahr   -2,45    2,78    2,74    4,01    3,94
+   2 Jahre  -0,80    1,22    2,38    2,12    2,36
+   5 Jahre  +0,09    1,19    1,44    1,77    1,85
+  10 Jahre  -0,22    0,67    0,70    1,02    1,12
+
+  -> 1.000 wertlose Varianten ueber 5 Jahre liefern einen
+     BESTEN Sharpe von ~1,8. OHNE JEDEN EDGE.
+     Ein Skript mit 5 Parametern hat leicht 1.000 Kombinationen.
+     Die schoene Kurve ist kein Betrug -- sie ist der
+     arithmetisch erwartete Wert der SUCHE.
+
+  UND SHARPE 0,3 IST GAR NICHT MESSBAR:
+  wahrer Sharpe   Jahre fuer p<0,05
+      0,2               96,0
+      0,3               42,7
+      0,5               15,4
+      1,0                3,8
+      1,5                1,7
+
+  -> "Diese Strategie hat Sharpe 0,3" auf 5 Jahren Daten ist
+     mathematisch NICHT von "Sharpe 0" unterscheidbar.
+     Das gilt auch fuer meinen S/R-Fund (0,36 ueber 5,4 Jahre).
+     Er haelt wegen VIER ANDERER Kontrollen, nicht wegen des Sharpe.
+
+  WARUM DIE KURVEN TROTZDEM GUT AUSSEHEN:
+  TradingView-Voreinstellungen: Slippage 0, Kommission 0,
+  Auswertung auf dem Optimierungszeitraum, kein Holdout.
+  Gemessene Wirkung je Fehler:
+    Look-ahead                     93 % -> 7 %
+    Kosten 0 -> 16 bp              Edge -35 %
+    Bestes von N                   54,7 % -> 31,9 %
+    Ueberlappung unkorrigiert      p=10^-240 -> p=0,27
+
+  WO DIE AUSSAGE ZU WEIT GEHT:
+  Ansatz                          Sharpe   Basis    Kontrollen
+  120 TA-Kombinationen (Median)    ~0,00  4,5 J     alle
+  S/R-Ausbruch BTC                  0,36  5,4 J     alle
+  Bot-Orderbuch (als MM)            0,85  2,7 J     OOS staerker
+  Vol-Praemie BTC                   1,85  5,4 J     t=4,12
+  Vol-Praemie S&P 500               1,52   10 J     t=4,67
+
+  -> Chartmuster: 0,00-0,36. DU HAST RECHT.
+  -> Risikopraemien: 1,5-1,9, ueber ZWEI unabhaengige Klassen.
+
+  DER UNTERSCHIED:
+                    Chartmuster          Risikopraemie
+  Woher das Geld?   jemand handelt       du traegst Risiko,
+                    schlechter           das andere loswerden wollen
+  Wenn alle es      VERSCHWINDET         BLEIBT -- die Versicherung
+  kennen?                                wird trotzdem gebraucht
+  Auf TradingView?  ja, tausendfach      nein, kein Indikator
+
+  DIE BRAUCHBARE VERSION:
+  "Kein Chartmuster hat einen nachweisbaren Edge, und die meisten
+   veroeffentlichten Backtests zeigen den Erwartungswert einer
+   SUCHE, nicht das Ergebnis einer Strategie."
+
+  Und die Frage, die alles entscheidet:
+  WIE VIELE VARIANTEN HAST DU GETESTET?
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
