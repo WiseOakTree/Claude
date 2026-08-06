@@ -821,6 +821,69 @@
   Eigenes Kapital     VRP real und handelbar, Sharpe 1,52
 
 ═══════════════════════════════════════════════════════════
+  MEHRERE KRAKEN-CHALLENGES — ABER NICHT GLEICHZEITIG
+═══════════════════════════════════════════════════════════
+
+  Versatz der Starts   >=1 gefunded  Ø Konten  $/Konto
+  1 Challenge allein         70,9 %      0,71     120 $
+  3x GLEICHZEITIG            70,9 %      2,13     120 $  <-- NULL Gewinn
+  3x Versatz 30/60           79,3 %      2,17     117 $
+  3x Versatz 60/120          92,7 %      2,31     111 $
+  3x Versatz 90/180         ~100  %      2,38     107 $
+
+  -> DREI GLEICHZEITIGE IDENTISCHE CHALLENGES SIND DREI
+     LOTTOSCHEINE MIT DENSELBEN ZAHLEN. Exakt dieselbe Quote.
+
+  WARUM DER VERSATZ WIRKT:
+  Die Strategie scheitert an MARKTREGIMEN (zerhackte Phasen,
+  Wochen bis Monate). Gleiche Startzeit = gleiches Regime.
+  90 Tage Abstand = drei verschiedene Regime.
+
+  ANDERE BAUFORMEN:
+  verschiedene Groessen  74,3 % -- bringt fast nichts
+  verschiedene Assets    87,2 % -- streut, aber Quote je Konto
+                         faellt auf 54,2 % (ETH/SOL schwaecher)
+  VERSATZ ist die einzige Form, die streut OHNE Qualitaetsverlust.
+
+  PRAKTISCH:
+  Nicht drei heute kaufen und heute starten.
+  Eine starten. Nach 60-90 Tagen die zweite. Dann die dritte --
+  unabhaengig davon, wie die erste laeuft.
+  255 $ ueber ein halbes Jahr, ~93-100 % mindestens ein Konto.
+
+  EINSCHRAENKUNGEN:
+  - Die 100 % sind zu glatt (wenige unabhaengige Beobachtungen).
+  - Die 70,9 % je Konto sind hoeher als die 53,8 % aus einfach.md,
+    weil hier unaufgeloeste Versuche herausfallen statt zu zaehlen.
+    Fuer den VERGLEICH der Bauformen egal, fuer die Hoehe nicht.
+  - Kraken fragen, ob mehrere gleichzeitige Challenges erlaubt sind.
+
+═══════════════════════════════════════════════════════════
+  "ICH BIN IM MINUS" — HEISST DAS WAS?
+═══════════════════════════════════════════════════════════
+
+  Anteil der Trades im Minus:
+   nach  1h 47,4 % |  6h 50,2 % | 24h 43,7 % | 48h 41,8 %
+  -> Jeder zweite Trade steht zwischendurch hinten. Normalzustand.
+
+  SAGT DER RUECKSTAND DAS ENDERGEBNIS VORAUS?
+  Korrelation 6h-Stand <-> Endergebnis:      +0,454
+  davon rein mechanisch (sqrt(6/48)):        +0,354
+  VORWAERTS-Anteil (6h -> 48h):              +0,145  p=0,346
+  Ø Vorwaerts-Rendite wenn im Minus:         +44,1 bp
+  -> Die 48h-Rendite ENTHAELT die 6h-Rendite. Der Rueckstand
+     ist keine Information, sondern die erste Haelfte des Wegs.
+
+  SIGNAL UMDREHEN:
+  folgen   +67,1 bp  55,9 % Trefferquote  p=0,016
+  umdrehen -99,1 bp  37,6 %               p<0,001
+  Differenz 166 bp je Trade = 354 Prozentpunkte ueber 213 Trades.
+  Man verliert den Edge UND zahlt die Gebuehren trotzdem.
+
+  -> Ein einzelner Gegentrade, der aufgeht, ist keine Widerlegung.
+     Er ist das, was in 44 % der Faelle passiert.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
