@@ -72,3 +72,35 @@ Signalen pro Jahr und 5,33 % breiten Stops ist es viel zu langsam für ein
 Jede Variante, die überhaupt Ziele trifft, reißt das **6 %-Limit** um das
 2–3-Fache. Tages-Renko ist für diese Challenge nicht brauchbar — nutze 1h-Kerzen
 (dafür braucht es kein Abo).
+
+---
+
+## `risiko_panel.pine` — Risikomaße statt Bänder
+
+Kein Signalgeber. Ein Fensterindikator, der sieben Volatilitätsmaße als
+**Perzentil** nebeneinander zeigt, inklusive der Bollinger-Breite zum
+Vergleich.
+
+Hintergrund: Gemessen an der Rangkorrelation mit einem Tag von −3 % oder
+schlechter (dem Kraken-Tageslimit), BTC-Holdout 2025-26:
+
+| Maß | Rangkorrelation | in TradingView eingebaut? |
+|---|---|---|
+| DVOL (implizite Vol) | **0,210** | nein — eigenes Symbol |
+| **Abwärts-Semivol** | **0,166** | nein → hier drin |
+| EWMA (λ 0,94) | 0,155 | nein → hier drin |
+| ATR(14) | 0,143 | ja (Average True Range) |
+| realisierte Vol | 0,129 | ja (Historical Volatility) |
+| **Bollinger-Breite** | **0,078** | ja (Bollinger Bands Width) |
+
+Zwei Dinge, die der Indikator bewusst **nicht** tut:
+
+- **Keine absoluten Schwellen.** Das Vol-Niveau ist nicht prognostizierbar
+  (Out-of-Sample-R² fast überall negativ, Bollinger −0,134) — nur der Rang.
+  Deshalb Perzentile.
+- **Keine Positionssteuerung.** Gemessen: Vol-gesteuerte Größe senkt die
+  Pass-Rate um 9–15 Punkte gegenüber fester Größe, obwohl der Drawdown fällt.
+  Das Regelwerk hat ein Ziel, und Volatilität ist der Weg dorthin.
+
+Einstellung: 4h-Chart, Vol-Fenster 20 Bars, Perzentil-Fenster 1000 Bars
+(≈ 6 Monate). Details in [`../docs/tradingview_namen.md`](../docs/tradingview_namen.md).
