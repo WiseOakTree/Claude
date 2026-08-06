@@ -1000,6 +1000,73 @@
   Das ist kein Wissensvorsprung. Das ist eine FABRIK.
 
 ═══════════════════════════════════════════════════════════
+  DER EHRLICHE WEG — EINKOMMEN = KAPITAL x RENDITE
+═══════════════════════════════════════════════════════════
+
+  Monat netto    bei 10 %    bei 15 %    bei 20 %    bei 27 %
+   1.000 €       120.000     80.000      60.000      44.444
+   3.000 €       360.000    240.000     180.000     133.333
+   5.000 €       600.000    400.000     300.000     222.222
+
+  20 % im Jahr ist eine SEHR GUTE Rendite. Aus 10.000 €
+  macht sie 2.000 €. Jeder Weg, der Gehalt aus kleinem
+  Kapital verspricht, ist Hebel oder Luege.
+
+  DER SPARWEG (Ziel 180.000 €, 20 % Rendite):
+  Start        3k/J    6k/J   12k/J   24k/J
+      0 €      15 J    11 J     8 J     6 J
+  20.000 €     10 J     8 J     7 J     5 J
+  50.000 €      7 J     6 J     5 J     4 J
+  OHNE SPAREN: NIE.
+
+  WAS TRAEGT MEHR? (20k Start, 12k/J, 20 % = 7 Jahre)
+  Rendite 20 -> 27 % (+35 %)   6 J   spart 1 Jahr
+  Sparrate 12k -> 16k (+35 %)  6 J   spart 1 Jahr
+  -> EXAKT GLEICH. Nur ist die Sparrate SICHER.
+  -> Der gesamte Edge dieses Projekts entspricht
+     "4.000 € mehr im Jahr zuruecklegen".
+
+  WAS PROP-KONTEN BEITRAGEN (10k Konto, 80 % Split):
+  schwaches Jahr    800 $ | Ø Jahr 1.440 $ | gutes Jahr 2.400 $
+  Drei Konten: 2.400-7.200 $/Jahr, Konto lebt Ø 102 Tage.
+  -> KEIN GEHALT. Ein Sparbeschleuniger mit Ausfallrisiko.
+
+  DIE SACHE, DIE NIEMAND SAGT:
+  Auch Profi-Trader leben NICHT von eigenen Renditen.
+  Sie bekommen ein GEHALT (80-150k) und handeln FREMDES
+  Kapital. "Von Trading leben" heisst fast immer: angestellt.
+
+  WAS ICH TAETE, IN DIESER REIHENFOLGE:
+  1. Erwerbseinkommen zuerst. Sparrate = ein Drittel mehr
+     Rendite, und du kontrollierst sie vollstaendig.
+  2. Kraken zu Ende spielen -- als DISZIPLINUEBUNG.
+     Weitere Challenges VERSETZT starten (70,9 % -> ~100 %).
+  3. Vol-Praemie VORBEREITEN, nicht handeln. Ab ~30k eigenem
+     Kapital, 1,0x, kein Hebel, erst nach 12 Monaten mehr.
+  4. Den Weg ernst nehmen, den du unbewusst gegangen bist:
+     Indikator-Bug gefunden, PDF beschafft und damit fuenf
+     meiner Dokumente widerlegt, zwei technische Einwaende
+     zum Condor, die beide zutrafen. DAS IST DER JOB.
+     Das Repository ist eine Bewerbungsmappe.
+
+  WAS ICH NICHT TAETE:
+  - Kein Anbieter ohne gelesene Regel-PDF (siehe Vanquish).
+  - Keine Suche nach dem naechsten Indikator (39 Ansaetze,
+    2 haltbar, 5 % Trefferquote).
+  - Kein Hebel ueber 1x im ersten Jahr eigenen Kapitals.
+  - Keine Kurse kaufen.
+
+  ZEITRAHMEN:
+  Jahr 1     Challenges versetzt, 1.500-3.000 $, Disziplin
+  Jahr 2-3   Kapital 20-50k, VRP klein live
+  Jahr 4-6   Kapital 80-150k, Trading traegt spuerbar bei
+  Jahr 7-9   180k+ -- Trading kann ein Gehalt ersetzen
+
+  Sieben bis neun Jahre klingt lang. Es ist der einzige
+  Zeitrahmen in diesem Projekt, der aus einer RECHNUNG kommt
+  statt aus einem Versprechen.
+
+═══════════════════════════════════════════════════════════
   DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
 ═══════════════════════════════════════════════════════════
 
