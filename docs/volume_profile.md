@@ -168,3 +168,65 @@ haltbare Information auf der Risikoseite.
 *Skripte: `research/vp.py` (Profilbau, POC-Magnet), `research/vp2.py`
 (Value-Area-Ausbruch, LVN-Geschwindigkeit, Profil als Risikomaß),
 `research/vp3.py` (Kopf-an-Kopf gegen die Pivot-Level).*
+
+---
+
+# Nachtrag: der SOL-Befund auf 14 Märkten geprüft
+
+Die auffälligste Zelle war der Value-Area-Ausbruch auf SOL — in beiden
+Zeiträumen positiv. Ich habe denselben Test auf **alle 14 verfügbaren Märkte**
+angewendet.
+
+| Markt | bp Suche | t | bp **Holdout** | t | beide + |
+|---|---|---|---|---|---|
+| **SOL** | **+77,1** | 0,23 | **+101,3** | 0,39 | **ja** |
+| **DOT** | **+90,8** | 0,47 | **+25,8** | 0,10 | **ja** |
+| **DOGE** | +52,2 | 0,21 | +31,1 | 0,10 | **ja** |
+| **ADA** | +33,7 | 0,18 | +19,3 | 0,07 | **ja** |
+| AVAX | +56,4 | 0,20 | −3,7 | −0,01 | — |
+| LTC | +48,9 | 0,25 | **−88,8** | −0,41 | — |
+| ATOM | +41,6 | 0,20 | −37,8 | −0,17 | — |
+| TRX | +23,1 | 0,12 | −15,6 | −0,13 | — |
+| XRP | +0,8 | 0,00 | −23,5 | −0,10 | — |
+| BTC | −6,7 | −0,05 | +14,5 | 0,12 | — |
+| LINK | −10,4 | −0,05 | +31,1 | 0,11 | — |
+| BNB | −14,1 | −0,09 | −26,3 | −0,14 | — |
+| BCH | −15,0 | −0,07 | −31,0 | −0,12 | — |
+| ETH | −62,8 | −0,34 | +44,5 | 0,16 | — |
+
+## Der gepoolte Test — und der ist eindeutig
+
+| | Trades | Effekt | t |
+|---|---|---|---|
+| Suchzeitraum 2021-24 | 7.337 | **+22,1 bp** | 0,39 |
+| **Holdout 2025-26** | 3.154 | **−0,2 bp** | **−0,00** |
+
+**Minus null Komma zwei Basispunkte. t = −0,00.** Über 3.154 Trades und
+vierzehn Märkte ist der Effekt exakt null.
+
+## Und die Kontrolle gegen den Zufall
+
+| | |
+|---|---|
+| Märkte gesamt | 14 |
+| positiv im Suchzeitraum | 9 (64 %) |
+| positiv im Holdout | **7 (50 %)** |
+| in **beiden** positiv | **4** |
+| bei reinem Zufall erwartet | **3,5** |
+| p (Binomialtest) | **0,479** |
+| Korrelation Suche ↔ Holdout über die Märkte | **+0,105** |
+
+Vier von vierzehn in beiden Zeiträumen positiv — **erwartet werden 3,5.**
+Im Holdout ist die Trefferquote **genau 50 %**, also ein Münzwurf. Und die
+Korrelation von +0,105 heißt: Zu wissen, welcher Markt damals funktioniert
+hat, sagt fast nichts darüber, welcher als nächstes funktioniert.
+
+> **SOL war nicht der Beginn einer Entdeckung. SOL war das Maximum von
+> vierzehn Rauschziehungen — und ich habe es selbst als interessant markiert,
+> bevor ich es geprüft habe.**
+
+Das ist Falle Nummer vier aus der Liste dieses Projekts (*„Bestes von N"*),
+diesmal an mir selbst vorgeführt. Der Unterschied zum üblichen Ablauf ist
+nur, dass der Test danach kam statt gar nicht.
+
+**Der Zähler bleibt: 2 haltbare Befunde von inzwischen über 40 Ansätzen.**

@@ -1484,3 +1484,50 @@
 
   GRENZE DES TESTS: keine Tickdaten. Footprint-Profile koennen anders
   aussehen; das kann ich nicht messen.
+
+
+═══════════════════════════════════════════════════════════
+  50. DER SOL-BEFUND AUF 14 MAERKTEN GEPRUEFT
+═══════════════════════════════════════════════════════════
+
+  Value-Area-Ausbruch, 1h, 48 h halten, nach Kosten:
+    Markt   bp Suche    t    |  bp HOLDOUT    t    beide +
+    SOL      +77,1    0,23   |    +101,3    0,39     JA
+    DOT      +90,8    0,47   |     +25,8    0,10     JA
+    DOGE     +52,2    0,21   |     +31,1    0,10     JA
+    ADA      +33,7    0,18   |     +19,3    0,07     JA
+    AVAX     +56,4    0,20   |      -3,7   -0,01      -
+    LTC      +48,9    0,25   |     -88,8   -0,41      -
+    ATOM     +41,6    0,20   |     -37,8   -0,17      -
+    TRX      +23,1    0,12   |     -15,6   -0,13      -
+    XRP       +0,8    0,00   |     -23,5   -0,10      -
+    BTC       -6,7   -0,05   |     +14,5    0,12      -
+    LINK     -10,4   -0,05   |     +31,1    0,11      -
+    BNB      -14,1   -0,09   |     -26,3   -0,14      -
+    BCH      -15,0   -0,07   |     -31,0   -0,12      -
+    ETH      -62,8   -0,34   |     +44,5    0,16      -
+
+  GEPOOLT -- DER EIGENTLICHE TEST
+    Suchzeitraum 2021-24 :  7337 Trades   +22,1 bp   t =  0,39
+    HOLDOUT 2025-26      :  3154 Trades    -0,2 bp   t = -0,00
+
+  MINUS NULL KOMMA ZWEI BASISPUNKTE. t = -0,00.
+
+  KONTROLLE GEGEN ZUFALL
+    Maerkte gesamt                    14
+    positiv im Suchzeitraum            9  (64 %)
+    positiv im Holdout                 7  (50 % = Muenzwurf)
+    in BEIDEN positiv                  4
+    bei Zufall erwartet              3,5
+    p (Binomialtest gegen 25 %)    0,479
+    Korrelation Suche <-> Holdout  +0,105
+
+  SOL war nicht der Beginn einer Entdeckung, sondern das MAXIMUM
+  VON 14 RAUSCHZIEHUNGEN -- und ich hatte es selbst als interessant
+  markiert, bevor ich es geprueft habe.
+
+  Das ist Falle Nr. 4 des Projekts ("Bestes von N"), diesmal am
+  eigenen Befund vorgefuehrt. Der Unterschied zum ueblichen Ablauf
+  ist nur, dass der Test danach kam statt gar nicht.
+
+  ZAEHLER UNVERAENDERT: 2 haltbare Befunde von ueber 40 Ansaetzen.
