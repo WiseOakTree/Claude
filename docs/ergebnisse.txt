@@ -1409,3 +1409,78 @@
     als Signal             12 von 12 negativ
     als Filter             gescheitert (Nr. 10)
     ALS BANDBREITE         besser als Bollinger, beide Maerkte
+
+
+═══════════════════════════════════════════════════════════
+  49. VOLUME PROFILE -- "das Einzige, was funktioniert"
+═══════════════════════════════════════════════════════════
+
+  AUFBAU: Profil aus 1h-Bars, Volumen gleichmaessig ueber [Tief, Hoch]
+  verteilt (Verfahren von TradingView ohne Tickdaten). 720-Bar-Fenster,
+  100 Koerbe, Value Area 70 %. BTC/ETH/SOL, Holdout 2025-26.
+
+  DER ENTSCHEIDENDE TEST -- VOLUMEN-LEVEL GEGEN PIVOT-LEVEL
+  Gleiche Mechanik, 48 h halten, gleiche Kosten:
+                                      Suche 21-24      HOLDOUT 25-26
+    POC der Vorwoche                 -7,4 bp (750)   -26,7 bp (343)
+    Value-Area-Grenzen Vorwoche     -11,0 bp (1418)  -15,4 bp (526)
+    POC des Vormonats               -11,0 bp (397)   -16,2 bp (149)
+    Value-Area-Grenzen Vormonat      -1,5 bp (550)   -25,4 bp (348)
+    S/R AUS PIVOTS (validiert)      +49,4 bp (474)   +52,2 bp (301)
+
+  ACHT VON ACHT ZELLEN NEGATIV. Alle t zwischen -0,01 und -0,25.
+  Die Pivot-Regel liefert rund 70 bp je Trade mehr.
+
+  1) POC ALS MAGNET -- NEIN
+    BTC  Suche t=-0,73  ->  HOLDOUT t=-0,51
+    ETH  Suche t=-0,14  ->  HOLDOUT t=-1,08
+    SOL  Suche t=-1,82  ->  HOLDOUT t=+0,09
+  Alle sechs bei null oder negativ. Wenn ueberhaupt: Fortsetzung
+  statt Rueckkehr.
+
+  2) VALUE-AREA-AUSBRUCH -- 1 VON 3 MAERKTEN
+    BTC  Suche  -6,7 bp (t-0,05)  ->  HOLDOUT  +14,5 bp (t 0,12)
+    ETH  Suche -62,8 bp (t-0,34)  ->  HOLDOUT  +44,5 bp (t 0,16)
+    SOL  Suche +77,1 bp (t 0,23)  ->  HOLDOUT +101,3 bp (t 0,39)
+  BTC und ETH kippen. SOL in beiden Zeitraeumen positiv -- die
+  auffaelligste Zelle der Untersuchung, aber t=0,39 und 1 von 3.
+
+  3) LOW VOLUME NODES -- DAS HAELT
+  Mittlere absolute Bewegung ueber 48 h nach Volumendichte am Kurs:
+    Markt  Zeitraum    LVN(unt.20%)  HVN(ob.20%)  Verhaeltnis
+    BTC    Suche          3,47 %       2,80 %       1,24x
+    BTC    HOLDOUT        2,57 %       2,38 %       1,08x
+    ETH    Suche          4,07 %       3,49 %       1,17x
+    ETH    HOLDOUT        4,40 %       3,48 %       1,26x
+    SOL    Suche          6,53 %       5,36 %       1,22x
+    SOL    HOLDOUT        4,42 %       4,20 %       1,05x
+  SECHS VON SECHS ueber 1,0. Der Kurs laeuft durch duenne Zonen
+  tatsaechlich schneller -- aber das ist eine Aussage ueber TEMPO,
+  nicht ueber Richtung. Groesse 5-26 %.
+
+  4) ALS RISIKOMASS -- SCHLECHTER ALS DAS VORHANDENE
+  Rangkorrelation im Holdout (Vol 48h / Tag <= -3 %):
+    BTC  Value-Area-Breite      0,332 / 0,151
+    BTC  |Abstand zum POC|      0,180 / 0,078
+    BTC  Volumendichte          0,068 / 0,015
+    BTC  Bollinger-Breite       0,385 / 0,185
+    BTC  ABWAERTS-SEMIVOL       0,435 / 0,188
+    ETH  Value-Area-Breite      0,252 / 0,061   Semivol 0,376 / 0,181
+    SOL  Value-Area-Breite      0,435 / 0,147   Semivol 0,532 / 0,206
+  Die Abwaerts-Semivol schlaegt jedes Profil-Mass in jedem Markt.
+  Bemerkenswert: der VWAP hat als Bandbreite die Bollinger geschlagen,
+  das Volume Profile schafft das nicht -- obwohl beide Volumen nutzen.
+
+  BILANZ
+    Volumen-Level schlagen Pivot-Level      NEIN (8/8 negativ)
+    POC ist ein Magnet                      NEIN (alle t <= 0,09)
+    Value-Area-Ausbruch traegt              1 von 3 Maerkten
+    Kurs laeuft schnell durch duenne Zonen  JA (6/6, aber 5-26 %)
+    Profil als Risikomass                   NEIN
+
+  FUENF WERKZEUGE GETESTET (MACD, Stochastik, Bollinger, VWAP,
+  Volume Profile), FUENFMAL DASSELBE MUSTER:
+  ueber die RICHTUNG leer, ueber das RISIKO brauchbar.
+
+  GRENZE DES TESTS: keine Tickdaten. Footprint-Profile koennen anders
+  aussehen; das kann ich nicht messen.
