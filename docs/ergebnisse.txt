@@ -1340,3 +1340,72 @@
     ABER NICHT zur Positionssteuerung -- nur um zu wissen, wann man
     der laufenden Position nicht trauen sollte. Groesse bleibt fest
     und klein.
+
+
+═══════════════════════════════════════════════════════════
+  48. VWAP -- der einzige der vier, der VOLUMEN benutzt
+═══════════════════════════════════════════════════════════
+
+  VORFRAGE: IST DER VWAP UEBERHAUPT ETWAS ANDERES?
+    BTC 20 Bars   VWAP <-> SMA  +0,9999   Ø |Differenz| 0,346 %
+    BTC 50 Bars   VWAP <-> SMA  +0,9999   Ø |Differenz| 0,515 %
+    ETH 20 Bars   VWAP <-> SMA  +0,9996   Ø |Differenz| 0,469 %
+  Die VWAP-LINIE ist praktisch ein gleitender Durchschnitt.
+
+  RICHTUNG: NICHTS
+  Abstand zum Tages-VWAP, unterstes gegen oberstes Quintil, 5 Tage:
+    BTC  Suche -0,20 (t=-0,38)  ->  HOLDOUT +0,19 (t=-0,09)
+    ETH  Suche -0,20 (t=-0,28)  ->  HOLDOUT +0,42 (t=+0,04)
+    SOL  Suche +0,60 (t=+0,10)  ->  HOLDOUT +0,71 (t=+0,16)
+
+  SIGNAL: 12 VON 12 ZELLEN NEGATIV
+    BTC Tages   Suche -14,8 bp  HOLDOUT -15,7 bp  (3.153 / 1.176 Signale)
+    BTC Wochen  Suche -13,1     HOLDOUT -15,7
+    BTC roll50  Suche  -2,5     HOLDOUT -15,7
+    ETH Tages   Suche -13,5     HOLDOUT  -6,2
+    ETH Wochen  Suche -12,8     HOLDOUT  -4,2
+    ETH roll50  Suche  -5,7     HOLDOUT -28,3
+  Tages-VWAP-Kreuzung feuert ~780x/Jahr auf 4h = ueber 100 % Gebuehren p.a.
+
+  FILTER NR. 10 AUF DAS S/R-SIGNAL -- GESCHEITERT
+                              Suche 21-24        HOLDOUT 25-26
+    ohne Filter             +49,4 bp (474)      +52,2 bp (301)
+    Einklang Tages-VWAP     +71,2 bp (365)      +53,8 bp (235)
+    Einklang VWAP(50)       +89,4 bp (324)      +26,1 bp (188)
+    GEGEN den Tages-VWAP    -23,8 bp (109)      +46,8 bp ( 66)
+  Im Suchzeitraum perfekt (+49 -> +89, Aussortierte bei -23,8).
+  Im Holdout halbiert er den Effekt, und die Aussortierten liefern +46,8.
+  ZEHNTER FILTER, ZEHNTES SCHEITERN.
+
+  ABER DIE BAENDER -- HIER STEHT ETWAS
+  Rangkorrelation, 4h, HOLDOUT 2025-26:
+    Markt  Mass                       Vol 5T   Tag <= -3 %
+    BTC    VWAP-Bandbreite (20)        0,420      0,241
+    BTC    Abwaerts-Semivol 20         0,409      0,301
+    BTC    Bollinger-Breite (20,2)     0,365      0,200
+    BTC    |Abstand| zum Tages-VWAP    0,136      0,078
+    BTC    Volumen / Ø20              -0,007      0,000
+    ETH    VWAP-Bandbreite (20)        0,366      0,166
+    ETH    Abwaerts-Semivol 20         0,361      0,168
+    ETH    Bollinger-Breite (20,2)     0,305      0,148
+  VWAP-Bandbreite schlaegt Bollinger in JEDER Spalte auf BEIDEN Maerkten.
+
+  UND DER VORSPRUNG KOMMT NACHWEISLICH VOM VOLUMEN
+                                        BTC Vol  BTC -3%  ETH Vol  ETH -3%
+    Schlusskurs, ungewichtet (Bollinger)  0,365    0,200    0,305    0,148
+    typ. Preis (HLC/3), ungewichtet       0,365    0,201    0,300    0,147
+    Schlusskurs, VOLUMENGEWICHTET         0,415    0,239    0,363    0,164
+    typ. Preis, VOLUMENGEWICHTET (VWAP)   0,420    0,241    0,366    0,166
+
+    HLC/3 statt Schlusskurs  ->  bringt NULL
+    Volumengewichtung        ->  bringt ALLES
+
+  Erster Vorschlag des Nutzers, der etwas hinzufuegt -- und zwar genau
+  die Groesse, die den anderen drei Indikatoren fehlt.
+
+  BILANZ VWAP
+    als Kurslinie          identisch mit der SMA (+0,9999)
+    als Richtungsinfo      nichts
+    als Signal             12 von 12 negativ
+    als Filter             gescheitert (Nr. 10)
+    ALS BANDBREITE         besser als Bollinger, beide Maerkte
