@@ -2059,3 +2059,69 @@
   einzigen der 57 anderen Ansaetze dieses Projekts.
   Erwartung realistisch 10-15 % p.a., nicht 37.
   Dieser Weg braucht kein Koennen, aber KAPITAL.
+
+
+═══════════════════════════════════════════════════════════
+  60. "KAPITAL UND KREDITE GIBT ES GENUG"
+═══════════════════════════════════════════════════════════
+
+  DER ZINSSPREAD BEI VERSCHIEDENEN ERTRAGSNIVEAUS
+    Kreditart              37 % (23-26)  19 % (2025)  11 % (2026)
+    Lombard 4 %              +33,3 %      +15,0 %      +7,0 %
+    Rahmenkredit 7 %         +30,3 %      +12,0 %      +4,0 %
+    Ratenkredit 10 %         +27,3 %       +9,0 %      +1,0 %
+    Dispo 13 %               +24,3 %       +6,0 %      -2,0 %
+  Beim AKTUELLEN Niveau ist der Spread bei jedem Konsumentenkredit
+  nahe null oder negativ.
+
+  WENN ALLES GUT GEHT (20.000 $)
+     7 % / 5 J -> zurueck 24.389 $, Anlage bei 11 % 33.701 $  = +9.312 $
+    10 % / 5 J -> zurueck 26.380 $, Anlage bei 11 % 33.701 $  = +7.321 $
+     7 % / 7 J -> zurueck 25.977 $, Anlage bei 11 % 41.523 $  = +15.546 $
+
+  DIE HEBELTABELLE AUF DER GEMESSENEN VERTEILUNG (wertlos, s.u.)
+    3x   +125,9 % p.a.   max DD -16,9 %
+    5x   +258,7 % p.a.   max DD -27,4 %
+   10x   +815,3 % p.a.   max DD -51,2 %
+
+  WARUM SIE WERTLOS IST
+  Schlechteste Periode in 3,45 Jahren: -4,42 %.
+  Ereignisse mit -20 % oder schlimmer: NULL.
+  Man kann die Ruinwahrscheinlichkeit eines Versicherers nicht aus
+  einer Stichprobe schaetzen, in der kein Schaden vorkommt.
+
+  DREIERREGEL (0 Ereignisse in n Versuchen -> obere Schranke 3/n)
+    je 14-Tage-Periode:  bis zu  3,3 %
+    je Jahr:             bis zu   87 %
+  Aus drei Jahren ohne Schaden folgt PRAKTISCH NICHTS.
+
+  RUINWAHRSCHEINLICHKEIT UEBER 5 JAHRE
+    Schaden        Hoehe     1x      2x      3x      5x     10x
+    alle  4 Jahre  -30 %   0,0 %   0,0 %   0,0 %  73,2 %  73,8 %
+    alle  4 Jahre  -60 %   0,0 %  70,2 %  71,9 %  73,8 %  72,0 %
+    alle 10 Jahre  -30 %   0,0 %   0,0 %   0,0 %  40,7 %  40,8 %
+    alle 10 Jahre  -60 %   0,0 %  37,7 %  37,6 %  39,2 %  39,0 %
+    alle 25 Jahre  -60 %   0,0 %  18,4 %  18,5 %  19,6 %  18,9 %
+    alle 50 Jahre  -60 %   0,0 %   9,8 %   8,9 %   8,8 %   9,3 %
+  OHNE HEBEL: NULL PROZENT RUIN IN JEDEM SZENARIO.
+  Das Risiko kommt nicht aus der Strategie, sondern aus dem Kredit.
+
+  EIGENKAPITAL NACH DEM EREIGNIS (in % des Einsatzes)
+    Vault-Verlust    1x     2x     3x     5x    10x
+      -10 %         90 %   80 %   70 %   50 %    0 %
+      -20 %         80 %   60 %   40 %    0 %  -100 %
+      -50 %         50 %    0 %  -50 % -150 %  -400 %
+
+  DIE ZWEITE FALLE: ERTRAG FAELLT, ZINS NICHT
+    2024  +79,1 %  ->  3x netto +223,3 %
+    2025  +19,0 %  ->  3x netto  +43,0 %
+    2026  +11,0 %  ->  3x netto  +19,0 %
+  Ein Kredit laeuft 5-7 Jahre. Der Ertrag, auf den man ihn aufnimmt,
+  existiert dann vermutlich nicht mehr.
+
+  DER UNTERSCHIED, UM DEN ES GEHT
+    1x eigenes Geld  ->  schlimmster Fall: Einsatz weg, NULL
+    2x               ->  Einsatz weg + 100 % Schulden
+    5x               ->  Einsatz weg + 400 % Schulden
+  2024 stand beim Nutzer eine Null. Das war vorbei.
+  Mit Kredit waere es nicht vorbei gewesen.
