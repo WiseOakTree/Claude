@@ -1,5 +1,14 @@
 # Krypto Prop Backtester — Renko-Reversal für die Kraken-Prop-Challenge
 
+> ## 🛑 Wichtige Korrektur zu allen t-Werten in diesem Repository
+>
+> Die Ueberlappungskorrektur `n_eff = n / Haltedauer` war **um Faktor 5,48 zu streng**. Sie stimmt nur, wenn auf jedem Bar ein Signal feuert. Geprueft mit einem eingebauten Edge: Die alte Pipeline erkannte einen **echten Edge von 200 bp in 0 % der Faelle**.
+>
+> **Der S/R-Ausbruch steigt dadurch von t = 0,54 auf t = 2,16** (gesamt), Holdout von 0,47 auf **1,73**. Die bp-Werte und alle Absagen wegen **Vorzeichenwechsel** bleiben unveraendert gueltig.
+>
+> Details: [`zu_streng.md`](docs/zu_streng.md)
+
+
 > ## 🛑 WICHTIG: Ergebnisse zurueckgezogen
 >
 > Der Backtest enthielt einen **Look-ahead-Bias** (Signal-Entscheidung per
@@ -105,6 +114,8 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 49 | **„Das Einzige, was funktioniert, ist Volume Profile"** | Kopf an Kopf gegen die validierte Pivot-Regel, gleiche Mechanik: **Volumen-Level 8 von 8 Zellen negativ** (-1,5 bis -26,7 bp), Pivot-Level **+52,2 bp im Holdout** — rund **70 bp Abstand**. POC als Magnet: alle sechs t <= 0,09. Value-Area-Ausbruch: Vorzeichen kippt bei BTC und ETH, **nur SOL in beiden Zeitraeumen positiv** (t 0,39). **Was haelt: LVN — der Kurs laeuft durch duenne Zonen 5-26 % schneller, 6 von 6 Zellen.** Als Risikomass aber schlechter als Abwaerts-Semivol und Bollinger. Fuenftes Werkzeug, fuenftes Mal dasselbe Muster | [`volume_profile.md`](docs/volume_profile.md) |
 | 50 | **Der SOL-Befund auf 14 Maerkten geprueft** | Value-Area-Ausbruch gepoolt: Suche **+22,1 bp** (7.337 Trades) → **Holdout -0,2 bp, t = -0,00** (3.154 Trades). In beiden Zeitraeumen positiv: **4 von 14 — bei Zufall erwartet 3,5** (p = 0,479). Holdout-Trefferquote **genau 50 %**, Korrelation Suche↔Holdout ueber die Maerkte **+0,105**. SOL war das Maximum von 14 Rauschziehungen — Falle Nr. 4 („Bestes von N") am eigenen Befund vorgefuehrt | [`volume_profile.md`](docs/volume_profile.md) |
 | 51 | **Echte Tickdaten: Footprint + Liquidations-Karte** (110,9 Mio Einzeltrades, 227.793 Bars Open Interest) | **Look-ahead im eigenen Skript gefunden**: CVD-Divergenz-IC faellt von **+0,2199 auf -0,0021**, als die Tages-z-Scores durch nachlaufende ersetzt wurden. Streng kausal: **0 von 56 Merkmalen** ueber der Kostenschwelle mit stabilem Vorzeichen; gestapelte 3:1-Ungleichgewichte bei **0,51x**. Selbstgebaute Liquidations-Karte aus OI + Taker-Ratio: Magnet-Test **16/32 = genau 50 %** Vorzeichentreffer, die drei groessten Effekte (8,96x/7,19x/4,99x) kippen alle. Nach der Kaskade: Suche Fortsetzung, Holdout **Umkehr**. Coinglass: Schluessel erkannt, Tarif gibt **jeden** Endpunkt gesperrt | [`footprint_liquidation.md`](docs/footprint_liquidation.md) |
+| 52 | **„Bist du zu pessimistisch?"** — Pipeline gegen eingebauten Edge geeicht | **Ja, Faktor 5,48.** Die alte Statistik erkannte einen **echten Edge von 200 bp in 0 % der Faelle**. Fehler: `n_eff = n/Haltedauer` gilt nur bei Signal auf jedem Bar. Korrigiert (Summe der Einzigartigkeit, Falschalarmrate 4,3 %): **S/R-Ausbruch t = 0,54 → 2,16** gesamt, Holdout **0,47 → 1,73**. Fuer t=2 im Holdout haetten +60,3 statt +52,2 bp gereicht. **Alle Absagen wegen Vorzeichenwechsel bleiben** (MACD+Stoch+BB: BTC +0,63 → -0,32) | [`zu_streng.md`](docs/zu_streng.md) |
+| 53 | **„Profitable Trader sieht man in oeffentlichen Statistiken"** | Beides wahr. 100.000 Trader mit Erwartungswert **null**: nach 5 Jahren **11.550 ueber +100 %** und **858 mit fuenf Gewinnjahren in Folge**. ABER mit 1 % echten Koennern sind nach 10 Jahren **65,5 % der Spitzenliste echte Koenner** (nach 1 Jahr nur 8,3 %). **Persistenz trennt, Rendite nicht** — Vorjahressieger wieder oben: 12,9 % bei Sharpe 2,0 gegen 1,0 % Zufall | [`profitable_trader.md`](docs/profitable_trader.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben
