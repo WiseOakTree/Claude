@@ -7,6 +7,15 @@
 > Zusammenfassung, Methodik (Reality Check, zirkulaeres Null, Einzigartigkeitskorrektur), Ergebnisse, Streichliste, **neun methodische Fallen am eigenen Material** und Einschraenkungen.
 
 
+> ## ➡️ Fortsetzung: [WiseOakTree/financelMarketAnalyses](https://github.com/WiseOakTree/financelMarketAnalyses)
+>
+> **The Retail Trading Reality Check** — dieselbe Frage auf Aktienindizes, Devisen, Rohstoffe und Zinsen, mit 55 Jahren Devisen- und 64 Jahren Zinshistorie gegenueber 5,4 Jahren Krypto. Krypto bleibt hier: als Anlageklasse #1 und als methodische Grundlage.
+>
+> Dort portiert und lauffaehig: die 22 kanonischen Regeln, die 10 Heuristiken, das zirkulaere Nullmodell, Einzigartigkeitskorrektur, Reality Check und Romano-Wolf — samt den acht Standards und dem Fallenkatalog. Die Eichung nach Standard 8 ist gelaufen und **bestanden**, und **Falle 3 reproduziert sich an unabhaengigen Daten**: Bei Rohstoffen erkennt die alte Ueberlappungskorrektur einen Vorteil von 30 bp in 0 % der Faelle, die richtige in 16 %.
+>
+> Das Verzeichnis `rtrc/` ist dorthin umgezogen und hier entfernt.
+
+
 > ## 🎯 Indikator ≈ Bauchgefuehl ≈ Zufall
 >
 > Drei Gruppen auf gemeinsamem Massstab (bp je Trade nach Kosten): **Indikator-Regeln Median -15,18 | Bauchgefuehl-Heuristiken -2,70 | Zufall -15,30**. Kruskal-Wallis **p = 0,5971** — nicht unterscheidbar. Alle drei paarweisen Vergleiche nach Holm ebenfalls nicht unterscheidbar.
