@@ -1846,3 +1846,83 @@
     zu nehmen. Die einzige Erkenntnis des Projekts, die man SOFORT
     umsetzen kann, ohne einen Edge gefunden zu haben -- sie macht
     jede Strategie besser, auch eine ohne Vorteil.
+
+
+═══════════════════════════════════════════════════════════
+  57. MARKOV-KETTEN UND DER RAINBOW CHART
+═══════════════════════════════════════════════════════════
+
+  MARKOV -- DAS GEDAECHTNIS IST DA
+  Chi-Quadrat gegen Unabhaengigkeit:
+    ETH 1h  k=3 o=2  n=46.736  Chi² 1651,6  p = 0,00      V 0,133
+    ETH 1h  k=5 o=2  n=46.736  Chi² 3303,4  p = 0,00      V 0,133
+    BTC 4h  k=5 o=2  n=11.685  Chi²  780,5  p = 8,9e-108  V 0,129
+    BTC 1D  k=5 o=2  n= 1.945  Chi²  143,9  p = 1,1e-03   V 0,136
+  p = 0,00 heisst kleiner als darstellbar. Der Markt ist NICHT
+  gedaechtnislos.
+
+  UND ES HAELT OUT-OF-SAMPLE
+  Log-Loss-Verbesserung gegen die Randverteilung im Holdout:
+    BTC 1h k=5 o=2   +1,854 %
+    BTC 1h k=3 o=2   +1,389 %
+    BTC 4h k=5 o=2   +0,843 %
+    ETH 4h k=3 o=1   -0,104 %   (der einzige negative)
+  FUENFZEHN VON SECHZEHN POSITIV.
+
+  ABER DER BETRAG
+  Handeln nach der Markov-Vorhersage, BTC 4h, Holdout:
+    k=3 o=1   3.275 Signale   -16,40 bp je Trade
+    k=3 o=2   3.274 Signale   -15,33 bp
+    k=5 o=1   3.275 Signale   -15,97 bp
+    k=5 o=2   3.274 Signale   -16,05 bp
+  Kostenschwelle 16 bp -> BRUTTOVORTEIL zwischen +0,7 und -0,4 bp.
+  Dasselbe Muster wie beim Orderflow (p=3e-173 bei 0,29 bp).
+
+  ───────────────────────────────────────────────────────
+  RAINBOW CHART
+  ───────────────────────────────────────────────────────
+  Der 3-MONATS-EFFEKT VERSCHWINDET VOLLSTAENDIG
+                        unten     oben     Spanne
+    Fit ueber alles    +34,3 %  -13,6 %   +48,0 Pp
+    KAUSAL             +18,8 %  +17,7 %    +1,1 Pp
+  98 % des sichtbaren Effekts sind Look-ahead.
+
+  DER 1-JAHRES-EFFEKT UEBERLEBT -- SCHEINBAR
+    Fit ueber alles   +310,9 % / -30,0 %   Spanne +340,9 Pp
+    KAUSAL            +180,7 % /  -1,3 %   Spanne +182,1 Pp
+  Aber:
+    Zeitraum 9,0 Jahre, 2.906 taegliche Beobachtungen
+    davon UNABHAENGIG: 8   (1-Jahres-Fenster ueberlappen 365-fach)
+    BTC-Zyklen im Zeitraum: 2
+    t ohne Korrektur 14,12  ->  t MIT Korrektur 0,74 (n_eff 2,4)
+    Kontrolle gegen verschobenes Band: p = 0,138
+  Es ist die Beschreibung von ZWEI Bullenzyklen, keine Statistik.
+
+  UND DIE TRENDLINIE SELBST IST NICHT STABIL
+   Stand    Exponent   Prognose in 1 Jahr   tatsaechlich
+   2020-01    0,039         7.326 $           28.924 $
+   2021-01    0,139         9.346 $           47.723 $
+   2022-01    0,470        20.723 $           16.617 $
+   2023-01    0,515        24.985 $           44.180 $
+   2024-01    0,541        28.457 $           93.576 $
+   2025-01    0,651        38.759 $           88.839 $
+   2026-01    0,764        53.262 $           62.888 $
+  SIEBEN PROGNOSEN, SIEBEN FEHLSCHLAEGE (-80 % bis +25 %).
+  Exponent wanderte 0,039 -> 0,786: die "Mitte" wird laufend neu
+  gezeichnet.
+
+  EINSCHRAENKUNG: meine Historie beginnt 2017-08 (Binance), der echte
+  Rainbow nutzt Daten ab 2010. Mit 15 statt 9 Jahren waere die Linie
+  stabiler. Das geht ZUGUNSTEN des Rainbow Charts.
+
+  ───────────────────────────────────────────────────────
+  DIE ZUSAMMENGESETZTE ANTWORT
+  ───────────────────────────────────────────────────────
+    Kann man etwas vorhersagen?   JA (p = 0,00, 15/16 bestaetigt)
+    Wie viel?                     unter 1 Basispunkt je Trade
+    Was kostet ein Trade?         16 Basispunkte
+    Verhaeltnis                   1 : 20 bis 1 : 50
+
+  Das Problem ist nicht, dass der Markt zufaellig waere.
+  Das Problem ist, dass er FAST zufaellig ist -- und die Gebuehren
+  in der Luecke sitzen.
