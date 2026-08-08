@@ -1631,3 +1631,77 @@
   SIEBTES WERKZEUG, SIEBTES MAL DASSELBE -- diesmal mit den feinsten
   Daten, die es fuer diesen Markt gibt.
   ES LAG NICHT AN DER DATENAUFLOESUNG. Das war die letzte Ausrede.
+
+
+═══════════════════════════════════════════════════════════
+  54. ALLE BEFUNDE MIT KORRIGIERTER STATISTIK
+═══════════════════════════════════════════════════════════
+
+  S/R-AUSBRUCH
+    Suche 21-24     474   +49,4 bp   t ALT 0,36 -> t NEU 1,52
+    HOLDOUT 25-26   301   +52,2 bp   t ALT 0,47 -> t NEU 1,73
+    gesamt          775   +50,5 bp   t ALT 0,54 -> t NEU 2,16
+  Pass-Rate Kraken-Regeln: 76,8 % (0,25x) / 78,1 % (0,35x) / 50,5 % (0,5x)
+
+  VOLATILITAETSPRAEMIE -- Korrektur war dort RICHTIG
+    naiv 22,77   alt (n/30) 4,16   neu (Einzigartigkeit) 4,19
+  An jedem Tag feuert ein 30-Tage-Fenster: Ueberlappung wirklich maximal.
+  Der Fehler trat nur auf, wo Signale duenn gesaet waren.
+
+  DIE ZEHN FILTER (Ausgangslage +49,4 / +52,2 bp)
+    1 Mindest-Durchbruch 0,25 ATR  +41,2 (1,15)  +21,2 (0,65)  schlechter
+    2 Rollenlogik                   +3,2 (0,10)  -17,4(-0,58)  KIPPT
+    3 Cooldown 48 Bars             +60,5 (1,72)  +32,9 (0,99)  schlechter
+    5 Heikin-Ashi                  +58,9 (1,77)  +44,8 (1,45)  schlechter
+    6 Session 08-20 UTC            +78,2 (2,05)  +41,6 (1,26)  schlechter
+    7/8 Wochentage                 +57,3 (1,65)  +34,2 (1,09)  schlechter
+    9 MARKTPHASE TREND             +84,6 (2,07)  +70,8 (1,94)  BESSER
+   10 VWAP im Einklang             +71,2 (2,10)  +53,8 (1,66)  +-0
+  Neun von zehn bleiben gescheitert. Marktphase ist der einzige, der in
+  BEIDEN Zeitraeumen ueber der Ausgangslage liegt -- aber Bonferroni bei
+  10 Tests verlangt t > 2,81, erreicht werden 2,07 und 1,94. KANDIDAT,
+  KEIN BEFUND. Halbiert ausserdem die Signalzahl (474 -> 244).
+
+  ─────────────────────────────────────────────────────────
+  DER ABGELEGTE S/R-BOUNCE VERLIERT SIGNIFIKANT
+  ─────────────────────────────────────────────────────────
+    Suche    651   -72,1 bp   t ALT -0,63 -> t NEU -2,17
+    HOLDOUT  433   -87,4 bp   t ALT -0,90 -> t NEU -2,79
+    gesamt  1084   -78,2 bp   t ALT -0,99 -> t NEU -3,28
+  Sein GEGENTEIL ist damit der staerkste Einzeleffekt des Projekts.
+
+  IST ES DER AUSBRUCH UNTER ANDEREM NAMEN? NEIN
+    Ausbruch 768 Ereignisse, Bounce 1068, gemeinsame Bars 21 (2,0 %)
+    Ohne Ueberschneidungen: +72,0 bp (t 2,18) / +88,9 bp (t 2,82)
+
+  DER GANZE EFFEKT SITZT AUF DER SHORT-SEITE
+    Suche    long 289  -49,1 bp (t-1,02) | short 362 +111,3 bp (t 3,00)
+    HOLDOUT  long 194   -2,7 bp (t-0,07) | short 239 +102,5 bp (t 2,65)
+  Nach einem Bounce an einer UNTERSTUETZUNG geht es weiter runter.
+  Und zwar in einem Markt, der +102 % bzw +74 % gestiegen ist --
+  der Effekt laeuft GEGEN den Drift.
+
+  KONTROLLE: LEVEL ODER NUR DIE VORBEWEGUNG?
+  Bars mit gleicher Vorbewegung, aber KEIN Level in Reichweite (200x):
+    Suche    echt +111,3 bp | Kontrolle Median -39,1 bp | p = 0,000
+    HOLDOUT  echt +102,5 bp | Kontrolle Median  +3,8 bp | p = 0,000
+  Reine Abwaerts-Fortsetzung ohne Level-Bedingung:
+    Suche   < -1 ATR  -39,9 bp (t-1,70)   -1..-0,3 ATR  -29,8 (t-1,43)
+    HOLDOUT < -1 ATR  +16,7 bp (t 0,70)   -1..-0,3 ATR   -3,2 (t-0,16)
+  ES IST DAS LEVEL, NICHT DIE BEWEGUNG.
+
+  WARUM ES TROTZDEM NICHT BEWIESEN IST
+    andere Maerkte:  ETH +49,5/+50,5   SOL +20,4/+63,4
+                     BNB +24,1/-33,2   XRP -4,2/+14,9   ADA -4,9/+85,1
+    Holdout 5 von 6 positiv (Median +57,0 bp), aber 3 von 6 KIPPEN.
+    Bonferroni ueber 12 Tests verlangt t > 2,87:
+      Suche 3,00 bestanden, Holdout 2,65 verfehlt.
+    Asymmetrie (nur short) UNERKLAERT -- das staerkste Warnsignal.
+    Und: der Befund entstand beim wiederholten Hinsehen nach einer
+    Methodikkorrektur. Genau die Lage, in der Scheinbefunde entstehen.
+
+  FOLGERUNG
+    Ausbruch und Gegen-Bounce sagen DASSELBE: Level halten nicht.
+    Das ist EIN Mechanismus, nicht zwei -- und das Gegenteil dessen,
+    was jeder Kurs lehrt.
+    Naechster Schritt: VORWAERTSTEST, nicht hochskalieren.
