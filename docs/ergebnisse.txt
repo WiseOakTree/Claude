@@ -1990,3 +1990,72 @@
     Keine Warteschlange modelliert -> Schaetzung eher ZU OPTIMISTISCH.
     Fuenf Tage, ein Instrument (BTC-Perp Binance).
     Rebate-Stufen sind Szenarien, nicht geprueft.
+
+
+═══════════════════════════════════════════════════════════
+  59. "AUF DER SEITE DES HAUSES STEHEN"
+═══════════════════════════════════════════════════════════
+
+  HLP-VAULT (Hyperliquid) -- stellt Liquiditaet, fuehrt Liquidationen
+  aus, kassiert Plattformgebuehren. 214,4 Mio $, on-chain nachpruefbar.
+  Native Frequenz ~14 Tage, 90 Beobachtungen ueber 3,17 Jahre.
+
+    kumulierte PnL              136,9 Mio $
+    Rendite kumuliert              +172,8 %
+    ANNUALISIERT                    +37,3 %
+    Volatilitaet p.a.                14,3 %
+    SHARPE                            2,12
+    groesster Rueckgang (14-Tage)    -5,8 %
+    Perioden im Plus                 86,7 %  (78 von 90)
+
+  Sharpe 2,12 ist HOEHER als alles bisher Gemessene
+  (S/R-Ausbruch 0,36, Volatilitaetspraemie 1,85).
+
+  ABER DER ERTRAG BRICHT WEG
+    2023            +19,6 %
+    2024            +79,1 %
+    2025            +19,0 %
+    2026 (bis Aug)   +7,1 %   -> hochgerechnet ~11 %
+  Mechanik: Der Ertrag haengt am VOLUMEN DER GAMBLER, nicht am
+  eigenen Kapital. Der Vault wuchs von wenigen Mio auf 214 Mio $ --
+  derselbe Gebuehrentopf durch mehr Anteile geteilt.
+
+  FUNDING-CARRY (Spot long, Perp short)
+    mittlere Rate je 8 h    0,00644 %
+    annualisiert              +7,05 %   nach Kosten +6,85 %
+    positive Zahlungen         84,4 %
+    Volatilitaet p.a.           0,48 %
+    2024 +11,96 % | 2025 +5,13 % | 2026 (bis Juli) +1,12 %
+  Derselbe Verfall. Sharpe 14,57 ist irrefuehrend: er misst die Ruhe
+  der Ertraege, nicht das Risiko der Konstruktion.
+
+  VERGLEICH ALLER WEGE
+    Weg                        Rendite   Vol   Sharpe   maxDD
+    HLP-Vault (das Haus)       +37,3 %  14,3%   2,12    -5,8%
+    Volatilitaetspraemie       +25,2 %  13,6%   1,85   -13,7%
+    Funding-Carry               +6,8 %   0,5%  14,57    -0,2%
+    Marktmachen ohne Rebate     -2,1 %    --      --      --
+    S/R-Ausbruch      im Vorwaertstest gescheitert
+
+  DREI EINSCHRAENKUNGEN
+  1. UEBERLEBENSAUSWAHL: HLP ist EIN Vault auf EINER Boerse, die
+     funktioniert hat. Genau der Fehler, vor dem dieses Projekt
+     fuenfzehnmal gewarnt hat.
+  2. Das 14-Tage-Raster VERSTECKT Rueckgaenge. Der wahre maximale
+     Rueckgang liegt ueber -5,8 %.
+  3. Es ist ein VERSICHERUNGSGESCHAEFT: viele kleine Gewinne, seltene
+     grosse Verluste. In drei Jahren ist der Fall nicht eingetreten.
+     Das ist kein Beweis, dass er nicht eintritt.
+
+  DIE 98 % GIBT ES NICHT
+    Perioden im Plus beim HLP-Vault    86,7 %
+    positive Funding-Zahlungen         84,4 %
+    Hyperliquid-Konten allTime im Plus 41,9 %
+  Das Haus gewinnt in RUND 85 % der Perioden, nicht in 98.
+
+  FOLGERUNG
+  Die Richtung stimmt aus einem STRUKTURELLEN Grund: Der Gebuehrenstrom
+  existiert unabhaengig davon, ob man recht hat. Das gilt fuer keinen
+  einzigen der 57 anderen Ansaetze dieses Projekts.
+  Erwartung realistisch 10-15 % p.a., nicht 37.
+  Dieser Weg braucht kein Koennen, aber KAPITAL.
