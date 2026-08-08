@@ -1,5 +1,12 @@
 # Krypto Prop Backtester — Renko-Reversal für die Kraken-Prop-Challenge
 
+> ## 🎯 Indikator ≈ Bauchgefuehl ≈ Zufall
+>
+> Drei Gruppen auf gemeinsamem Massstab (bp je Trade nach Kosten): **Indikator-Regeln Median -15,18 | Bauchgefuehl-Heuristiken -2,70 | Zufall -15,30**. Kruskal-Wallis **p = 0,5971** — nicht unterscheidbar. Alle drei paarweisen Vergleiche nach Holm ebenfalls nicht unterscheidbar.
+>
+> Bei 15.776 echten Hyperliquid-Konten zeigt sich der eigentliche Gradient: **je mehr gehandelt wird, desto schlechter** — von +1.736 bp (kaum gehandelt) auf **-6,72 bp** bei ueber 1.000x Umschlag. → [`drei_gruppen.md`](docs/drei_gruppen.md)
+
+
 > ## 📋 Methodisches Audit und finaler Test
 >
 > **~1.067 tatsaechlich getestete Varianten** (nicht 61) → Bonferroni-Schwelle **t > 4,07**. Holdout in 30,5 % der Skripte, Slippage in 3,0 %, Funding in 4,2 %. Der BTC-Holdout wurde **ueber zwanzigmal benutzt** und ist als Holdout verbraucht.
@@ -138,6 +145,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 60 | **„Kapital und Kredite gibt es genug"** | **Wenn nichts passiert**: 20.000 $ zu 7 % ueber 5 Jahre ergeben **+9.312 $**. **Wenn etwas passiert**: ab -20 % Vault-Verlust ist ein 5x-Konto weg, die Schuld bleibt. Die entscheidende Zahl ist **nicht schaetzbar** — 3,45 Jahre ohne Schadensfall geben nach der Dreierregel eine obere Jahresschranke von **87 %**. Ruin ueber 5 Jahre: **1x = 0,0 % in JEDEM Szenario**, 2x mit -60 % alle 10 Jahre = **37,7 %**. Und der Spread schrumpft: bei 11 % Ertrag laesst ein 10-%-Kredit nur **+1 %**. Das Risiko kommt nicht aus der Strategie, sondern **ausschliesslich aus dem Kredit** | [`kredit.md`](docs/kredit.md) |
 | 61 | **🛑 Korrektur: der HLP-Vault verdient GERADE nichts** | Die +37,3 % p.a. waren der **Dreijahresdurchschnitt**, nicht der aktuelle Lauf. Aus demselben API-Aufruf: letzter Monat **+0,3 %**, letzte Woche **-0,5 %**, gemeldetes `apr`-Feld **0,21 %**. Jahresverlauf korrekt annualisiert: 2023 +37,9 %, 2024 **+85,9 %**, 2025 +19,5 %, 2026 +12,6 %, **letzte 30 Tage +0,3 %**. Funding-Carry haelt sich besser (30 Tage +6,71 %, 90 Tage +4,13 %), hatte aber **drei negative Monate in Folge** (Feb-Apr 2026). Auf 20.000 $ heisst das **800-1.400 $ im Jahr** | [`einsatz_20k.md`](docs/einsatz_20k.md) |
 | 62 | **Methodisches Audit + FINALER TEST** | Audit: **~1.067 getestete Varianten** → Schwelle t > 4,07; Holdout in 30,5 % der Skripte, Slippage 3,0 %, Funding 4,2 %; **Survivorship ungeloest**, BTC-Holdout **ueber zwanzigmal benutzt**. Finaler Test (25 Lehrbuchregeln, 14 Maerkte, 1,12 Mio Trades, Reality Check mit zirkulaerer Verschiebung): **24 von 25 negativ**, familienweiser p = **0,0170** — aber der Gewinner (Keltner) kippt: **+16,92 bp Suche / -17,61 bp Holdout**, 5 von 14 Maerkten, 8 von 18 Parametervarianten negativ. **Urteil: kein reproduzierbarer Edge** | [`audit_und_finaltest.md`](docs/audit_und_finaltest.md) |
+| 63 | **Indikator gegen Bauchgefuehl gegen Zufall** | Gemeinsamer Massstab, Spezifikation vorab committet. Median: **Indikator -15,18 | Bauchgefuehl -2,70 | Zufall -15,30**. **Kruskal-Wallis p = 0,5971**, alle drei Paarvergleiche nach Holm nicht unterscheidbar. Bei echten Menschen (15.776 Konten) monotoner Umschlag-Gradient: **+1.736 bp bei unter 5x, -6,72 bp bei ueber 1.000x** — die scheinbare Ueberlegenheit ist Kaufen-und-Halten, nicht Handel. **Neunte Falle**: Look-ahead in meinen eigenen Heuristiken (Tagesschluss um 01:00 bekannt), "laeuft heiss" faellt von +176 auf +37 bp | [`drei_gruppen.md`](docs/drei_gruppen.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben

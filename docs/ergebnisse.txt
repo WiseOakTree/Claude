@@ -2285,3 +2285,71 @@
     Zeitraummittel          HLP +37,3 % gegen aktuell +0,3 %
     Holdout mehrfach        ueber zwanzigmal
     Nullmodell zu eng       erste Fassung des finalen Tests
+
+
+═══════════════════════════════════════════════════════════
+  63. INDIKATOR gegen BAUCHGEFUEHL gegen ZUFALL
+═══════════════════════════════════════════════════════════
+
+  Gemeinsamer Massstab: bp je Trade nach Kosten, 14 Maerkte,
+  1 h, 48 h Halten, 16 bp je Roundtrip.
+  Spezifikation VOR der Rechnung committet.
+
+  DIE VIER GRUPPEN
+    Gruppe                              n    Median    25 %     75 %
+    1  Indikator (Regeln)              24   -15,18   -18,88   -10,53
+    2a Bauchgefuehl (Heuristiken)      10    -2,70   -28,35   +15,55
+    3  Zufall                          60   -15,30   -19,46    -8,23
+    2b echte Menschen              15.776    +5,36   -18,40  +105,73
+
+  VORAB FESTGELEGTER TEST
+    Kruskal-Wallis ueber 1, 2a, 3:  H = 1,031   p = 0,5971
+    URTEIL: 1 = 2 = 3, NICHT UNTERSCHEIDBAR
+
+  PAARWEISE (Mann-Whitney, Holm-korrigiert)
+    Indikator gegen Bauchgefuehl   p roh 0,3744   p Holm 0,7488   nein
+    Indikator gegen Zufall         p roh 0,7476   p Holm 0,7476   nein
+    Bauchgefuehl gegen Zufall      p roh 0,3603   p Holm 1,0000   nein
+
+  DIE ZEHN BAUCHGEFUEHL-HEURISTIKEN
+    "fuehlt sich nach Breakout an"    +52,27 bp
+    "laeuft heiss" (drei gruene Tage) +37,28
+    "ist ueberverkauft"               +15,95
+    "war ruhig, jetzt gehts los"      +14,34
+    "sieht bullish aus"                +0,98
+    "grosse Kerze"                     -6,37
+    "runde Zahl"                      -25,00
+    "sieht bearish aus"               -29,47
+    "faellt ins Messer"               -35,45
+    "ist ueberkauft"                  -60,87
+
+  NEUNTE FALLE -- LOOK-AHEAD IM EIGENEN CODE
+  Tagesbedingung per reindex(ffill) auf alle Stunden verteilt ->
+  die Stunde 01:00 kannte den Schluss um 23:00.
+    "laeuft heiss"       +176,10  ->   +37,28
+    "faellt ins Messer"  +116,15  ->   -35,45  (Vorzeichen kippt)
+
+  GRUPPE 2b: WARUM ECHTE MENSCHEN SCHEINBAR GEWINNEN
+  Nach Umschlag (Volumen / Kontowert), 15.776 Konten:
+    unter 5x  (kaum gehandelt)     692 Konten  +1736,14 bp   80,6 % > 0
+    5-25x                        1.928         +323,83       75,0 %
+    25-100x                      2.088         +114,55       74,7 %
+    100-1.000x                   4.557          +13,32       61,7 %
+    UEBER 1.000x (Vieltrader)    6.511           -6,72       36,1 %
+  PERFEKT MONOTON: je mehr gehandelt wird, desto schlechter.
+  Die besten Werte haben die, die FAST NICHT gehandelt haben --
+  dort misst PnL/Volumen den Kursanstieg, nicht die Handelsleistung.
+  Echte Vieltrader: Median -1,98 bp, nur 36,1 % im Plus.
+  Der Restabstand zum Zufall entspricht ungefaehr dem
+  Gebuehrenunterschied der Plattformen, nicht einem Koennen.
+
+  GRENZEN
+    Gruppe 2a hat nur 10 Mitglieder -> geringe Trennschaerfe.
+    Bauchgefuehl bleibt eine Modellierung, kein Mensch am Chart.
+    Gruppe 2b hat Ueberlebensauswahl und andere Kostenbasis.
+
+  DIE AUSSAGE
+    Schlagen Indikatoren den Zufall?        nein (p 0,7476)
+    Schlaegt Bauchgefuehl den Zufall?       nein (p 1,0000)
+    Schlagen Indikatoren das Bauchgefuehl?  nein (p 0,7488)
+    Was schlaegt alles?                     WENIGER HANDELN
