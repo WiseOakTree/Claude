@@ -1,5 +1,12 @@
 # Krypto Prop Backtester — Renko-Reversal für die Kraken-Prop-Challenge
 
+> ## 📄 [PAPER.md](PAPER.md) — die Untersuchung als Paper
+>
+> *Kein reproduzierbarer Edge. Indikatoren, Intuition und Zufall im Kryptohandel — eine vorregistrierte Untersuchung mit 1.067 getesteten Varianten.*
+>
+> Zusammenfassung, Methodik (Reality Check, zirkulaeres Null, Einzigartigkeitskorrektur), Ergebnisse, Streichliste, **neun methodische Fallen am eigenen Material** und Einschraenkungen.
+
+
 > ## 🎯 Indikator ≈ Bauchgefuehl ≈ Zufall
 >
 > Drei Gruppen auf gemeinsamem Massstab (bp je Trade nach Kosten): **Indikator-Regeln Median -15,18 | Bauchgefuehl-Heuristiken -2,70 | Zufall -15,30**. Kruskal-Wallis **p = 0,5971** — nicht unterscheidbar. Alle drei paarweisen Vergleiche nach Holm ebenfalls nicht unterscheidbar.
