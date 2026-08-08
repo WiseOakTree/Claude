@@ -1926,3 +1926,67 @@
   Das Problem ist nicht, dass der Markt zufaellig waere.
   Das Problem ist, dass er FAST zufaellig ist -- und die Gebuehren
   in der Luecke sitzen.
+
+
+═══════════════════════════════════════════════════════════
+  58. "DEN GAMBLERN LIQUIDITAET STELLEN"
+      7.812.435 echte Einzeltrades, fuenf Tage
+═══════════════════════════════════════════════════════════
+
+  METHODE: kein Quote-Modell. Jeder Trade HAT einen Maker auf der
+  Gegenseite -- gemessen wird direkt, was dieser Maker verdient hat
+  (realisierter Spread nach adverser Selektion).
+
+  DER NAIVE MARKET MAKER VERLIERT
+    Tag           Trades       1s      10s     1min    10min
+    2026-03-10  2.802.252   -0,581   -0,665   -0,672   -1,042
+    2026-05-19    991.693   -0,479   -0,633   -0,523   -0,319
+    2026-06-24  2.352.076   -0,537   -0,558   -0,439   -0,332
+    2026-07-15  1.107.089   -0,505   -0,571   -0,556   -0,399
+    2026-08-02    559.325   -0,387   -0,583   -0,790   -0,530
+  ZWANZIG VON ZWANZIG ZELLEN NEGATIV.
+  Gepoolt -0,575 bp je Trade, Median -0,429, positiv in 46,6 %.
+
+  DIE HYPOTHESE KIPPT -- KLEINE TRADES SIND DIE SCHLECHTESTEN
+    Tradegroesse        Anteil    Trades      Maker      mit -1bp Rebate
+    unter 100 $         22,7 %  1.775.277   -0,705 bp        +0,295
+    100-500 $           40,5 %  3.167.689   -0,715 bp        +0,285
+    500-2.000 $         13,3 %  1.040.364   -0,374 bp        +0,626
+    2.000-10.000 $      12,9 %  1.005.484   -0,331 bp        +0,669
+    10.000-50.000 $      7,5 %    582.595   -0,246 bp        +0,754
+    ueber 50.000 $       3,1 %    241.026   -0,445 bp        +0,555
+  Kleine Prints sind oft Bruchstuecke grosser informierter Marktorders.
+  "Kleiner Trade" ist nicht dasselbe wie "kleiner Trader".
+
+  TAGESZEIT HILFT AUCH NICHT -- alle acht Fenster negativ
+    bestes  15-18 Uhr UTC  -0,368 bp
+    schlechtestes 00-03 Uhr -0,772 bp
+
+  WAS RETTET: ALLEIN DIE GEBUEHR
+    Standard-Maker 1,5 bp     -2,075 bp je Trade
+    Gebuehr null              -0,575 bp
+    Rebate -0,5 bp            -0,075 bp
+    Rebate -1,0 bp            +0,425 bp
+  Mit Rebate ist JEDES Segment profitabel.
+
+  IN ZAHLEN
+  Segment unter 500 $ = 63,3 % aller Trades, aber nur 1,4 % des
+  Volumens (163,4 Mio $/Tag). Wer es GANZ bedienen wuerde:
+    bei 1,5 bp Standardgebuehr   -13.192.459 $ im Jahr
+    bei Gebuehr null              -4.245.365 $
+    bei Rebate -1,0 bp           +1.719.364 $
+  Dieselbe Taetigkeit, dieselben Gegenparteien, dasselbe Risiko --
+  15 Mio $ Unterschied allein durch die Gebuehrenstufe.
+
+  FOLGERUNG
+  Die Idee ist RICHTIG und beschreibt ein reales Geschaeft -- genau das,
+  was die dauerhaft erfolgreichen Hyperliquid-Konten betreiben (Taker
+  38 % statt 66 %). Aber der Eintrittspreis ist eine GEBUEHRENSTUFE,
+  keine Strategie.
+
+  GRENZEN
+    Misst den DURCHSCHNITTLICHEN Maker; echte MM sind selektiv.
+    -0,575 bp ist der Startpunkt, nicht das Schicksal.
+    Keine Warteschlange modelliert -> Schaetzung eher ZU OPTIMISTISCH.
+    Fuenf Tage, ein Instrument (BTC-Perp Binance).
+    Rebate-Stufen sind Szenarien, nicht geprueft.
