@@ -6,7 +6,9 @@
 >
 > **Der S/R-Ausbruch steigt dadurch von t = 0,54 auf t = 2,16** (gesamt), Holdout von 0,47 auf **1,73**. Die bp-Werte und alle Absagen wegen **Vorzeichenwechsel** bleiben unveraendert gueltig.
 >
-> **Alles neu gerechnet**: [`neuberechnung.md`](docs/neuberechnung.md) — der S/R-Bounce verliert signifikant (t = **-3,28**), sein Gegenteil ist damit der staerkste Einzeleffekt des Projekts.
+> **🛑 VORWAERTSTEST: BEIDE REGELN GESCHEITERT** — acht nie benutzte Maerkte, gepoolt **-36,9 bp** (Ausbruch) und **-31,1 bp** (Gegen-Bounce), positiv in nur **2 von 8**. Frischer Zeitraum 2026-07/08 auf BTC: **-128,9 bp** bzw. **-115,7 bp**. Das Kriterium stand vorher fest: [`vorwaertstest.md`](docs/vorwaertstest.md)
+>
+> Alles neu gerechnet: [`neuberechnung.md`](docs/neuberechnung.md) — der S/R-Bounce verliert signifikant (t = **-3,28**), sein Gegenteil ist damit der staerkste Einzeleffekt des Projekts.
 >
 > Details zum Fehler: [`zu_streng.md`](docs/zu_streng.md)
 
@@ -119,6 +121,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 52 | **„Bist du zu pessimistisch?"** — Pipeline gegen eingebauten Edge geeicht | **Ja, Faktor 5,48.** Die alte Statistik erkannte einen **echten Edge von 200 bp in 0 % der Faelle**. Fehler: `n_eff = n/Haltedauer` gilt nur bei Signal auf jedem Bar. Korrigiert (Summe der Einzigartigkeit, Falschalarmrate 4,3 %): **S/R-Ausbruch t = 0,54 → 2,16** gesamt, Holdout **0,47 → 1,73**. Fuer t=2 im Holdout haetten +60,3 statt +52,2 bp gereicht. **Alle Absagen wegen Vorzeichenwechsel bleiben** (MACD+Stoch+BB: BTC +0,63 → -0,32) | [`zu_streng.md`](docs/zu_streng.md) |
 | 53 | **„Profitable Trader sieht man in oeffentlichen Statistiken"** | Beides wahr. 100.000 Trader mit Erwartungswert **null**: nach 5 Jahren **11.550 ueber +100 %** und **858 mit fuenf Gewinnjahren in Folge**. ABER mit 1 % echten Koennern sind nach 10 Jahren **65,5 % der Spitzenliste echte Koenner** (nach 1 Jahr nur 8,3 %). **Persistenz trennt, Rendite nicht** — Vorjahressieger wieder oben: 12,9 % bei Sharpe 2,0 gegen 1,0 % Zufall | [`profitable_trader.md`](docs/profitable_trader.md) |
 | 54 | **Alle Befunde mit korrigierter Statistik neu gerechnet** | **S/R-Ausbruch t = 2,16** gesamt, Pass-Rate **78,1 % bei 0,35x**. **Volatilitaetspraemie unveraendert** (4,16 → 4,19) — dort war die Korrektur richtig angewandt. **9 von 10 Filtern bleiben gescheitert**; Marktphase ist der einzige Kandidat (+84,6/+70,8 bp gegen Ausgangslage +49,4/+52,2), verfehlt aber Bonferroni. **Der abgelegte S/R-Bounce verliert signifikant** (t = -3,28) — sein Gegenteil liefert **+111/+102 bp (t 3,00/2,65)**, unabhaengig vom Ausbruch (2 % Ueberschneidung), Kontrolle gegen die Vorbewegung **p = 0,000 zweimal**, laeuft **gegen** den +102-%-Markt. ABER: nur BTC, nur short, 3 von 6 Maerkten kippen, Asymmetrie unerklaert | [`neuberechnung.md`](docs/neuberechnung.md) |
+| 55 | **VORWAERTSTEST** (Kriterium vorher committet) | **Beide Regeln gescheitert.** Acht nie benutzte Maerkte, Holdout gepoolt: Ausbruch **-36,9 bp**, Gegen-Bounce **-31,1 bp**, positiv in **2 von 8** (Kriterium war die Mehrheit). Drei Maerkte zeigen den Gegen-Bounce **signifikant negativ** (TRX t -2,97). Frischer Zeitraum 2026-07-01 bis 08-07, 14 Maerkte: **-39,7** und **-42,4 bp** gepoolt. **BTC selbst -128,9 / -115,7 bp** — das liegt im schlechtesten **1,6 %** bzw. **5,0 %** aller historischen Bloecke gleicher Laenge. **Die Empfehlung, die Kraken-Challenge mit dieser Regel zu spielen, ist damit nicht mehr gedeckt** | [`vorwaertstest.md`](docs/vorwaertstest.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben

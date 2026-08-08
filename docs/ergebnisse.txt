@@ -1705,3 +1705,69 @@
     Das ist EIN Mechanismus, nicht zwei -- und das Gegenteil dessen,
     was jeder Kurs lehrt.
     Naechster Schritt: VORWAERTSTEST, nicht hochskalieren.
+
+
+═══════════════════════════════════════════════════════════
+  55. VORWAERTSTEST -- BEIDE REGELN GESCHEITERT
+═══════════════════════════════════════════════════════════
+
+  Kriterium VORHER festgelegt und committet (vorwaertstest_spec.md):
+  "bestanden = Effekt > 0 auf der MEHRHEIT der frischen Maerkte"
+
+  TEST 1 -- ACHT MAERKTE, FUER DIESE REGELN NIE BENUTZT
+    Markt   Ausbruch Suche  Ausbruch HOLD   GegBounce Suche  GegBounce HOLD
+    ATOM      +25,6           -39,3            +69,0           -12,0
+    AVAX     +146,2 (2,18)     -1,3            +87,3           -39,2
+    BCH       -15,1           -73,6             +0,3            +8,5
+    DOGE      -33,7            +3,3             +7,5           -50,3
+    DOT        +6,3           -69,2            -37,4           +78,3
+    LINK      -24,2            +7,8            -52,8           -99,7 (-2,08)
+    LTC       -54,5           -59,2            -47,2          -127,0 (-1,98)
+    TRX       +44,0           -37,9 (-1,85)    -51,3           -72,8 (-2,97)
+
+    S/R-Ausbruch        Suche  -0,7 bp (4/8)  HOLDOUT -36,9 bp (2/8)
+    Gegen-Bounce short  Suche -10,6 bp (4/8)  HOLDOUT -31,1 bp (2/8)
+
+  ZWEI VON ACHT. Kriterium war die Mehrheit. GESCHEITERT, beide Regeln.
+  Drei Maerkte zeigen den Gegen-Bounce SIGNIFIKANT NEGATIV -- auf BTC
+  war derselbe Effekt mit t +2,65 positiv.
+
+  TEST 2 -- FRISCHER ZEITRAUM 2026-07-01 BIS 2026-08-07 (14 Maerkte)
+    S/R-Ausbruch        gepoolt -39,7 bp ueber 353 Trades, 5/13 positiv
+    Gegen-Bounce short  gepoolt -42,4 bp ueber 277 Trades, 5/12 positiv
+
+    BTC SELBST (der Entwicklungsmarkt):
+      S/R-Ausbruch        -128,9 bp (38 Trades)
+      Gegen-Bounce short  -115,7 bp (21 Trades)
+
+  WAR DAS NUR PECH? NEIN.
+  Verteilung aller historischen Bloecke gleicher Laenge:
+    Ausbruch (38 Trades)     Median +49,3   5-95 %: -76..+268
+                             beobachtet -128,9 -> schlechter in nur 1,6 %
+    GegBounce (21 Trades)    Median +85,3   5-95 %: -114..+384
+                             beobachtet -115,7 -> schlechter in nur 5,0 %
+
+  DEUTUNG
+  Alles an der Regel wurde auf BTC gewaehlt: Levellogik, 6 Beruehrungen,
+  48 h Haltedauer, Toleranz. Auf BTC t = 2,16 / 2,65. Auf acht Maerkten,
+  die bei keiner dieser Entscheidungen mitgeredet haben: -37 / -31 bp.
+  Das ist die Signatur einer UEBERANPASSUNG.
+
+  UND DER WICHTIGSTE PUNKT:
+  Die korrigierte Statistik hat den Befund signifikant gemacht --
+  der Vorwaertstest hat ihn trotzdem widerlegt. Signifikanz auf den
+  Entwicklungsdaten war nie das Entscheidende.
+
+  ZURUECKGENOMMEN
+  Die Empfehlung, die bezahlte Kraken-Challenge mit dieser Regel zu
+  spielen (BTC 1h, >=6 Beruehrungen, 48 h, 0,35x), ist nicht mehr
+  gedeckt. Die Pass-Rate von 78,1 % stammt aus derselben BTC-Historie,
+  auf der die Regel gebaut wurde.
+
+  STAND NACH 55 UNTERSUCHUNGEN
+    Volatilitaetspraemie   HAELT (zwei Anlageklassen, 4,16 -> 4,19)
+    S/R-Ausbruch           im Vorwaertstest gescheitert
+    Gegen-Bounce           im Vorwaertstest gescheitert
+    Marktphasen-Filter     Kandidat, nie vorwaerts getestet
+    alles andere           gescheitert
+  EIN Befund von 55 -- und der eine ist kein Chartmuster.
