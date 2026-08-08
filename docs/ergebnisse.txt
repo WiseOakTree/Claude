@@ -1771,3 +1771,78 @@
     Marktphasen-Filter     Kandidat, nie vorwaerts getestet
     alles andere           gescheitert
   EIN Befund von 55 -- und der eine ist kein Chartmuster.
+
+
+═══════════════════════════════════════════════════════════
+  56. DIE TRADER, DIE ES NACHWEISLICH KOENNEN
+      Hyperliquid -- 41.362 Konten, jede PnL ON-CHAIN
+═══════════════════════════════════════════════════════════
+
+  GRUNDVERTEILUNG (36.889 Konten mit > 1 Mio $ Volumen)
+    allTime im Plus          41,9 %
+    Gewinn > 100.000 $       19,62 %
+    Gewinn > 1 Mio $          4,89 %
+    Gewinn > 10 Mio $         0,57 %
+    Oberstes 1 % haelt 57,7 % ALLER Gewinne
+    Gesamt: 15,7 Mrd $ Gewinne, 5,0 Mrd $ Verluste, 10,3 Bio $ Volumen
+
+  "ZWEIMAL PROFITABEL" IST REINER ZUFALL
+  Zwei DISJUNKTE Perioden (Monat-minus-Woche vs Woche-minus-Tag),
+  2.234 Konten mit > 1 Mio $ Volumen in beiden:
+    Periode A im Plus        48,5 %
+    Periode B im Plus        54,2 %
+    in BEIDEN im Plus        26,1 %
+    bei Unabhaengigkeit      26,3 %
+    UEBERSCHUSS              -0,2 Prozentpunkte
+  Genau der Nachweis, den Trader vorlegen -- und er ist wertlos.
+  (Auch mein eigener erster Gruppenvergleich beruhte darauf.)
+
+  ABER DIE RAENDER PERSISTIEREN
+    oberstes Dezil zweimal    1,88 % gegen 1,00 % Zufall = 1,9x
+    oberste 5 % zweimal       0,45 % gegen 0,25 %        = 1,8x
+    unterstes Dezil zweimal  20,0 % gegen 10 %           = 2,0x
+  Rangkorrelation ueber ALLE Konten: +0,005 (also null).
+  KOENNEN EXISTIERT AN DEN RAENDERN, NICHT IN DER MITTE.
+
+  Schwellenanalyse (die erste Rechnung war ein Nennerartefakt):
+    Mindestvol.  10.000 $  Rho -0,275
+                500.000 $  Rho -0,147
+                  2 Mio $  Rho -0,104
+                 50 Mio $  Rho +0,005   <- sauber
+
+  WIE HANDELT DIE KERNGRUPPE? (echte Fills)
+  42 Konten zweimal oberstes Dezil gegen 29 zweimal unterstes:
+                          KERN      GEGEN      p
+    Fills pro Tag          199        204     0,233
+    Ordergroesse ($)     4.519      4.425      --
+    Maerkte                  6          6      --
+    Gebuehren (bp/Vol)    1,18       1,42     0,159
+    TAKER-ANTEIL         38,0 %     66,3 %    0,057   <- der einzige
+
+  VIER VON FUENF MERKMALEN IDENTISCH.
+  Der einzige Unterschied: sie NEHMEN kaum Liquiditaet.
+  Das ist derselbe Edge wie der Orderflow-IC des Projekts
+  (-0,041, p = 3e-173): wer mit Market-Order kauft, zahlt.
+
+  FREQUENZ TRENNT NICHT
+    unter 20 Fills/Tag (menschlich)   n=23   56,5 % dauerhaft im Plus
+    20-100                            n=56   51,8 %
+    100-500                           n=42   38,1 %
+    500-2000 (Bot)                    n=11   72,7 %
+    ueber 2000 (HFT)                   n=7   57,1 %
+  (geschichtete Stichprobe, Basisrate 50 %)
+  18,8 % der Kerngruppe handeln unter 20 Fills/Tag.
+  MAN MUSS KEIN BOT SEIN. MAN MUSS AUFHOEREN, DEN SPREAD ZU ZAHLEN.
+
+  GRENZEN
+    Perioden sehr kurz (3 Wochen gegen 6 Tage)
+    p = 0,057 ist NICHT signifikant, und einer von fuenf Vergleichen
+    n = 32 gegen 26
+    Leaderboard ist eine Auswahl; geschlossene Nullkonten fehlen
+    Eine Adresse ist kein Mensch (Vaults, verteilte Wallets)
+
+  PRAKTISCHE FOLGERUNG
+    Limit-Orders statt Market-Orders. Auf den Preis warten statt ihn
+    zu nehmen. Die einzige Erkenntnis des Projekts, die man SOFORT
+    umsetzen kann, ohne einen Edge gefunden zu haben -- sie macht
+    jede Strategie besser, auch eine ohne Vorteil.
