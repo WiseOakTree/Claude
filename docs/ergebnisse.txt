@@ -1531,3 +1531,103 @@
   ist nur, dass der Test danach kam statt gar nicht.
 
   ZAEHLER UNVERAENDERT: 2 haltbare Befunde von ueber 40 Ansaetzen.
+
+
+═══════════════════════════════════════════════════════════
+  51. ECHTE TICKDATEN -- FOOTPRINT UND LIQUIDATIONS-KARTE
+═══════════════════════════════════════════════════════════
+
+  DATENBASIS
+    110.886.718 einzelne Trades (Preis, Menge, Aggressor-Kennzeichen)
+    72 Tage -> 20.736 Fuenf-Minuten-Footprints
+    227.793 Bars Open Interest im 5-Minuten-Takt, 26 Monate
+  Primaerdaten aus dem Binance-Archiv. Kein Anbieter dazwischen.
+
+  COINGLASS
+    ohne Schluessel:  "API key missing"
+    mit Schluessel:   "401 Upgrade plan"  -- bei JEDEM Endpunkt,
+                      auch bei der reinen Coin-Liste.
+  Der Schluessel wird erkannt, der Tarif gibt nichts frei.
+
+  ─────────────────────────────────────────────────────────
+  DER LOOK-AHEAD IN MEINEM EIGENEN SKRIPT
+  ─────────────────────────────────────────────────────────
+  Erster Lauf (mit Tages-z-Scores = Zukunft im Merkmal):
+    CVD-Divergenz 6h      IC Suche +0,2199  HOLD +0,0931   1,54x
+    Delta grosse Trades   IC Suche -0,0793  HOLD -0,1009   1,26x
+    Delta alle Trades     IC Suche -0,0589  HOLD -0,0782   1,21x
+    Trade-Anzahl 6h       IC Suche +0,0770  HOLD +0,0426   1,00x
+  VIER Merkmale ueber der Kostenschwelle.
+
+  Fehler:  g.transform("mean") ueber den GANZEN Tag -- also auch
+  ueber Bars, die zum Entscheidungszeitpunkt nicht existierten.
+
+  Streng kausal (nachlaufende 24h-Fenster, 1 Bar verzoegert):
+    mittlere Tradegroesse 6h  +0,0062 -> -0,0424   1,49x  KIPPT
+    CVD-Divergenz 6h          -0,0021 -> +0,0616   1,44x  KIPPT
+    Trade-Anzahl 6h           +0,0221 -> -0,0658   0,59x  KIPPT
+    Anteil grosser Trades 6h  -0,0246 -> +0,0260   0,51x  KIPPT
+    Ungleichgewicht netto 6h  -0,0148 -> -0,0238   0,51x  stabil
+
+  CVD-IC FAELLT VON +0,2199 AUF -0,0021. Die 0,22 war Look-ahead.
+
+    Merkmale gesamt                        56
+    gleiches Vorzeichen Suche/Holdout      38 (68 %)
+    ueber der Kostenschwelle im Holdout     2
+    DAVON VORZEICHENSTABIL                  0
+
+  Gestapelte 3:1-Ungleichgewichte -- das Kernkonzept des
+  Footprint-Handels -- liegen bei 0,51x der Schwelle.
+
+  ─────────────────────────────────────────────────────────
+  LIQUIDATIONS-KARTE, SELBST GEBAUT
+  ─────────────────────────────────────────────────────────
+  Neue Positionen = OI-Zunahme je 5 Min
+  Richtung        = Taker-Long/Short-Verhaeltnis
+  Liquidation bei P*(1-1/L) long, P*(1+1/L) short
+  Hebel 10x/25x/50x/100x zu 20/30/30/20 %
+  Zerfall 3 Tage Halbwertszeit; Masse verschwindet, wenn der Kurs
+  durchlaeuft (dann WURDE liquidiert).
+    Ø Masse ueber dem Kurs   8.540 BTC
+    Ø Masse unter dem Kurs   6.794 BTC
+    Bars mit ausgeloester Masse   8,1 %
+
+  1) MAGNET-TEST
+    Asymmetrie oben/unten  3d  +0,0258 -> -0,1388  -143,4bp  8,96x KIPPT
+    Masse unten (log)      3d  -0,0275 -> +0,1016  +115,0bp  7,19x KIPPT
+    Masse oben (log)       3d  +0,0222 -> -0,1124   -79,8bp  4,99x KIPPT
+    Abstand groesster oben 3d  +0,0037 -> +0,0725   +73,9bp  4,62x stabil
+    naeher oben als unten  3d  +0,0092 -> -0,0265   -34,5bp  2,16x KIPPT
+
+    gleiches Vorzeichen  16 von 32 = GENAU 50 % (Muenzwurf)
+    ueber 16 bp im Holdout: 6, davon vorzeichenstabil: 2
+    Die zwei "stabilen" haben im Suchzeitraum IC +0,0037 bzw +0,0170
+    -- also praktisch null. Zweimal knapp auf derselben Seite gelandet.
+    3-Tage-Horizont auf 5-Min-Bars ueberlappt 864-fach.
+
+  2) NACH DER KASKADE
+    Suche  2024-25  n=1360   nach 1h -0,0bp   nach 6h  +7,6bp  Fortsetzung
+    HOLDOUT 2026    n= 442   nach 1h -5,5bp   nach 6h -14,2bp  UMKEHR
+    Beide gaengigen Erzaehlungen finden im anderen Zeitraum ihr Gegenteil.
+
+  3) ALS RISIKOMASS
+    Liquidationsmasse gesamt      Suche -0,287   HOLD -0,547
+    gerade ausgeloeste Masse            +0,138        +0,139
+    Abwaerts-Semivol (1 Tag)            +0,545        +0,605
+    realisierte Vol (1 Tag)             +0,553        +0,616
+    Die negative Korrelation ist vermutlich ein ARTEFAKT der eigenen
+    Konstruktion: die Karte wird geleert, wenn der Kurs durchlaeuft.
+    Viel Masse = Kurs bewegte sich zuletzt wenig. Und die schlichte
+    realisierte Vol schlaegt sie ohnehin.
+
+  BILANZ
+    Footprint schlaegt 5-Min-Bars       NEIN (0 von 56)
+    3:1-Ungleichgewichte                0,51x der Schwelle
+    CVD-Divergenz                       war Look-ahead
+    Liquidations-Magnet                 50 % = Muenzwurf
+    Umkehr nach Kaskade                 widerspruechlich
+    Masse als Risikomass                Artefakt, verliert gegen Vol
+
+  SIEBTES WERKZEUG, SIEBTES MAL DASSELBE -- diesmal mit den feinsten
+  Daten, die es fuer diesen Markt gibt.
+  ES LAG NICHT AN DER DATENAUFLOESUNG. Das war die letzte Ausrede.
