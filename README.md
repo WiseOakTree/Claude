@@ -1,5 +1,14 @@
 # Krypto Prop Backtester — Renko-Reversal für die Kraken-Prop-Challenge
 
+> ## 📋 Methodisches Audit und finaler Test
+>
+> **~1.067 tatsaechlich getestete Varianten** (nicht 61) → Bonferroni-Schwelle **t > 4,07**. Holdout in 30,5 % der Skripte, Slippage in 3,0 %, Funding in 4,2 %. Der BTC-Holdout wurde **ueber zwanzigmal benutzt** und ist als Holdout verbraucht.
+>
+> **Finaler Test** (25 Lehrbuchregeln, 14 Maerkte, 1,12 Mio Trades, White's Reality Check): **24 von 25 Regeln verlieren.** Familienweiser p = **0,0170** — aber der Gewinner liefert **+16,92 bp in der Suche und -17,61 bp im Holdout**.
+>
+> **Urteil: Nein. Nach Kosten, Out-of-Sample und sauberer Statistik bleibt kein reproduzierbarer Edge.** → [`audit_und_finaltest.md`](docs/audit_und_finaltest.md)
+
+
 > ## 🛑 Wichtige Korrektur zu allen t-Werten in diesem Repository
 >
 > Die Ueberlappungskorrektur `n_eff = n / Haltedauer` war **um Faktor 5,48 zu streng**. Sie stimmt nur, wenn auf jedem Bar ein Signal feuert. Geprueft mit einem eingebauten Edge: Die alte Pipeline erkannte einen **echten Edge von 200 bp in 0 % der Faelle**.
@@ -128,6 +137,7 @@ Zehn Ansaetze, jeder mit echten Daten und Out-of-Sample-Kontrolle geprueft.
 | 59 | **„Auf der Seite des Hauses stehen"** (HLP-Vault + Funding-Carry) | **Die beste Idee des Projekts.** HLP-Vault (Gegenseite aller Hyperliquid-Trader, 214 Mio $, on-chain): **+37,3 % p.a., Sharpe 2,12**, 86,7 % der Perioden im Plus — hoeher als alles bisher Gemessene. **ABER der Ertrag verfaellt**: 2024 +79,1 % → 2025 +19,0 % → 2026 hochgerechnet ~11 %, weil der Gebuehrentopf durch mehr Kapital geteilt wird. Funding-Carry: +6,8 % nach Kosten, ebenfalls im Verfall (12 % → 5 % → unter 2 %). **Die 98 % gibt es nicht — es sind 85 %**, und der Rest ist der Versicherungsfall | [`das_haus.md`](docs/das_haus.md) |
 | 60 | **„Kapital und Kredite gibt es genug"** | **Wenn nichts passiert**: 20.000 $ zu 7 % ueber 5 Jahre ergeben **+9.312 $**. **Wenn etwas passiert**: ab -20 % Vault-Verlust ist ein 5x-Konto weg, die Schuld bleibt. Die entscheidende Zahl ist **nicht schaetzbar** — 3,45 Jahre ohne Schadensfall geben nach der Dreierregel eine obere Jahresschranke von **87 %**. Ruin ueber 5 Jahre: **1x = 0,0 % in JEDEM Szenario**, 2x mit -60 % alle 10 Jahre = **37,7 %**. Und der Spread schrumpft: bei 11 % Ertrag laesst ein 10-%-Kredit nur **+1 %**. Das Risiko kommt nicht aus der Strategie, sondern **ausschliesslich aus dem Kredit** | [`kredit.md`](docs/kredit.md) |
 | 61 | **🛑 Korrektur: der HLP-Vault verdient GERADE nichts** | Die +37,3 % p.a. waren der **Dreijahresdurchschnitt**, nicht der aktuelle Lauf. Aus demselben API-Aufruf: letzter Monat **+0,3 %**, letzte Woche **-0,5 %**, gemeldetes `apr`-Feld **0,21 %**. Jahresverlauf korrekt annualisiert: 2023 +37,9 %, 2024 **+85,9 %**, 2025 +19,5 %, 2026 +12,6 %, **letzte 30 Tage +0,3 %**. Funding-Carry haelt sich besser (30 Tage +6,71 %, 90 Tage +4,13 %), hatte aber **drei negative Monate in Folge** (Feb-Apr 2026). Auf 20.000 $ heisst das **800-1.400 $ im Jahr** | [`einsatz_20k.md`](docs/einsatz_20k.md) |
+| 62 | **Methodisches Audit + FINALER TEST** | Audit: **~1.067 getestete Varianten** → Schwelle t > 4,07; Holdout in 30,5 % der Skripte, Slippage 3,0 %, Funding 4,2 %; **Survivorship ungeloest**, BTC-Holdout **ueber zwanzigmal benutzt**. Finaler Test (25 Lehrbuchregeln, 14 Maerkte, 1,12 Mio Trades, Reality Check mit zirkulaerer Verschiebung): **24 von 25 negativ**, familienweiser p = **0,0170** — aber der Gewinner (Keltner) kippt: **+16,92 bp Suche / -17,61 bp Holdout**, 5 von 14 Maerkten, 8 von 18 Parametervarianten negativ. **Urteil: kein reproduzierbarer Edge** | [`audit_und_finaltest.md`](docs/audit_und_finaltest.md) |
 | — | Traden als Beruf | 3.000 EUR/Monat verlangen ~338.000 EUR; Prop-Konto lebt erwartet 102 Tage | [`trading_as_job.md`](docs/trading_as_job.md) |
 
 ### Die zwei Ergebnisse, die bleiben

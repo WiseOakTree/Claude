@@ -53,8 +53,8 @@ def bewerte(maske_zeit=None,ne=20,mult=2.0,na=10):
     t=x.mean()/(x.std(ddof=1)/np.sqrt(ne_ges))
     return x.mean()*1e4, t, len(x), ne_ges
 for lab,mz in (("gesamt",None),
-               ("Suche 2021-24",lambda i:(i<SPLIT).to_numpy()),
-               ("HOLDOUT 2025-26",lambda i:(i>=SPLIT).to_numpy())):
+               ("Suche 2021-24",lambda i:np.asarray(i<SPLIT)),
+               ("HOLDOUT 2025-26",lambda i:np.asarray(i>=SPLIT))):
     bp,t,n,nef=bewerte(mz)
     print(f"  {lab:<20}{n:>9,} Trades{bp:>+9.2f} bp   t = {t:>5.2f}   n_eff = {nef:,.0f}")
 
@@ -66,7 +66,7 @@ pos=0
 for sym,(df,f,n) in D.items():
     s=keltner(df); m=(s!=0)&np.isfinite(f)
     x=s[m]*f[m]-2*COST
-    tr=m&(df.index<SPLIT).to_numpy(); ho=m&(df.index>=SPLIT).to_numpy()
+    tr=m&np.asarray(df.index<SPLIT); ho=m&np.asarray(df.index>=SPLIT)
     a=(s[tr]*f[tr]-2*COST).mean()*1e4 if tr.sum() else np.nan
     b=(s[ho]*f[ho]-2*COST).mean()*1e4 if ho.sum() else np.nan
     pos+= x.mean()>0

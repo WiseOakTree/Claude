@@ -2186,3 +2186,102 @@
   Derselbe Fehlertyp wie beim Rainbow Chart: eine ueber den ganzen
   Zeitraum gemittelte Groesse als Aussage ueber die Gegenwart lesen.
   Das apr-Feld stand in derselben API-Antwort.
+
+
+═══════════════════════════════════════════════════════════
+  62. METHODISCHES AUDIT UND FINALER TEST
+═══════════════════════════════════════════════════════════
+
+  WAS TATSAECHLICH GETESTET WURDE
+    Forschungsskripte              167
+    nummerierte Untersuchungen      61
+    TATSAECHLICH GETESTETE VARIANTEN ~1.067
+    -> Bonferroni-Schwelle: t > 4,07  (p < 4,7e-05)
+
+  METHODISCHE SAUBERKEIT (grep ueber alle 167 Skripte)
+    Kosten                   51,5 %
+    Look-ahead-Kontrolle     40,1 %
+    Holdout / Split          30,5 %
+    Zufallskontrolle         23,4 %
+    Ueberlappungskorrektur   21,6 %
+    mehrere Maerkte          13,8 %
+    Funding                   4,2 %
+    Bonferroni / FDR          4,2 %
+    Slippage explizit         3,0 %
+
+  DIE VIER LUECKEN
+  1. HOLDOUT VERBRAUCHT: der BTC-Zeitraum 2025-26 wurde ueber
+     zwanzigmal benutzt. Nach dem ersten Zugriff war er keiner mehr.
+  2. SURVIVORSHIP UNGELOEST: alle 14 Maerkte sind Ueberlebende.
+     LUNA, FTT und hunderte tote Projekte fehlen vollstaendig.
+     Jede Renditeaussage ist nach oben verzerrt.
+  3. FUNDING FEHLT: bei 48 h Halten sind das ~3,9 bp je Long-Trade.
+  4. MULTIPLE TESTING zu spaet ernst genommen.
+
+  STREICHLISTE
+    S/R-Ausbruch            raus (Vorwaertstest, -9,84 bp im 25er-Test)
+    Gegen-Bounce            raus (-10,76 bp im 25er-Test)
+    Marktphasen-Filter      raus (verfehlt Bonferroni)
+    SOL-VA-Ausbruch         raus (4 von 14, Zufall erwartet 3,5)
+    alle 9 fruehere Filter  raus
+    alle Pass-Raten         raus (aus der Baudaten-Historie)
+    HLP +37,3 % p.a.        raus als Erwartungswert (aktuell +0,3 %)
+
+    Volatilitaetspraemie    BEHALTEN mit Einschraenkung: uebersteht
+      Bonferroni (t 4,19 > 4,07), zwei Anlageklassen, Kosten drin --
+      ABER KEIN HOLDOUT. Rettet sich nur als vorbestehende,
+      publizierte Hypothese statt als gesuchtes Muster.
+    Orderflow / Markov      BEHALTEN als Statistik, WERTLOS als Handel
+    Maker -0,575 bp         BEHALTEN (7,8 Mio Trades, 20/20 negativ)
+    Taker-Anteil 38/66      NICHT signifikant (p 0,057, 1 von 5 Tests)
+
+  ─────────────────────────────────────────────────────────
+  DER FINALE TEST
+  ─────────────────────────────────────────────────────────
+  25 kanonische Regeln, Lehrbuchparameter, KEINE Optimierung.
+  14 Maerkte, 1 h, 48 h Halten, 16 bp Kosten, 1.121.000 Trades.
+  Spezifikation vor der Rechnung committet.
+
+  24 VON 25 REGELN VERLIEREN
+    Keltner-Ausbruch          +6,08 bp   <- einziger positiver
+    Goldenes Kreuz            -3,12
+    ATR-Ausbruch              -3,88
+    S/R-Ausbruch (Projekt)    -9,84
+    Gegen-Bounce (Projekt)   -10,76
+    MACD 12/26/9             -13,14
+    Stochastik 14/3/3        -28,42
+    RSI 14 (30/70)           -32,40
+
+  REALITY CHECK (zirkulaere Verschiebung, 2.000 Runden)
+    beobachtetes Maximum          +6,08 bp
+    Zufalls-Maximum Median        -7,06 bp
+    Zufalls-Maximum 95. Perzentil +2,29 bp
+    FAMILIENWEISER p-WERT          0,0170
+  Nullkontrolle bestanden: Null-Streuung 7,09 bp gegen echten
+  Standardfehler 6,52 bp = 0,92x (eher zu breit als zu eng).
+
+  UND DANN DIE DIAGNOSTIK
+    gesamt            71.082 Trades   +6,08 bp   t  0,93
+    Suche 2021-24     48.770 Trades  +16,92 bp   t  2,01
+    HOLDOUT 2025-26   22.312 Trades  -17,61 bp   t -1,88
+    positiv in 5 von 14 Maerkten, getragen von DOGE und SOL
+    18 Parametervarianten: -6,65 bis +17,85 bp, 8 davon negativ
+
+  URTEIL
+  NEIN. Nach Kosten, Out-of-Sample und sauberer Statistik bleibt
+  kein reproduzierbarer Edge.
+
+  Der Unterschied zwischen "signifikant ueber einen Zeitraum" und
+  "reproduzierbar" ist das letzte Kriterium der Liste: REGIME CHANGES.
+  Ein familienweiser p-Wert ueber einen festen Zeitraum faengt sie
+  nicht. Nur die Teilung tut es.
+
+  ACHT FALLEN, ALLE IM EIGENEN MATERIAL VORGEFUEHRT
+    Look-ahead              Footprint IC 0,22 -> -0,002; Rainbow 48 -> 1,1 Pp
+    Ueberlappung zu naiv    p 1e-240 -> 0,27
+    Ueberlappung zu streng  Faktor 5,48; 200 bp Edge in 0 % erkannt
+    Bestes von N            SOL, Keltner, 324er-Gitter
+    Kosten doppelt          16 bp -> faktisch 32 bp
+    Zeitraummittel          HLP +37,3 % gegen aktuell +0,3 %
+    Holdout mehrfach        ueber zwanzigmal
+    Nullmodell zu eng       erste Fassung des finalen Tests
