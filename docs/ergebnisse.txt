@@ -2125,3 +2125,64 @@
     5x               ->  Einsatz weg + 400 % Schulden
   2024 stand beim Nutzer eine Null. Das war vorbei.
   Mit Kredit waere es nicht vorbei gewesen.
+
+
+═══════════════════════════════════════════════════════════
+  61. KORREKTUR: DER HLP-VAULT VERDIENT GERADE NICHTS
+═══════════════════════════════════════════════════════════
+
+  Die +37,3 % p.a. mit Sharpe 2,12 waren der DREIJAHRESDURCHSCHNITT.
+  Fuer eine Entscheidung HEUTE ist der aktuelle Lauf massgeblich.
+
+  AUS DEMSELBEN API-AUFRUF, jedes Fenster einzeln:
+    Fenster    Dauer          PnL     Ø Kapital   annualisiert
+    day         1,0 d      +1.298 $     215,3 M       +0,2 %
+    week        7,1 d     -20.753 $     217,5 M       -0,5 %
+    month      30,4 d     +63.818 $     231,6 M       +0,3 %
+    allTime  1.185,5 d  +136,9 Mio $    222,0 M      +15,9 %
+
+  Das API-Feld `apr` meldet es selbst: 0,0021 = 0,21 %.
+
+  JAHRESVERLAUF, KORREKT ANNUALISIERT
+    2023            +37,9 %
+    2024            +85,9 %
+    2025            +19,5 %
+    2026            +12,6 %
+    letzte 30 Tage   +0,3 %
+  Verlauf 86 -> 20 -> 13 -> 0. Kein Ausreisser, eine Linie.
+
+  FUNDING-CARRY HAELT SICH BESSER -- ist aber nicht risikofrei
+    2026-01  +5,39 %   95,7 % positiv
+    2026-02  -0,83 %   46,4 %
+    2026-03  -1,09 %   44,1 %
+    2026-04  -2,16 %   35,6 %
+    2026-05  +2,72 %   71,0 %
+    2026-06  +2,47 %   76,7 %
+    2026-07  +6,66 %   98,9 %
+    letzte 30 Tage +6,71 %  |  letzte 90 Tage +4,13 %  |  gesamt +7,05 %
+  DREI NEGATIVE MONATE IN FOLGE im Fruehjahr 2026.
+
+  WAS 20.000 $ REALISTISCH BRINGEN
+    HLP-Vault        ~0 %        ->     ~0 $
+    Funding-Carry    4-7 %       ->  800-1.400 $
+    Volatilitaetspr. ~25 %       ->  5.000 $ (taegliche Arbeit noetig)
+
+  800 BIS 1.400 DOLLAR IM JAHR. Das ist die Groessenordnung.
+
+  EMPFEHLUNG
+    Nicht alles auf einmal: 2.000-3.000 $ in den Funding-Carry,
+    nach 3 Monaten die EIGENEN Zahlen pruefen, dann entscheiden.
+    Unterschied "alles jetzt" gegen "ueber 9 Monate verteilt":
+    bei 5 % rund 500 $ -- dafuer kauft man sich echte Messungen.
+    Den HLP-Vault jetzt NICHT bestuecken (0 % ist kein Grund),
+    aber beobachten: ueber 8 % annualisiert waere neue Datenlage.
+    Vergleichsanker nicht vergessen: 4-7 % mit Boersen- und
+    Liquidationsrisiko muss sich gegen risikoarme Alternativen
+    messen. Unter zwei Prozentpunkten Abstand ist der Aufwand
+    nicht bezahlt.
+
+  EIGENER FEHLER
+  +37,3 % berichtet, ohne zu pruefen, ob das der aktuelle Lauf ist.
+  Derselbe Fehlertyp wie beim Rainbow Chart: eine ueber den ganzen
+  Zeitraum gemittelte Groesse als Aussage ueber die Gegenwart lesen.
+  Das apr-Feld stand in derselben API-Antwort.
