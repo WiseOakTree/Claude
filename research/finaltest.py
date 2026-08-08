@@ -35,7 +35,7 @@ def regeln(df, by=None):
     KANONISCHE Parameter, keine Suche."""
     c,h,l,o,v=df.close,df.high,df.low,df.open,df.volume
     R={}
-    ml=ema(c,12)-ema(c,26); ms=ema(c,9)
+    ml=ema(c,12)-ema(c,26); ms=ema(ml,9)   # Signallinie auf die MACD-Linie, nicht auf den Preis
     R["MACD 12/26/9"]=np.where(kreuz(ml,ms),1,np.where(kreuz(ms,ml),-1,0))
     rs=rsi(c,14)
     R["RSI 14 (30/70)"]=np.where(kreuz(rs,pd.Series(30,index=c.index)),1,
@@ -151,3 +151,65 @@ bester=[k for k,v in beob.items() if v==best][0]
 print(f"\n  BESTE REGEL: {bester}  mit {best:+.2f} bp je Trade")
 pickle.dump({"beob":beob,"best":best,"bester":bester},
             open("/tmp/claude-0/-home-user-Claude/15d15817-1e32-5d20-88a2-91c5ca4d5da2/scratchpad/ft_beob.pkl","wb"))
+
+# ===================================================================
+#  WHITE'S REALITY CHECK
+# ===================================================================
+print("\n"+"="*92)
+print("REALITY CHECK: das Maximum der 25 Regeln gegen das Maximum von 25")
+print("Zufallsregeln mit gleicher Anzahl, Haltedauer und Long/Short-Quote")
+print("="*92)
+rng=np.random.default_rng(20260808)
+# Profil je Regel und Markt: Anzahl Signale und Long-Anteil
+profil={}
+for nm in NAMEN:
+    profil[nm]={}
+    for sym,d in daten.items():
+        s=d["sig"][nm]; m=s!=0
+        profil[nm][sym]=(int(m.sum()), float((s[m]>0).mean()) if m.sum() else 0.5)
+
+def zufalls_kennzahl(nm):
+    ges=[]
+    for sym,d in daten.items():
+        k,pl=profil[nm][sym]
+        if k==0: continue
+        f=d["f"]; n=d["n"]
+        gueltig=np.where(np.isfinite(f))[0]
+        if len(gueltig)<k: continue
+        idx=rng.choice(gueltig,size=k,replace=False)
+        richt=np.where(rng.random(k)<pl,1.0,-1.0)
+        ges.append(richt*f[idx]-2*COST)
+    if not ges: return np.nan
+    return np.concatenate(ges).mean()*1e4
+
+RUNDEN=2000
+max_null=np.empty(RUNDEN)
+einzel_null={nm:np.empty(RUNDEN) for nm in NAMEN}
+for b in range(RUNDEN):
+    werte={nm:zufalls_kennzahl(nm) for nm in NAMEN}
+    for nm in NAMEN: einzel_null[nm][b]=werte[nm]
+    max_null[b]=np.nanmax(list(werte.values()))
+    if (b+1)%400==0: print(f"  {b+1} Runden",flush=True)
+
+p_fw=float(np.mean(max_null>=best))
+print(f"\n  beobachtetes Maximum:        {best:+.2f} bp  ({bester})")
+print(f"  Zufalls-Maximum Median:      {np.median(max_null):+.2f} bp")
+print(f"  Zufalls-Maximum 95. Perzentil:{np.percentile(max_null,95):+.2f} bp")
+print(f"  Zufalls-Maximum Spanne:      {max_null.min():+.2f} .. {max_null.max():+.2f} bp")
+print(f"\n  FAMILIENWEISER p-WERT:       {p_fw:.4f}")
+print(f"  URTEIL: {'EDGE NACHGEWIESEN' if p_fw<0.05 else 'KEIN nachweisbarer Edge'}")
+
+print("\n"+"="*92)
+print("EINZELBEFUNDE (unkorrigiert) und Romano-Wolf-Schrittabstieg")
+print("="*92)
+print(f"{'Regel':<28}{'bp':>9}{'p einzeln':>12}{'p familienweise':>18}")
+sortiert=sorted([n for n in NAMEN if np.isfinite(beob[n])],
+                key=lambda n:-beob[n])
+verbleibend=list(sortiert)
+for nm in sortiert:
+    p_e=float(np.mean(einzel_null[nm]>=beob[nm]))
+    mx=np.nanmax(np.column_stack([einzel_null[k] for k in verbleibend]),axis=1)
+    p_rw=float(np.mean(mx>=beob[nm]))
+    print(f"{nm:<28}{beob[nm]:>+8.2f}{p_e:>12.4f}{p_rw:>18.4f}")
+    if nm in verbleibend: verbleibend.remove(nm)
+    if len(verbleibend)==0: break
