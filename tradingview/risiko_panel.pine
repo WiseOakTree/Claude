@@ -1,0 +1,214 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0
+//@version=6
+// =============================================================================
+//  Risiko-Panel  —  die Volatilitaetsmasse, die besser sind als die Baender
+// =============================================================================
+//  Gemessen in docs/risiko_indikatoren.md, BTC-Holdout 2025-26, Rangkorrelation
+//  mit einem Tag von -3 % oder schlechter (= Kraken-Tageslimit):
+//
+//      Abwaerts-Semivol   0,166      <- eine Zeile Code, kein externes Datum
+//      EWMA (0,94)        0,155
+//      ATR(14)            0,143
+//      realisierte Vol    0,129
+//      Bollinger-Breite   0,078      <- die Messlatte, Platz 9 von 14
+//
+//  WICHTIG — zwei gemessene Einschraenkungen, die dieser Indikator umsetzt:
+//
+//  1. Das NIVEAU ist nicht prognostizierbar, nur der RANG. Out-of-Sample-R2
+//     ist fuer fast alle Masse negativ (Bollinger -0,134), weil sich das
+//     Vol-Niveau verschiebt (BTC 51,8 % -> 39,0 %). Deshalb zeigt dieses
+//     Panel PERZENTILE, keine absoluten Schwellen. Baue nie "ueber 60 % Vol
+//     mache ich X" ein — das ist in zwei Jahren falsch geeicht.
+//
+//  2. NICHT zur Positionssteuerung benutzen. Gemessen: jede Vol-gesteuerte
+//     Groesse senkt die Pass-Rate um 9-15 Punkte gegenueber fester Groesse,
+//     obwohl der Drawdown faellt. Grund: das Regelwerk hat ein ZIEL (+10 %),
+//     und Volatilitaet ist der einzige Weg dorthin.
+//
+//     -> Nutze das Panel, um zu wissen, WANN DU DER LAUFENDEN POSITION NICHT
+//        TRAUEN SOLLTEST. Die Groesse selbst bleibt fest und klein.
+//
+//  Kein Finanzrat. Der Indikator zeigt Messwerte, keine Empfehlungen.
+// =============================================================================
+
+indicator("Risiko-Panel (Semivol / EWMA / ATR / HV)", overlay = false)
+
+// ---------------------------------------------------------------- Eingaben --
+grpM = "Messfenster"
+lenV   = input.int(20,  "Fenster fuer Vol-Masse (Bars)", minval = 5,   group = grpM)
+lenATR = input.int(14,  "ATR-Periode",                   minval = 2,   group = grpM)
+lenBB  = input.int(20,  "Bollinger-Periode",             minval = 5,   group = grpM)
+nStd   = input.float(2.0, "Bollinger Standardabw.",      minval = 0.5, step = 0.5, group = grpM)
+lamb   = input.float(0.94, "EWMA lambda (RiskMetrics)",  minval = 0.80, maxval = 0.999, step = 0.01, group = grpM)
+
+grpR = "Rang"
+lenRank = input.int(1000, "Perzentil-Fenster (Bars)", minval = 100, group = grpR,
+     tooltip = "Rang gegen die letzten N Bars. 1000 Bars auf 4h ~ 6 Monate, " +
+               "auf 1h ~ 6 Wochen. Gemessen wurde mit 6-12 Monaten.")
+
+grpP = "Anzeige"
+showSemi = input.bool(true,  "Abwaerts-Semivol",   group = grpP)
+showEwma = input.bool(true,  "EWMA (0,94)",        group = grpP)
+showAtr  = input.bool(true,  "ATR(14) / Preis",    group = grpP)
+showHv   = input.bool(true,  "realisierte Vol",    group = grpP)
+showBbw  = input.bool(true,  "Bollinger-Breite",   group = grpP)
+showPark = input.bool(false, "Parkinson (H-T)",    group = grpP)
+showGk   = input.bool(false, "Garman-Klass",       group = grpP)
+asRank   = input.bool(true,  "Als Perzentil zeichnen (empfohlen)", group = grpP,
+     tooltip = "Aus = Rohwerte. Die annualisierten Vol-Masse sind untereinander " +
+               "vergleichbar, die Bollinger-Breite NICHT (andere Einheit). " +
+               "Belastbar ist ohnehin nur die Rangaussage, nicht das Niveau.")
+
+grpIV = "Implizite Volatilitaet (optional)"
+useIV = input.bool(false, "Externen Vol-Index laden", group = grpIV)
+symIV = input.symbol("", "Symbol", group = grpIV,
+     tooltip = "Der staerkste gemessene Praediktor (0,210 gegen 0,078 fuer die " +
+               "Baender) war DVOL von Deribit — die einzige Groesse, die NICHT " +
+               "aus dem Chart kommt. Ob und unter welchem Kuerzel ein " +
+               "Krypto-Vol-Index in deinem Plan verfuegbar ist, musst du in der " +
+               "Symbolsuche pruefen (Suchbegriffe: DVOL, BVIV, EVIV, BitVol). " +
+               "Fuer Aktien ist es CBOE:VIX bzw. TVC:VIX.")
+
+// ------------------------------------------------------------ Grundgroessen --
+// Annualisierung aus dem Chart-Timeframe, damit die Vol-Masse vergleichbar sind
+barsPerYear = 365.0 * 24.0 * 60.0 * 60.0 / math.max(timeframe.in_seconds(), 1)
+annf = math.sqrt(barsPerYear)
+
+r = math.log(close / close[1])
+
+// 1) Abwaerts-Semivol — dieselbe Streuung, aber nur die Verlusttage
+//    Python: r.where(r < 0, 0).rolling(20).std() * sqrt(365)
+rNeg  = r < 0 ? r : 0.0
+semiv = ta.stdev(rNeg, lenV) * annf
+
+// 2) EWMA nach RiskMetrics — gewichtet Neues staerker, ohne festes Fenster
+var float ewmaVar = na
+ewmaVar := na(ewmaVar[1]) ? r * r : lamb * ewmaVar[1] + (1.0 - lamb) * r * r
+ewmav = math.sqrt(math.max(nz(ewmaVar), 0)) * annf
+
+// 3) ATR relativ zum Preis
+atrv = ta.atr(lenATR) / close * annf
+
+// 4) Realisierte Volatilitaet — das, was TradingView "Historical Volatility" nennt
+hv = ta.stdev(r, lenV) * annf
+
+// 5) Bollinger-Breite — die Messlatte, nur zum Vergleich.
+//    Eigene Einheit (Bandbreite relativ zum Mittelband), NICHT annualisiert.
+basisBB = ta.sma(close, lenBB)
+bbw = basisBB != 0 ? 2 * nStd * ta.stdev(close, lenBB) / basisBB : na
+
+// 6) Parkinson — nutzt Hoch/Tief statt nur Schlusskursen
+parkv = math.sqrt(ta.sma(math.pow(math.log(high / low), 2), lenV) / (4 * math.log(2))) * annf
+
+// 7) Garman-Klass — nutzt alle vier Preise
+gkRaw = 0.5 * math.pow(math.log(high / low), 2) - (2 * math.log(2) - 1) * math.pow(math.log(close / open), 2)
+gkv   = math.sqrt(math.max(ta.sma(gkRaw, lenV), 0)) * annf
+
+// 8) Optionaler externer Vol-Index
+ivRaw = useIV and symIV != "" ? request.security(symIV, timeframe.period, close) : na
+
+// --------------------------------------------------------------- Perzentil --
+// ta.percentrank muss auf JEDEM Bar laufen, nicht bedingt — sonst fehlt Historie
+pSemi = ta.percentrank(semiv, lenRank)
+pEwma = ta.percentrank(ewmav, lenRank)
+pAtr  = ta.percentrank(atrv,  lenRank)
+pHv   = ta.percentrank(hv,    lenRank)
+pBbw  = ta.percentrank(bbw,   lenRank)
+pPark = ta.percentrank(parkv, lenRank)
+pGk   = ta.percentrank(gkv,   lenRank)
+pIv   = ta.percentrank(nz(ivRaw), lenRank)
+
+val(float raw, float pr) => asRank ? pr : raw * 100
+
+// ---------------------------------------------------------------- Zeichnen --
+plot(showSemi ? val(semiv, pSemi) : na, "Abwaerts-Semivol", color.new(#e0533d, 0), 2)
+plot(showEwma ? val(ewmav, pEwma) : na, "EWMA (0,94)",      color.new(#2962ff, 0), 1)
+plot(showAtr  ? val(atrv,  pAtr)  : na, "ATR / Preis",      color.new(#ff9800, 0), 1)
+plot(showHv   ? val(hv,    pHv)   : na, "realisierte Vol",  color.new(#00897b, 0), 1)
+plot(showBbw  ? val(bbw,   pBbw)  : na, "Bollinger-Breite", color.new(#9e9e9e, 0), 1)
+plot(showPark ? val(parkv, pPark) : na, "Parkinson",        color.new(#7b1fa2, 0), 1)
+plot(showGk   ? val(gkv,   pGk)   : na, "Garman-Klass",     color.new(#546e7a, 0), 1)
+plot(useIV    ? val(ivRaw, pIv)   : na, "implizite Vol",    color.new(#c2185b, 0), 2)
+
+hline(asRank ?  80 : na, "oberes Fuenftel",  color.new(color.red,   60), hline.style_dashed)
+hline(asRank ?  50 : na, "Median",           color.new(color.gray,  70), hline.style_dotted)
+hline(asRank ?  20 : na, "unteres Fuenftel", color.new(color.green, 60), hline.style_dashed)
+
+// ------------------------------------------------------------------ Tabelle --
+rankColor(float p) =>
+    na(p)     ? color.new(color.gray,   85) :
+     p >= 80  ? color.new(color.red,    75) :
+     p >= 60  ? color.new(color.orange, 80) :
+     p <= 20  ? color.new(color.green,  80) :
+                color.new(color.gray,   88)
+
+lage(float p) =>
+    na(p)    ? "—" :
+     p >= 80 ? "sehr hoch" :
+     p >= 60 ? "hoch" :
+     p >= 40 ? "mittel" :
+     p >= 20 ? "niedrig" : "sehr niedrig"
+
+var table t = table.new(position.top_right, 4, 9, border_width = 1)
+
+if barstate.islast
+    names = array.new_string()
+    raws  = array.new_float()
+    ranks = array.new_float()
+
+    if showSemi
+        array.push(names, "Abwaerts-Semivol")
+        array.push(raws,  semiv)
+        array.push(ranks, pSemi)
+    if showEwma
+        array.push(names, "EWMA (0,94)")
+        array.push(raws,  ewmav)
+        array.push(ranks, pEwma)
+    if showAtr
+        array.push(names, "ATR / Preis")
+        array.push(raws,  atrv)
+        array.push(ranks, pAtr)
+    if showHv
+        array.push(names, "realisierte Vol")
+        array.push(raws,  hv)
+        array.push(ranks, pHv)
+    if showBbw
+        array.push(names, "Bollinger-Breite")
+        array.push(raws,  bbw)
+        array.push(ranks, pBbw)
+    if showPark
+        array.push(names, "Parkinson")
+        array.push(raws,  parkv)
+        array.push(ranks, pPark)
+    if showGk
+        array.push(names, "Garman-Klass")
+        array.push(raws,  gkv)
+        array.push(ranks, pGk)
+    if useIV and symIV != ""
+        array.push(names, "implizite Vol")
+        array.push(raws,  ivRaw)
+        array.push(ranks, pIv)
+
+    table.clear(t, 0, 0, 3, 8)
+    hdr = color.new(color.gray, 30)
+    table.cell(t, 0, 0, "Risikomass", bgcolor = hdr, text_color = color.white, text_size = size.small)
+    table.cell(t, 1, 0, "Wert",       bgcolor = hdr, text_color = color.white, text_size = size.small)
+    table.cell(t, 2, 0, "Perzentil",  bgcolor = hdr, text_color = color.white, text_size = size.small)
+    table.cell(t, 3, 0, "Lage",       bgcolor = hdr, text_color = color.white, text_size = size.small)
+
+    for i = 0 to math.max(array.size(names) - 1, 0)
+        if i < array.size(names)
+            nm = array.get(names, i)
+            rw = array.get(raws,  i)
+            pr = array.get(ranks, i)
+            bg = rankColor(pr)
+            table.cell(t, 0, i + 1, nm, text_size = size.small, bgcolor = bg)
+            table.cell(t, 1, i + 1, na(rw) ? "—" : str.tostring(rw * 100, "#.0") + " %", text_size = size.small, bgcolor = bg)
+            table.cell(t, 2, i + 1, na(pr) ? "—" : str.tostring(pr, "#") + ".",          text_size = size.small, bgcolor = bg)
+            table.cell(t, 3, i + 1, lage(pr), text_size = size.small, bgcolor = bg)
+
+// ------------------------------------------------------------------ Alarme --
+alertcondition(ta.crossover(pSemi, 80),  "Semivol ins oberste Fuenftel",
+     "Abwaerts-Semivol im obersten Fuenftel der letzten Monate — Verlusttage werden groesser.")
+alertcondition(ta.crossunder(pSemi, 20), "Semivol ins unterste Fuenftel",
+     "Abwaerts-Semivol im untersten Fuenftel — ruhige Phase.")

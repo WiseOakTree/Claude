@@ -1,0 +1,2355 @@
+═══════════════════════════════════════════════════════════
+  WAS GETESTET WURDE — UND WAS DURCHGEFALLEN IST
+  BTC/ETH/SOL/XRP, 1h, 2021-2026, 16 bp Kosten je Roundtrip
+═══════════════════════════════════════════════════════════
+
+── KLASSISCHE CHARTTECHNIK ──────────────────────────────
+[x] Renko-Reversal (Ausgangspunkt)  Look-ahead-Bug: 93% -> 7%
+[x] Donchian-Ausbruch               Median-Rendite 0,00%
+[x] EMA-Kreuzung                    beste Pass-Rate 20%
+[x] Momentum                        Median -2,5%
+[x] Bollinger-Reversion             Pass-Rate 0%
+[x] Golden Cross SMA 50/200         Pass-Rate 0,0%, 10 Trades in 4,5 J.
+[x] MACD                            Pass-Rate 7,2%, Median -2,85%
+[x] Volumen-Bestaetigung            bessere Trades, schlechtere Pass-Rate
+[x] Order Blocks (Smart Money)      Zufallskerze genauso gut
+[x] S/R-Bounce (an Support kaufen)  systematisch NEGATIV, -16 bp
+[x] Wochen-Swing                    1 Trade je Fenster, Median 0,0%
+[x] Heikin Ashi                     nichts; Falle: HA-Preise sind nicht handelbar
+
+── ALTERNATIVE DATEN ────────────────────────────────────
+[x] Orderbuch-Imbalance             1-5 bp gegen 16 bp Kosten
+[x] Orderbuchtiefe (9,2 Mio Snaps)  5 bp = 0,31x Kostenschwelle
+[x] Orderflow (Taker-Volumen)       0,3 bp — statistisch massiv, unhandelbar
+[x] ETF-Fluesse (Coinbase-Premium)  IC 0,10, out-of-sample instabil
+[x] Liquidations-Kaskaden           kein messbarer Effekt
+[x] Tech-Kopplung (NVIDIA/QQQ)      gleichzeitig, nicht vorlaufend
+[x] On-Chain MVRV                   wirkt UMGEKEHRT zur Lehrmeinung
+[x] On-Chain Puell / Hash Ribbons   nichts
+[x] On-Chain NVT / Adressen         nichts
+[x] Funding-Raten                   IC ~0
+
+── PORTFOLIO & TIMING ───────────────────────────────────
+[x] Diversifikation ueber 12 Coins  Korrelation 0,68 — bringt nichts
+[x] Signal-Kombination (Ensemble)   verwaessert, 22% -> 2%
+[x] Timeframe 2h / 4h / 8h          brechen out-of-sample ein
+[x] Smart DCA                       11% Pass-Rate
+
+── FILTER AUF DAS SIGNAL (alle neun durchgefallen) ──────
+[x] Mindest-Durchbruch (x ATR)      schlechter auf jeder Stufe
+[x] Rollenlogik nach Kurslage       -65% Effekt
+[x] Cooldown nach Bruch             Pass-Rate faellt
+[x] XGBoost-Filter                  in-sample 1,1 SD, OOS zerfaellt
+[x] Heikin-Ashi-Richtungsfilter     inkonsistent
+[x] Session-Filter (Asien/US)       nur suggestiv, kein Holdout
+[x] Tagesbremse (-2,5% Stopp)       BTC-Holdout: +/-0,0 pp
+[x] Wochenendfilter (Fr22-So22)     Praemisse stimmt, Holdout = Muenzwurf
+[x] Marktphase (Efficiency Ratio)   Orakel waere 348 bp wert -- nicht prognostizierbar
+[x] Stop-Loss                       bessere Erwartung, schlechtere Pass-Rate
+
+── MACHINE LEARNING ─────────────────────────────────────
+[x] Vol-Prognose                    perfektes Orakel = heutiger Stand
+[x] Richtungsprognose               60% Trefferquote noetig fuer Gleichstand
+
+═══════════════════════════════════════════════════════════
+  WAS UEBRIG GEBLIEBEN IST
+═══════════════════════════════════════════════════════════
+
+[+] VOLATILITAETS-RISIKOPRAEMIE
+    Sharpe 1,33 ueber 64 Monate, t=4,12 nach Korrektur.
+    ECHTER EDGE — aber Kraken hat 0 Optionen. Nicht handelbar.
+
+[+] S/R-AUSBRUCH NACH BERUEHRUNGSZAHL
+    BTC +45,7 bp | ETH +33,5 | SOL +18,8 | XRP -11,3
+    Traegt nur auf BTC und ETH. BTC-Zahl ist der OBERE Rand.
+
+[+] POSITIONSGROESSE
+    0,5x statt 1,0x: 39,6% -> 49,4% Pass-Rate.
+    Reine Arithmetik, keine Prognose noetig. Der zuverlaessigste Hebel.
+
+═══════════════════════════════════════════════════════════
+  DIE REGEL, DIE BLEIBT  (vereinfachte Endfassung)
+═══════════════════════════════════════════════════════════
+
+  Asset    NUR BTC. 1-Stunden-Chart.
+  Signal   Level mit >=6 Beruehrungen, Einstieg beim Bruch
+  Position EINE. Bist du drin, ignorierst du jedes neue Signal.
+  Halten   48 Stunden. Dann raus. Egal was.
+  Stop     KEINER
+  Groesse  3.500 $ Nominal bei 10.000 $ Konto (0,35x)
+  Frequenz ~40 Trades im Jahr
+
+  Erwartung: ~48% (Such 47,4% / Holdout 53,9%), ~4 Monate.
+  Kein Zeitlimit bei Kraken — Ungeduld ist der teuerste Fehler.
+
+  GEGEN DIE ALTE FASSUNG: gleiche Pass-Rate,
+  ein VIERTEL der Trades, keine gestapelten Positionen.
+
+  WARUM NICHT SELEKTIVER:
+  >=10 Beruehrungen statt >=6  ->  0,0 % Pass-Rate.
+  1 % Zeit im Markt = 3 % Jahresvol = Ziel nie erreicht.
+  Mit 3x Hebel repariert: 10,4 % -- 25 Punkte UNTER Zufall,
+  weil dieselbe Vol in Schueben das Tageslimit reisst.
+
+  -> Viel Zeit klein im Markt schlaegt wenig Zeit gross im Markt.
+  -> Die Groesse zwischen 0,35x und 0,5x ist Rauschen. Nicht optimieren.
+
+═══════════════════════════════════════════════════════════
+  DIE SPIELREGEL, DIE DIR GEHOERT: DIE ANZAHL DER VERSUCHE
+═══════════════════════════════════════════════════════════
+
+  Kraken hat kein Zeitlimit, ein Versuch kostet 85 $.
+  Damit ist die Challenge ein Wiederholungsspiel.
+
+  Versuche   BTC      ETH      SOL      XRP    Ø Einsatz
+  ---------------------------------------------------------
+     1      50,9%    27,5%    20,6%    23,2%      85 $
+     2      63,0%    54,4%    32,7%    35,4%     114 $
+     3      78,7%    88,9%    41,7%    51,8%     132 $
+
+  ~168 $ je gefundetem Konto (BTC).
+
+  ABER: Fehlschlaege clustern.
+  P(2. Versuch besteht | 1. gescheitert) = 35,9 % statt 60,1 %.
+  Die naive Formel 1-(1-p)^n ist zu optimistisch.
+
+  Gut fuer dich: Fehlschlaege sind SCHNELLER als Erfolge
+  (BTC 107 vs 133 Tage) -- das Tageslimit greift frueh oder gar nicht.
+
+═══════════════════════════════════════════════════════════
+  DIE FORMEL, DIE ALLES ERKLAERT
+═══════════════════════════════════════════════════════════
+
+  REINER ZUFALL, richtig dimensioniert, besteht mit
+
+        P = Drawdown / (Drawdown + Ziel)
+
+  Kraken: 6/(6+10) = 37,5 %.  Gemessen: 36,7 % bei 15 % Jahresvol.
+  Null Koennen. Null Indikator. Nur die richtige Groesse.
+
+  Regelwerk                      Zufall besteht
+  ------------------------------------------------
+  Kraken Starter 10/6/3               36,6 %
+  6 % Ziel / 6 % DD                   49,8 %
+  6 % Ziel / 10 % DD / 5 %            61,4 %
+
+  -> Eine Challenge sucht man nach DEM VERHAELTNIS,
+     nicht nach "grosszuegigem Drawdown".
+
+  ABER: Zufall GEHANDELT (16 bp, Frequenz wie S/R) = 13,9 %.
+  Das Handeln selbst kostet 23 Prozentpunkte.
+  Wer keinen Edge hat, darf nicht traden.
+
+  BTC halten 0,25x: Suchzeitraum 60,6 %, Holdout 9,5 %.
+  Halten ist keine Strategie, sondern eine Richtungswette.
+  Drift +10 % p.a. -> 54,9 % | -10 % -> 21,6 %.
+
+  EHRLICHE BILANZ: 35 Ansaetze, 8 Filter, XGBoost
+  ergeben rund 12 Prozentpunkte ueber einem korrekt
+  dimensionierten Muenzwurf (36,7 % -> 49 %).
+
+═══════════════════════════════════════════════════════════
+  DIE VIER GRUNDFRAGEN — GEMESSEN
+═══════════════════════════════════════════════════════════
+
+  1. RAUF ODER RUNTER?
+     50,4 % ueber 47.000 Stunden. Im Holdout 50,0 %.
+     Auf Wochensicht kippt der Drall sogar: 48,6 %.
+     Fuer blosse Kostendeckung braeuchtest du 50,8 %.
+
+  2. UHRZEIT?
+     Nach Bonferroni (24 Tests): KEINE Stunde signifikant.
+     20-21 UTC (22-23 Uhr bei uns) sind die einzigen, die
+     in beiden Zeitraeumen gleich aussehen: +3,0 bp.
+     Groesster Unterschied im Tag: 5,0 bp gegen 16 bp Kosten.
+     -> Kein Handelsgrund. Nur Tiebreaker.
+
+  3. WIE VIEL RISIKO?  (10.000 $ Konto)
+     Groesse   Nominal   schlecht. Tag   Tage < -3 %
+     0,25x      2.500$        -3,70%        0,10%
+     0,35x      3.500$        -5,16%        0,10%
+     0,50x      5.000$        -7,31%        0,36%
+     1,00x     10.000$       -14,21%        1,69%
+     Selbst 0,25x hatte einen -3,70%-Tag.
+     ES GIBT KEINE SICHERE GROESSE. Nur zu klein
+     (5 % Vol = 4,9 % Pass) oder zu gross (fliegst raus).
+     0,35x = ~1 zu 1.000 pro Tag, sofort auszuscheiden.
+
+  4. WARUM WAR ICH FALSCH?
+     213 Trades, 7 Merkmale geprueft. KEINES signifikant.
+     Richtung p=0,68 | Trend p=0,37 | Vol p=0,09
+     Beruehrungen p=0,10 | Uhrzeit p=0,36 | WE p=0,71
+     Die 6 groessten Verluste: long UND short, mit UND
+     gegen Trend, hohe UND niedrige Vol. Kein Muster.
+     Groesster Einzelverlust: 08.11.2022 = FTX-Kollaps.
+     Der stand am 07.11. in keinem Chart.
+
+  -> VERLIERER SEHEN AUS WIE GEWINNER.
+     Der Edge liegt in +308 gegen -238 bp bei 55,9 %
+     Trefferquote -- nicht in einem erkennbaren Merkmal.
+     Deshalb funktioniert kein Filter: es gibt nichts zu filtern.
+
+═══════════════════════════════════════════════════════════
+  "ABER DIE FIRMEN TRADEN MIT BOTS" — STIMMT. GEMESSEN.
+═══════════════════════════════════════════════════════════
+
+  Bester Bot-Edge, den ich finden konnte:
+  Orderbuch-Ungleichgewicht +-5 %, 4h
+  110.786 Trades, 2,7 Jahre, out-of-sample STAERKER geworden.
+
+  Groesse: +0,87 Basispunkte je Trade.
+  Deine Kostenschwelle: 16 Basispunkte.
+
+  AB WELCHEN KOSTEN TRAEGT WAS?
+  Signal                        brutto/Trade  max. Kosten
+  --------------------------------------------------------
+  S/R-Ausbruch (deins)             +45,70 bp    45,70 bp  <-- einziges
+  Orderbuch-Imbalance 4h            +0,87 bp     0,87 bp      ueber 16
+  Orderflow OFI 1h (p=10^-173)      +1,26 bp     1,26 bp
+  Orderflow OFI 5min                +0,29 bp     0,29 bp
+
+  DERSELBE EDGE, JE NACHDEM WER DU BIST:
+  Du bei Kraken (Taker, 16 bp)      -331 % p.a.
+  Maker ohne Gebuehr (2 bp)          -25 % p.a.
+  Market Maker mit Rebate (0 bp)     +19 % p.a.
+  MM + Rebate + Colocation (-1 bp)   +41 % p.a.
+
+  DER VERGLEICH, DER ALLES ERKLAERT:
+                    je Trade  Trades/J  brutto p.a.  Sharpe
+  Dein S/R          +45,7 bp        40      +18,3 %    0,36
+  Bot-Orderbuch     +0,87 bp     2.190      +19,1 %    0,85
+
+  -> Der Bot verdient pro Jahr NICHT MEHR als du.
+     Dein Edge je Trade ist 130x groesser, seiner 55x haeufiger.
+     Der Unterschied ist der SHARPE -- und den kann man hebeln.
+     Die Bots sind nicht schlauer. Sie sind ruhiger.
+
+  UND: Der Orderflow-IC ist NEGATIV. Aggressives Kaufen sagt
+  fallende Kurse voraus. Das ist die Bezahlung des Market Makers.
+  Als Taker kannst du das Signal nicht ernten -- du ERZEUGST es.
+
+  -> Der Einwand ist richtig UND er erklaert die 35 Fehlschlaege.
+     Was uebrig bleibt, ist was fuer Bots zu langsam und zu
+     klein ist: 40 Trades im Jahr, 48h halten, 5.000 $ Nominal.
+
+═══════════════════════════════════════════════════════════
+  KORREKTUR: KOSTEN WAREN DOPPELT VERRECHNET
+═══════════════════════════════════════════════════════════
+
+  Der Code zog 16 bp bei JEDER Positionsaenderung ab.
+  Ein Roundtrip hat zwei -> 32 bp statt der genannten 16 bp.
+  ALLE Zahlen dieses Projekts sind unter doppelten Kosten
+  gemessen. Fehler zu Ungunsten der Strategie.
+
+  Pass-Rate BTC 0,35x:   48,4 %  ->  53,8 %
+  (Suchzeitraum 53,4 % | Holdout 57,0 %)
+
+  Was sich NICHT aendert: kein Fehlschlag wird zum Erfolg.
+  Alternativdaten (0,3-6 bp) bleiben unter jeder Schwelle,
+  die acht Filter bleiben durchgefallen.
+
+═══════════════════════════════════════════════════════════
+  MIT EIGENEM KAPITAL — DA GEWINNT ETWAS ANDERES
+═══════════════════════════════════════════════════════════
+
+  Ohne Tageslimit zaehlt nicht Pass-Rate, sondern SHARPE.
+
+                        p.a.     Vol  Sharpe  max.DD   bei 2x
+  ---------------------------------------------------------
+  Short-Straddle (VRP) +26,3%  17,0%    1,47   -9,9%  +53%/-20%
+  S/R-Ausbruch BTC     +26,5%  25,0%    1,07  -30,4%  +53%/-61%
+  BTC einfach halten    +3,2%  55,6%    0,34  -76,6%   +6%/-153%
+
+  Gleiche Rendite, EIN DRITTEL des Drawdowns.
+  Die VRP war nur ausgeschlossen, weil Kraken keine
+  Optionen hat. Deribit hat sie.
+
+  GEBUEHREN — deine Frage:
+  Bruttoertrag 45,7 bp je Trade. Was ankommt:
+  32 bp/RT -> 30 % des Edge -> +19,0 % p.a. -> Sharpe 0,82
+  16 bp/RT -> 65 %          -> +26,5 %      -> Sharpe 1,07
+   8 bp/RT -> 82 %          -> +30,4 %      -> Sharpe 1,19
+   0 bp/RT -> 100 %         -> +34,5 %      -> Sharpe 1,31
+
+  -> Tot erst bei 45,7 bp je Roundtrip.
+  -> Bei 39 Trades im Jahr beherrschbar. Bei 2.190 (Bot) toedlich.
+     Deine niedrige Frequenz IST der Gebuehrenschutz.
+  -> LIMIT-Orders statt Market: halbe Gebuehr, kein Spread.
+
+  WARNUNGEN ZUM STRADDLE:
+  - Short Gamma = Versicherung verkaufen. Datensatz enthaelt
+    KEIN Ereignis vom Typ Maerz 2020 (-50 % in zwei Tagen).
+  - Kelly (8,67x) gilt NICHT: fetter linker Rand.
+    Hoechstens ein Viertel Kelly, also ~2x.
+  - Margin steigt mit Vol -> Zwangsschliessung im schlechtesten
+    Moment ist das reale Ausfallszenario.
+  - Taeglich hedgen = echte Arbeit.
+
+═══════════════════════════════════════════════════════════
+  ZIEL: 20-30 % P.A. AUF 100.000 $
+═══════════════════════════════════════════════════════════
+
+  DIE EINE REGEL, DIE ALLES ENTSCHEIDET:
+
+  Tageslimit      Ø Rendite (S/R)   Jahre >=20 %
+  ------------------------------------------------
+  3 % (Kraken)          +1,4 %          21,1 %
+  5 %                   +9,8 %          31,5 %
+  keins                +13,6 %          36,6 %
+  keins + 10 % DD      +19,9 %          42,3 %
+
+  -> MIT 3 % TAGESLIMIT IST DAS ZIEL UNMOEGLICH.
+     Nicht wegen der Strategie -- wegen der Regel.
+
+  ARITHMETIK DAHINTER:
+  25 % Rendite bei Sharpe 1,8 = 14 % Jahresvol = 0,7 % Tagesvol.
+  Ein -3 %-Tag ist dann 4 Sigma -> passiert ~2x im Jahr.
+  Wer klein genug fuer NIE -3 % handelt: 8 % Vol = 14 % Rendite.
+  -> 3 % Tageslimit und 25 % Jahresziel schliessen sich AUS.
+
+  EINKAUFSLISTE FUER DIE CHALLENGE:
+  1. KEIN Tagesverlustlimit oder >=5 %   <-- DAS Kriterium
+  2. Drawdown >=10 % NACH dem Funding
+  3. Niedriges Gewinnziel (nur fuer den Einstieg)
+  4. Keine Konsistenzregel
+  5. Drawdown-Art: egal
+
+  EHRLICHE ERWARTUNG (ohne Tageslimit, 10 % DD):
+  Ø 14-20 % p.a. | 42 % der Jahre ueber 20 % | 13 % Kontoverlust
+  Auf 100k = 11.000-16.000 $ fuer dich (bei 80 % Split).
+  20-30 % ist das GUTE Jahr, nicht der Durchschnitt.
+
+═══════════════════════════════════════════════════════════
+  WAR DIE ACHTERBAHN PECH? NEIN.
+═══════════════════════════════════════════════════════════
+
+  Simulation: 2.000 $, 51 % Trefferquote, Einsatz als Kontoanteil.
+
+  Hebel  Einsatz  erreicht 100k  endet unter 1k  BEIDES
+  ---------------------------------------------------------
+   10x     50%          3,0%          95,5%       1,2%
+   20x     50%          2,8%         100,0%       2,7%
+
+  -> Von denen, die mit 20x die 100k erreichen,
+     verlieren 96 % danach ALLES.
+
+  Das ist kein Ausstiegsfehler. Ein gehebelter Prozess mit
+  winzigem Edge MUSS diesen Pfad produzieren. Die 100k waren
+  nie ein Ergebnis, sondern eine Durchgangsstation.
+
+  Die Achterbahn kommt nicht vom Markt. Sie kommt vom Hebel.
+  Bei 0,35-0,75x gibt es keine Achterbahn.
+  Ein Jahr mit 15 % fuehlt sich langweilig an.
+  Genau daran erkennt man, dass es richtig laeuft.
+
+═══════════════════════════════════════════════════════════
+  RAUS AUS KRYPTO — 24 REIHEN, TEILS SEIT 1971
+═══════════════════════════════════════════════════════════
+
+  WAS SICH SOFORT AENDERT: DIE KORRELATION
+  Krypto (BTC/ETH/SOL/XRP)          +0,68
+  20 Maerkte quer ueber Klassen     +0,001
+  Diversifikationsgewinn: Faktor 3,5 auf den Sharpe.
+
+  DAS NEGATIVE: TRENDFOLGE IST SEIT 2008 TOT
+  Horizonte         1990-2007  2008-2016  2017-2026
+  252 Tage               0,92       0,10       0,14
+  63/126/252 komb.       0,80       0,39      -0,17
+  Sektoren 2017-2026: Aktien -0,13 | Rohstoffe -0,19
+                      FX     -0,29 | Anleihen  -0,23
+  Jeder Horizont, jeder Sektor, letztes Jahrzehnt: null.
+
+  DER FUND: DIE VOL-PRAEMIE GIBT ES IN AKTIEN AUCH
+                    VRP    positiv     t        p
+  S&P/VIX 16-26  +4,65pp     83,4%   4,67  <0,00001
+  BTC/DVOL 21-26 +10,47pp    72,3%   4,12   0,0001
+
+  -> ZWEI UNABHAENGIGE MAERKTE, DERSELBE MECHANISMUS.
+     Die einzige Bestaetigung dieser Art im ganzen Projekt.
+
+  S&P-500-SHORT-STRADDLE (delta-gehedgt, monatlich):
+  Rendite p.a. +8,6 % | Vol 5,5 % | Sharpe 1,52
+  groesster Drawdown -13,7 % (16.03.2020)
+  Tage unter -3 %: 0,16 %
+  2010er Sharpe 1,68 | 2020er Sharpe 1,48
+  -> Enthaelt Volmageddon 2018, COVID 2020, Baermarkt 2022.
+     XIV ging an genau dem Tag auf null. Unterschied:
+     der taegliche Delta-Hedge.
+
+  AUF DEM GEFUNDETEN KONTO (100k):
+  Regelwerk                 Hebel  ueberlebt  Ø p.a.  >=20 %
+  3 % Tag / 6 % DD (Kraken)    1x     74,8%   +5,3%    6,8%
+  5 % Tag / 10 % DD            2x     60,3%   +8,6%   23,6%
+  KEIN Tageslimit / 10 % DD    3x     78,2%  +22,3%   42,5%
+  eigenes Kapital              3x    100,0%  +27,3%   49,0%
+
+  -> ZIEL ZUM ERSTEN MAL GETROFFEN. Aber nur ohne Tageslimit.
+
+  WARNUNGEN:
+  - S&P-Test nur 2016-2026 (FRED liefert nicht laenger).
+  - Bei 4x waere Maerz 2020 ein -55 %-Drawdown gewesen.
+    Der Datensatz enthaelt EINEN COVID-Crash.
+  - Hoechstens 2x, bis ein Jahr live gehandelt.
+    Bei 2x: +15,0 % p.a., 86 % Ueberlebensrate.
+  - Erster Nasdaq/VIX-Test ergab t=-1,19: FALSCHE PAARUNG
+    (VIX misst den S&P, nicht den Nasdaq). Kein Gegenbeleg.
+
+═══════════════════════════════════════════════════════════
+  VIER PROP-ANBIETER DURCHGERECHNET
+═══════════════════════════════════════════════════════════
+
+  PUNKT 1: DREI VON VIER KOENNEN ES GAR NICHT TRADEN
+  Vanquish = Index-Optionen  -> ja
+  MFF / TradeDay / Apex = Futures -> nein
+  Die Vol-Praemie braucht OPTIONEN. Die einzige Futures-
+  Strategie mit Evidenz (Trendfolge) liegt seit 2017 bei
+  Sharpe -0,17.
+
+  PUNKT 2: TRAILING GEGEN STATISCH -- NICHT EOD GEGEN INTRADAY
+  S&P-Straddle, 3x Hebel, kein Tageslimit bei beiden:
+
+  Drawdown   STATISCH ueberlebt   EOD-TRAILING ueberlebt
+     2 %          44,9 %                 0,0 %
+     3 %          54,5 %                 0,0 %
+     5 %          62,8 %                10,7 %
+    10 %          78,2 %                36,8 %
+
+  -> Trailing bestraft den ERFOLG. Jedes neue Hoch hebt
+     den Boden mit. Weniger Hebel rettet nichts:
+     bei 0,5x ueberlebst du 82-100 % und erreichst
+     in 0 % der Jahre dein Ziel.
+
+  RANGFOLGE (umgekehrt zum Berater-Fazit):
+  1. Vanquish   statisch + Optionen   <-- einziger Fit
+  2. TradeDay   statisch WAEHLBAR
+  3. MFF        EOD-trailing
+  4. Apex       intraday-trailing
+
+  PUNKT 3: DIE ZAHL, DIE NIRGENDS STEHT
+  Futures-Props: 2.000-4.000 $ auf 100k = 2-4 % Drawdown.
+  Kraken: 6 % statisch.
+  -> Futures-Props sind ENGER als Kraken, nicht weiter.
+
+  PUNKT 4: NACKTE OPTIONEN SIND MEIST VERBOTEN
+  Ein Short-Straddle ist eine nackte Short-Option.
+  Erlaubt sind definierte Risiken (Iron Condor).
+  UND DIE SIND BESSER:
+
+  Variante                p.a.    Vol  Sharpe  schlecht.Tag
+  Straddle (nackt)       +8,6%   5,5%    1,52       -5,58%
+  Iron Condor (70 %)     +7,0%   3,3%    2,03       -1,40%
+  Iron Condor (55 %)     +6,2%   2,4%    2,55       -0,66%
+  Iron Condor (40 %)     +5,1%   1,6%    3,11       -0,32%
+
+  IRON CONDOR AUF STATISCHEM DRAWDOWN:
+  DD    Hebel  ueberlebt   Ø p.a.   >=20 %
+   3 %     6x     68,6%    +29,0%    58,6%
+   6 %     8x     78,2%    +47,7%    73,0%
+
+  -> BESTES ERGEBNIS DES GESAMTEN PROJEKTS.
+     Und es ist die Variante, die ein Prop-Konto erlaubt.
+
+  SCHWACHSTELLEN:
+  - Iron Condor ist eine NAEHERUNG, kein Backtest.
+    Keine echten Optionsketten, keine Skew, keine Fluegel-Spreads.
+  - Margin bei 6-8x Hebel NICHT geprueft. Daran kann alles scheitern.
+  - 68,6 % Ueberleben heisst: ein Drittel der Jahre Konto weg.
+
+  VOR DEM KAUF BEI VANQUISH KLAEREN:
+  1. Nackte Short-Optionen erlaubt oder nur definierte Risiken?
+  2. Wie GROSS ist der statische Drawdown live, in Prozent?
+  3. Consistency Rule auf dem LIVE-Konto?
+  4. Margin je Spread -- traegt das Konto 6-8x?
+  5. Kosten je Evaluierung, zweiter Versuch einpreisen.
+
+═══════════════════════════════════════════════════════════
+  VANQUISH MIT DEN ECHTEN REGELN — UND EINE KORREKTUR
+═══════════════════════════════════════════════════════════
+
+  KORREKTUR: Mein Hebel-Sweep war STRUKTURELL falsch.
+  Bindend ist nicht das Nominal (100.000 $), sondern der
+  Maximalverlust gegen den Puffer (6.000 $).
+
+  Kappe   Hebel   Verlust je Ereignis   Anteil Puffer
+   1,2 %     3x           3,6 %              60 %
+   1,2 %     6x           7,2 %             120 %  KONTO WEG
+   2,0 %     3x           6,0 %             100 %  KONTO WEG
+
+  -> "6x -> +29 % p.a." beschrieb ein Konto, das nach dem
+     ersten Vol-Schub nicht mehr existiert.
+
+  NEU GERECHNET (statischer DD 6 %, kein Tageslimit):
+  Kappe  Hebel  Einzelverl.  ueberlebt   Ø p.a.  >=20 %
+  0,8 %   2,5x     2,0 %       100,0%   +13,0%   16,7%
+  0,8 %   3,0x     2,4 %       100,0%   +15,9%   23,6%
+  0,8 %   4,0x     3,2 %        98,5%   +21,0%   33,9%
+  2,0 %   4,0x     8,0 %        77,2%   +22,9%   46,2%
+
+  DIE NICHT OFFENSICHTLICHE ERKENNTNIS:
+  Kappe 0,8 % bei 4x -> +21,0 % bei 98,5 % Ueberleben
+  Kappe 2,0 % bei 4x -> +22,9 % bei 77,2 % Ueberleben
+  Fast gleiche Rendite, 21 Punkte mehr Ueberlebensrate.
+  -> ENGE FLUEGEL, MEHR KONTRAKTE schlaegt das Gegenteil.
+
+  KONSISTENZREGEL: KEIN PROBLEM
+  Bester Tag am Jahresgewinn: Median 10,1 %
+  Jahre ueber 30 %: 3,1 % | ueber 40 %: 0,7 %
+  Theta verdient gleichmaessig -- genau das Profil,
+  fuer das die Regel gemacht ist.
+
+  EVALUIERUNG (Ziel 8 %, EOD-DD 6 %, Kappe 0,8 %):
+  Hebel  bestanden  Median Dauer
+   2,0x     57,9 %      184 T
+   3,0x     90,9 %      142 T
+   4,0x     96,1 %      105 T
+  Erwartete Kosten bei 400 $/Versuch: ~440 $.
+
+  ENDRECHNUNG (100 % Split, brutto = netto):
+  3,0x -> +15,9 % p.a. = 15.861 $  (100 % ueberlebt)
+  4,0x -> +21,0 % p.a. = 21.036 $  (98,5 %, aber ein
+          Ereignis frisst 53 % des Puffers)
+
+  -> ZIEL ERREICHBAR BEI 4x, ROBUST BEI 3x.
+
+  WAS WEITERHIN SCHWACH IST:
+  - Iron Condor ist Naeherung, keine echten Optionsketten.
+  - Praemien-Annahme (40 % bei 0,8 % Kappe) ist MEINE,
+    nicht gemessen. An echten Ketten pruefen!
+  - GROESSTER MODELLFEHLER: Reihe stammt aus einem
+    delta-gehedgten Straddle. Ein Condor wird ueblicherweise
+    NICHT gehedgt -> meine Zahlen sind eher zu gut.
+  - 10 Jahre Daten.
+
+═══════════════════════════════════════════════════════════
+  ECHTES CONDOR-MODELL — MEINE NAEHERUNG WAR ZU GUT
+═══════════════════════════════════════════════════════════
+
+  Naeherung ersetzt durch: explizite Strikes, Black-Scholes
+  mit VIX, linearer Skew, Abrechnung am Verfall aus der
+  TATSAECHLICHEN Bewegung (Delta-Drag vollstaendig drin).
+
+  PRAEMIENANTEIL: nicht 40 % (meine Zahl),
+  nicht 20-25 % (Einwand), sondern 4-11 %.
+
+  ABER DER SKEW IST NICHT DER GRUND:
+  Skew 0,0 -> 8,3 %  |  Skew 1,0 -> 7,7 %
+  Nur 0,6 Prozentpunkte. Der Condor ist SYMMETRISCH --
+  teurer verkaufter Put gegen noch teureren gekauften Put,
+  die Effekte heben sich auf.
+  DER KILLER IST DIE FLUEGELBREITE. Ein 0,8-%-Fluegel liegt
+  so nah, dass die gekaufte Option fast so viel kostet wie
+  die verkaufte.
+
+  DELTA-DRAG GEMESSEN (ohne Hedge):
+  Strangle  Fluegel   p.a.   Sharpe  Trefferq.
+   +-2,0 %    0,8 %  -0,24%   -0,18     42,0%
+   +-3,0 %    0,8 %  +0,13%   +0,11     57,1%
+   +-5,0 %    1,5 %  +1,52%   +1,01     85,7%
+  -> Enge Strangles sind ohne Hedge VERLUSTBRINGEND.
+
+  FRUEHER STOP IST DIE LOESUNG:
+  kein Stop        +1,52%  Sharpe 1,01
+  50 % vom Max     +2,14%  Sharpe 1,92
+  35 % vom Max     +2,36%  Sharpe 2,38
+  (35 % ist bester von fuenf -> Bestes-von-N-Falle.
+   Rechne mit dem 50-%-Wert.)
+
+  NAEHERUNG GEGEN ECHT:
+                          Naeherung    echt
+  Anteil Straddle-Praemie   40-55 %   4-11 %
+  Rendite p.a. auf Nominal   +6,2 %   +2,4 %
+  Sharpe                       2,55     2,38
+  Delta-Drag drin              NEIN       ja
+  Skew drin                    NEIN       ja
+  -> Der SHARPE haelt. Die ERTRAGSDICHTE halbiert sich.
+
+  KORRIGIERTE ENDRECHNUNG (Strangle +-5 %, Fluegel 1,5 %,
+  Stop 35 %, Kredit 0,323 % je Zyklus):
+  Nominal  Stopp-Verlust  Puffer-Anteil  ueberlebt   Ø p.a.
+     4x         1,65 %         27 %       100,0%    +9,7%
+     6x         2,47 %         41 %        99,1%   +14,8%
+     8x         3,29 %         55 %        99,1%   +20,2%
+    10x         4,12 %         69 %        97,2%   +25,5%
+
+  Margin bei 8x: ~9.400 $ auf 100k -- NICHT die Bremse.
+  Die Bremse ist der Puffer.
+
+  GROESSTE SCHWAECHE JETZT:
+  10 Jahre = ~119 Monatszyklen, 12-Monats-Fenster ueberlappen
+  stark -> effektiv ~ZEHN unabhaengige Jahre.
+  Die "99,1 % Ueberlebensrate" ruht auf zehn Beobachtungen.
+
+  EMPFEHLUNG: 6x Nominal, ~14.800 $ im Jahr auf 100k.
+  Nicht 8x -- dort kostet EIN gestoppter Zyklus 55 % des
+  gesamten Risikokapitals.
+
+═══════════════════════════════════════════════════════════
+  VALIDIERUNG AN EINER ECHTEN SPX-KETTE
+═══════════════════════════════════════════════════════════
+
+  Kostenlose CBOE-Schnittstelle: 32.168 SPX-Optionen mit
+  echten Bid/Ask, IV und Greeks. Spot 7.723,55.
+
+  SELBSTKORREKTUR ZUERST:
+  Erster Vergleich sah nach einem Modellfehler aus
+  (Straddle 4,23 % Modell gegen 3,05 % real). Ich hatte
+  schon eine "Korrektur um 0,721" gerechnet.
+  BEIDES FALSCH -- ich hatte iv30=13,211 als 1321 % gelesen.
+  Modell bei HEUTIGER Vol: 3,09 % | real: 3,06 %
+  Abweichung 0,03 pp. Die 4,23 % waren der DURCHSCHNITT
+  ueber 2016-2026 (VIX 18,6 %), heute steht er bei 13,2 %.
+  -> Kein Modellfehler. Ein ruhiger Tag.
+  -> Die sechste Falle: eine Korrektur, die selbst der Fehler ist.
+
+  MODELL GEGEN ECHTE KETTE (Condor-Anteil am Straddle):
+  Konfiguration   Modell   real    Abweichung
+  +-2 % / 0,8 %    10,6%   12,5%     +1,9 pp
+  +-3 % / 0,8 %     8,0%    8,8%     +0,8 pp
+  +-5 % / 0,8 %     4,1%    4,3%     +0,2 pp
+  -> Modell trifft, leicht KONSERVATIV.
+  -> Die 4-11 % sind an echten Preisen bestaetigt.
+     20-25 % gelten nur fuer BREITE Fluegel:
+     +-2 % / 2,5 % liefert real 30,1 %.
+
+  DIE 4-LEG-SLIPPAGE, GEMESSEN:
+  ATM-Option Spanne 0,7 % vom Mid
+  Long Call +6,5 %  Spanne 9,1 %
+  Vier Legs, halbe Spannen: 1,05 Punkte = 0,014 % des Spot
+  Kompletter Roundtrip:     0,027 % des Nominals
+  = 14 % des Kredits.
+  Mein Modell rechnete 0,04 % -- also 1,5x zu VIEL.
+
+  ICH HATTE DIE FALSCHE KONFIGURATION OPTIMIERT:
+  Kredit/Risiko  +-2 %/0,8 %: 1,29 | +-5 %/1,5 %: 0,27
+  (meine bisherige Wahl war die kapitalineffizienteste)
+
+  ENDSTAND GEGEN DEN 6-%-PUFFER:
+  Konfig        Nom.  Stopverl.  Puffer  ueberlebt   Ø p.a.
+  +-5 %/3,5 %    4x     5,77 %     96 %    98,1 %   +19,0%
+  +-5 %/2,5 %    4x     4,02 %     67 %   100,0 %   +14,4%
+  +-5 %/1,5 %    6x     3,53 %     59 %    98,1 %   +13,1%
+  +-5 %/1,5 %   10x     5,88 %     98 %    90,7 %   +21,3%
+
+  -> Alle 20-%-Zeilen verlangen, dass EIN Stop-Ereignis
+     96-98 % des Risikokapitals frisst.
+
+  FREIGABE:
+  +-5 % Strangle, 2,5 % Fluegel, 4x Nominal, Stop bei 50 %.
+  +14,4 % p.a., 100 % Ueberlebensrate, Stop = 67 % des Puffers.
+  Auf 100k bei vollem Split: ~14.400 $.
+
+  WARUM BELASTBAR: nicht die Zahl, sondern die STABILITAET.
+  Vier Modellierungswege -- gekappte Naeherung, echtes
+  Condor-Modell, Kalibrierung an realer Kette, voller Sweep --
+  landen alle zwischen 13 % und 16 %. Zum ersten Mal in
+  diesem Projekt bleibt eine Zahl unter Methodenwechsel stabil.
+
+  20-30 % bleiben ausser Reichweite, solange der Puffer
+  6.000 $ betraegt. Nicht wegen der Strategie -- wegen der
+  Arithmetik zwischen Stopverlust und Puffer.
+
+═══════════════════════════════════════════════════════════
+  MEHRERE KONTEN STATT MEHR HEBEL
+═══════════════════════════════════════════════════════════
+
+  DER SATZ, DER ALLES ERKLAERT:
+  Bei N Konten waechst der PUFFER mit N mit. Bei Hebel nicht.
+
+  GLEICHES GESAMT-NOMINAL, ANDERS VERTEILT:
+  Aufbau            Nominal  Stopverl.  %Puffer  ueberl.   $/Jahr
+  1 Konto  4x           4x     4,02 %     67 %   100,0%   14.405
+  1 Konto 12x          12x    12,06 %    201 %    79,4%   39.322
+  3 Konten je 4x       12x     4,02 %     67 %   100,0%   43.214
+  3 Konten je 6x       18x     6,03 %    100 %    93,5%   62.880
+
+  -> Zeile 2 gegen Zeile 3: identische Marktposition.
+     MEHR GELD UND BESSERE UEBERLEBENSRATE.
+     Bei 12x auf einem Konto ist es nach EINEM Stopp weg.
+
+  DER HAKEN: PERFEKTE KORRELATION
+  P(ein Konto ueberlebt)     = 100,0 %
+  P(alle drei ueberleben)    = 100,0 %  <- IDENTISCH
+  P(mindestens eins)         = 100,0 %  <- IDENTISCH
+  Parallele Konten schuetzen vor der GROESSE,
+  nicht vor dem EREIGNIS.
+
+  ECHTE DIVERSIFIKATION: VERFALLSZYKLEN VERSETZEN
+                     Vol p.a.  Sharpe  schlecht. Zyklus
+  1 Zyklus synchron     1,65%    2,07        -1,09 %
+  3 versetzte Zyklen    1,14%    2,69        -0,92 %
+  -> Vol -31 %, und der schlechteste Zyklus faellt von
+     73 % auf 61 % des Puffers. Das kauft eine Hebelstufe.
+
+  DIE KOMBINIERTE BAUFORM:
+  KONSERVATIV  3 Konten, 3 Tranchen, 4x
+               39.285 $/Jahr, 100 % Ueberleben, 61 % Puffer
+  AUSGEWOGEN   3 Konten, 3 Tranchen, 5x
+               49.025 $/Jahr, 98,1 % Ueberleben, 76 % Puffer
+  (6x gaebe 57.897 $ -- aber 92 % Puffer je Stopp. Das ist
+   wieder die Kante von 2024.)
+
+  KOSTEN: 3 Evaluierungen ~1.320 $, parallel ~142 Tage.
+  Erwartungswert 1. Jahr: 41.600 - 47.700 $.
+
+  DERSELBE MECHANISMUS WIE GANZ AM ANFANG:
+  spielregeln.md -> Mehrfachantritt war der staerkste Hebel.
+  Hier dasselbe, auf gefundete Konten statt auf Versuche.
+  Die einzige Idee im Projekt, die ZWEIMAL unabhaengig wirkt.
+
+  VOR DEM KAUF KLAEREN:
+  1. Erlaubt Vanquish IDENTISCHE Strategien auf mehreren
+     Konten -- oder gilt das als "Shotgunning"?
+     Werden Konten fuer Risikozwecke ZUSAMMENGEFASST?
+  2. Konsistenzregel je Konto oder ueber alle Konten?
+  3. Obergrenze fuer das gesamte gefundete Kapital?
+
+═══════════════════════════════════════════════════════════
+  ZWEI REGELFRAGEN — EINE ENTSCHEIDET ALLES
+═══════════════════════════════════════════════════════════
+
+  WIDERSPRUCH 1: STATISCH ODER TRAILING?
+  Recherche A: "Live wechselt auf Static Drawdown."
+  Recherche B: "5 % Trailing auf Basis High-Water-Mark."
+  BEIDES KANN NICHT STIMMEN. Gemessen (Wochen-Condor):
+
+  Nominal  %Puffer  STATISCH ueberl./p.a.  TRAILING ueberl./p.a.
+     4x      38 %      95,1 % / +19,9 %      77,2 % / +16,2 %
+     6x      56 %      86,1 % / +29,5 %      15,9 % /  -1,0 %
+     8x      75 %      81,4 % / +39,9 %      13,1 % /  -0,6 %
+    10x      94 %      76,1 % / +49,9 %       5,8 % /  -4,3 %
+
+  -> STATISCH: funktioniert. TRAILING: bei KEINER Groesse.
+     Das zuerst klaeren, alles andere ist danach.
+
+  KORREKTUR 2: KONSISTENZREGEL FALSCH GEMESSEN
+  Ich hatte den besten TAG gemessen: 10,1 % -> Entwarnung.
+  Vanquish misst "Best TRADE / Total Profits". Neu:
+    Median 22,6 % | 90. Perzentil 63,5 %
+    JAHRE UEBER 30 %: 38,3 %
+  Meine Entwarnung war FALSCH.
+
+  Und je frueher die Auszahlung, desto schlimmer:
+    3 Monate sammeln  -> 100,0 % der Faelle ueber 30 %
+    6 Monate          ->  50,0 %
+   12 Monate          ->  38,3 %
+   24 Monate          ->   3,2 %
+
+  DIE LOESUNG: KUERZERE ZYKLEN, NICHT LAENGER WARTEN
+  Laufzeit  Zyklen/J  Strikes   p.a.  Sharpe  best.Trade  >30%
+  1 Woche        50    +-2,4%  +4,90%   2,59      11,5%   9,1%
+  2 Wochen       25    +-3,5%  +3,84%   2,09      15,7%  27,4%
+  1 Monat        12    +-5,0%  +3,47%   2,08      22,6%  38,3%
+  2 Monate        6    +-7,1%  +1,81%   1,07      41,2%  69,0%
+
+  -> Wochenzyklen sind auf JEDER Dimension besser.
+     Theta 50x im Jahr statt 12x, gleiche Trefferquote je Zyklus.
+
+  WO DIE RECHERCHE IRRT:
+  "Konsistenzproblem multipliziert sich ueber Konten" -- NEIN.
+  Der Anteil ist ein VERHAELTNIS, also skaleninvariant.
+  Drei Konten haben jeweils 23 %, nicht zusammen 69 %.
+  Schlimmer wird es nur bei ZUSAMMENFASSUNG -- und dann waere
+  auch der Puffer-Vorteil weg. Dieselbe Frage.
+
+  ENDSTAND (Wochenzyklen, statischer Boden, 3 Konten):
+    4x je Konto -> 95,1 % ueberlebt, +19,9 %, 59.797 $/Jahr
+    6x je Konto -> 86,1 % ueberlebt, +29,5 %, 88.355 $/Jahr
+  95,1 % heisst: etwa jedes 20. Jahr sind ALLE DREI weg
+  (perfekt korreliert). Preis tragbar, weil eine neue
+  Evaluierung 1.320 $ kostet und nicht 300.000 $.
+
+  DIE FRAGEN AN VANQUISH, IN DIESER REIHENFOLGE:
+  1. Drawdown live STATISCH oder TRAILING?
+  2. Konsistenzregel je TRADE oder je TAG? Ueber welchen Zeitraum?
+  3. Mehrere Konten mit identischer Strategie erlaubt --
+     oder Zusammenfassung fuer Risiko/Konsistenz/Auszahlung?
+  4. Obergrenze gefundetes Gesamtkapital je Person?
+  5. Sind SPX-Wochenoptionen zugelassen? Mindesthaltedauer?
+     (Falls nein, faellt die Loesung fuer Punkt 2 weg.)
+
+═══════════════════════════════════════════════════════════
+  DIE ECHTEN VANQUISH-REGELN — DER PLAN IST TOT
+═══════════════════════════════════════════════════════════
+
+  WOERTLICH AUS DEM REGELWERK-PDF:
+  "SPX, XSP and VIX can only be traded long as single-leg
+   calls/puts. No spreads, no selling to open."
+  "Drawdown Type: Intraday Trailing"
+  "No overnight positions. All trades must be closed by
+   3:59pm EST or they will be auto liquidated."
+
+  Beide Kontotypen, identische Beschraenkungen.
+  Gewinnziel 10 % | Konsistenz 30 % | Verlustlimit 5 %
+  Konten bis 150.000 $ | Reset 250 $
+
+  WAS DAS ZERSTOERT:
+  1. NO SELLING TO OPEN
+     Die Vol-Praemie kassiert nur, wer VERKAUFT.
+     Vanquish erlaubt nur KAUFEN. Damit ist dort ausschliesslich
+     die VERLIERERSEITE des einzigen gemessenen Edges erlaubt.
+     Short-Straddle +8,6 % p.a. -> Gegenposition ca. -8,6 %.
+  2. NO SPREADS -> kein Iron Condor. Die gesamte Rechnung
+     aus condor.md und validierung.md beschreibt eine Position,
+     die das System nicht ausfuehrt.
+  3. INTRADAY TRAILING (nicht statisch, wie recherchiert)
+     Bei 6x: statisch 86,1 % ueberlebt, trailing 15,9 % bei -1,0 %.
+     Intraday-Trailing ist noch schaerfer als EOD.
+  4. NO OVERNIGHT -> Wochen- und Monatszyklen unmoeglich.
+     Die Loesung fuer die Konsistenzregel faellt auch weg.
+     Uebrig: 0DTE-Intraday mit gekauften Einzeloptionen --
+     schnellster Theta-Verfall, falsche Seite der Praemie.
+
+  IM GESAMTEN PDF KOMMEN NICHT VOR:
+  "credit", "condor", "strangle", "straddle", "multi", "static".
+  "advanced options strategies" steht EINMAL -- im Werbetext.
+
+  MEIN FEHLER:
+  Ich habe fuenf Dokumente auf zwei unverifizierte Recherche-
+  zusammenfassungen gebaut, obwohl das Primaerdokument einen
+  Download entfernt war. Dieselbe Falle wie am Anfang mit der
+  angenommenen 90-Tage-Frist bei Kraken, die es nie gab.
+
+  DIE UNBEQUEME SCHLUSSFOLGERUNG:
+  Der einzige zweifach bestaetigte Edge verlangt, Optionen zu
+  VERKAUFEN. Das erlaubt kein Prop-Konto -- weil es genau das
+  Risiko ist, das Prop-Firmen nicht tragen wollen.
+  Prop-Firmen verkaufen Zugang zu HEBEL, nicht zu RISIKOPRAEMIEN.
+
+  WAS NOCH STEHT:
+  Vanquish            tot
+  MFF/TradeDay/Apex   Trendfolge Sharpe -0,17 seit 2017
+  Kraken (bezahlt)    S/R-Ausbruch BTC 1h, 0,35x -> ~53,8 %
+  Eigenes Kapital     VRP real und handelbar, Sharpe 1,52
+
+═══════════════════════════════════════════════════════════
+  MEHRERE KRAKEN-CHALLENGES — ABER NICHT GLEICHZEITIG
+═══════════════════════════════════════════════════════════
+
+  Versatz der Starts   >=1 gefunded  Ø Konten  $/Konto
+  1 Challenge allein         70,9 %      0,71     120 $
+  3x GLEICHZEITIG            70,9 %      2,13     120 $  <-- NULL Gewinn
+  3x Versatz 30/60           79,3 %      2,17     117 $
+  3x Versatz 60/120          92,7 %      2,31     111 $
+  3x Versatz 90/180         ~100  %      2,38     107 $
+
+  -> DREI GLEICHZEITIGE IDENTISCHE CHALLENGES SIND DREI
+     LOTTOSCHEINE MIT DENSELBEN ZAHLEN. Exakt dieselbe Quote.
+
+  WARUM DER VERSATZ WIRKT:
+  Die Strategie scheitert an MARKTREGIMEN (zerhackte Phasen,
+  Wochen bis Monate). Gleiche Startzeit = gleiches Regime.
+  90 Tage Abstand = drei verschiedene Regime.
+
+  ANDERE BAUFORMEN:
+  verschiedene Groessen  74,3 % -- bringt fast nichts
+  verschiedene Assets    87,2 % -- streut, aber Quote je Konto
+                         faellt auf 54,2 % (ETH/SOL schwaecher)
+  VERSATZ ist die einzige Form, die streut OHNE Qualitaetsverlust.
+
+  PRAKTISCH:
+  Nicht drei heute kaufen und heute starten.
+  Eine starten. Nach 60-90 Tagen die zweite. Dann die dritte --
+  unabhaengig davon, wie die erste laeuft.
+  255 $ ueber ein halbes Jahr, ~93-100 % mindestens ein Konto.
+
+  EINSCHRAENKUNGEN:
+  - Die 100 % sind zu glatt (wenige unabhaengige Beobachtungen).
+  - Die 70,9 % je Konto sind hoeher als die 53,8 % aus einfach.md,
+    weil hier unaufgeloeste Versuche herausfallen statt zu zaehlen.
+    Fuer den VERGLEICH der Bauformen egal, fuer die Hoehe nicht.
+  - Kraken fragen, ob mehrere gleichzeitige Challenges erlaubt sind.
+
+═══════════════════════════════════════════════════════════
+  "ICH BIN IM MINUS" — HEISST DAS WAS?
+═══════════════════════════════════════════════════════════
+
+  Anteil der Trades im Minus:
+   nach  1h 47,4 % |  6h 50,2 % | 24h 43,7 % | 48h 41,8 %
+  -> Jeder zweite Trade steht zwischendurch hinten. Normalzustand.
+
+  SAGT DER RUECKSTAND DAS ENDERGEBNIS VORAUS?
+  Korrelation 6h-Stand <-> Endergebnis:      +0,454
+  davon rein mechanisch (sqrt(6/48)):        +0,354
+  VORWAERTS-Anteil (6h -> 48h):              +0,145  p=0,346
+  Ø Vorwaerts-Rendite wenn im Minus:         +44,1 bp
+  -> Die 48h-Rendite ENTHAELT die 6h-Rendite. Der Rueckstand
+     ist keine Information, sondern die erste Haelfte des Wegs.
+
+  SIGNAL UMDREHEN:
+  folgen   +67,1 bp  55,9 % Trefferquote  p=0,016
+  umdrehen -99,1 bp  37,6 %               p<0,001
+  Differenz 166 bp je Trade = 354 Prozentpunkte ueber 213 Trades.
+  Man verliert den Edge UND zahlt die Gebuehren trotzdem.
+
+  -> Ein einzelner Gegentrade, der aufgeht, ist keine Widerlegung.
+     Er ist das, was in 44 % der Faelle passiert.
+
+═══════════════════════════════════════════════════════════
+  "MARKTPHASEN UND PRICE ACTION SIND DAS WICHTIGSTE"
+═══════════════════════════════════════════════════════════
+
+  MIT PERFEKTEM ORAKEL (Blick in die naechsten 48h):
+  Phase          n    Ø netto   positiv        p
+  Seitwaerts    71    -80,5bp    19,7 %   <0,001
+  gemischt      71    +13,8bp    69,0 %    0,610
+  Trend         71   +268,1bp    78,9 %   <0,001
+
+  348 BASISPUNKTE SPANNE -- der groesste Einzeleffekt des
+  ganzen Projekts. Der Guru hat also RECHT.
+
+  ABER: KANN MAN DIE PHASE KENNEN?
+  Korrelation Vergangenheit <-> naechste 48h:
+   24h -0,077 | 48h +0,023 | 96h +0,026
+  168h -0,138 | 336h -0,015     alle p>0,26 ausser 168h
+  -> NULL. Und der einzige Wert nahe Signifikanz ist NEGATIV.
+     Marktphasen PERSISTIEREN NICHT.
+
+  DER NEUNTE FILTER: Ausbruch nach ruhiger Phase
+  BTC-Suchzeitraum +115,5 bp | BTC-Holdout +233,0 bp
+  Auf ungesehenen Daten gepoolt: +41,9 bp
+    p roh                       0,380
+    p ueberlappungskorrigiert   0,586
+    p nach Bonferroni (9)       1,000   FAELLT DURCH
+    Quintile: +37,7 / -21,1 / +18,5 / +10,7 / -83,0
+    Spearman -0,063  -> keine Monotonie
+  ETH-Holdout kippt auf -210 bp, SOL-Holdout auf +12,6 bp.
+  (Immerhin: NICHT dasselbe wie Volatilitaet, Korrelation +0,029.)
+
+  PRICE ACTION -- was davon haelt:
+  S/R-Ausbruch nach Beruehrungszahl  +45,7 bp  <-- einziges
+  Order Blocks ("Smart Money")       Zufallskerze gleich gut
+  Heikin Ashi                        nichts
+  Bollinger / Donchian / EMA / MACD  Median 0,00 %
+  -> Price Action ist ~12 Punkte ueber einem korrekt
+     dimensionierten Muenzwurf wert. Nicht null, nicht "das Wichtigste".
+
+  WAS TATSAECHLICH WIRKT (nach Nutzbarkeit):
+  1. Regelwerk DD/(DD+Ziel)      37,5 % geschenkt   fix
+  2. Positionsgroesse            39,6 -> 49,4 %     kontrollierbar
+  3. Zeitversatz der Versuche    70,9 -> ~100 %     kontrollierbar
+  4. Price Action (S/R)          ~12 pp             teilweise
+  5. MARKTPHASE                  348 bp             NEIN
+
+  -> Die Marktphase ist Platz 1 nach WIRKUNG und letzter Platz
+     nach NUTZBARKEIT. Genau das macht sie zum perfekten
+     Lehrinhalt: im Rueckblick erklaert sie jedes Chart restlos.
+     Die drei Faktoren, die wirklich helfen, sind Arithmetik --
+     und in zehn Minuten erklaert.
+
+═══════════════════════════════════════════════════════════
+  "WIE MACHEN DAS FIRMEN?" — ZWEI VERSCHIEDENE ANTWORTEN
+═══════════════════════════════════════════════════════════
+
+  A) PROP-FIRMEN: KEIN HANDELS-EDGE
+  Gewinn je Challenge = Gebuehr - P(besteht) x Auszahlung
+
+  Ø Auszahlung   kritische Bestehensquote
+       500 $              17,0 %
+     1.000 $               8,5 %
+     2.000 $               4,2 %
+     4.000 $               2,1 %
+
+  -> Bei realistischen 1.000-2.000 $ liegt die Grenze bei 4-9 %.
+     Deshalb: Konsistenzregeln, Tageslimits, trailende Drawdowns,
+     Mindesthandelstage. Gemessene Wirkung:
+       trailing statt statisch   54,5 % -> 0,0 %
+       3 % Tageslimit            78,1 % -> 40,2 %
+       Ziel 10 % statt 6 %       49,3 % -> 33,1 %
+     DIESE REGELN SIND KEIN RISIKOMANAGEMENT. SIE SIND DAS PRODUKT.
+
+  B) HANDELSFIRMEN: FUENF ECHTE EDGES, ALLE HIER GEMESSEN
+  Market Making        Orderflow-IC -0,041, p=3e-173   0,3-1,3 bp
+  Vol-Praemie          BTC t=4,12 | S&P t=4,67         Sharpe 1,5-1,9
+  Orderbuch-Imbalance  +0,87 bp, 110.786 Trades        +19 % als MM
+  Diversifikation      Korrelation +0,001, 20 Maerkte  Sharpe x3,5
+  Kostenstruktur       -331 % Taker / +41 % MM         Faktor 18
+
+  DER VERGLEICH:
+                     je Trade  Trades/J  brutto p.a.  Sharpe
+  Dein S/R           +45,7 bp        40      +18,3 %    0,36
+  Bot-Orderbuch      +0,87 bp     2.190      +19,1 %    0,85
+  -> Die Firma verdient NICHT MEHR. Ihr Edge ist 53x KLEINER
+     und kommt 55x haeufiger. Unterschied: der SHARPE.
+
+  WARUM KAPITAL DIE FOLGE IST, NICHT DIE URSACHE:
+  Bei GLEICHEM 10-%-Drawdown ueber 10 Jahre simuliert:
+  Sharpe 0,36 -> tragbare Vol  4 % -> Rendite  +1,5 % p.a.
+  Sharpe 0,85 ->               6 % ->          +4,7 %
+  Sharpe 1,50 ->               7 % ->         +11,1 %
+  Sharpe 3,00 ->              12 % ->         +35,2 %
+  Sharpe 5,00 ->              17 % ->         +84,6 %
+  -> Zwanzigfache Rendite bei identischem Risiko.
+     Nicht groesserer Edge -- RUHIGERER Edge.
+
+  WIE VIELE EDGES BRAUCHT MAN FUER SHARPE 3?
+  Sharpe waechst mit sqrt(N). Gemessen: 20 Maerkte -> Faktor 3,5
+  statt 4,47, also 78 % Effizienz.
+  Ziel 1,0 ->  13 Strategien
+  Ziel 2,0 ->  50
+  Ziel 3,0 -> 113
+  Ziel 5,0 -> 315
+
+  -> KEINE FIRMA HAT EINEN GROSSARTIGEN EDGE.
+     Sie haben siebzig mittelmaessige, die nicht korrelieren --
+     und jeder einzelne ist KLEINER als der hier gefundene.
+
+  WAS DAS KOSTET:
+  Dieses Projekt: ~40 Ansaetze, 2 haltbar = 5 % Trefferquote.
+  Fuer 70 Edges also ~1.400 Ansaetze -- mit Look-ahead-Kontrolle,
+  Ueberlappungskorrektur, Holdout und Bonferroni.
+  Das ist kein Wissensvorsprung. Das ist eine FABRIK.
+
+═══════════════════════════════════════════════════════════
+  DER EHRLICHE WEG — EINKOMMEN = KAPITAL x RENDITE
+═══════════════════════════════════════════════════════════
+
+  Monat netto    bei 10 %    bei 15 %    bei 20 %    bei 27 %
+   1.000 €       120.000     80.000      60.000      44.444
+   3.000 €       360.000    240.000     180.000     133.333
+   5.000 €       600.000    400.000     300.000     222.222
+
+  20 % im Jahr ist eine SEHR GUTE Rendite. Aus 10.000 €
+  macht sie 2.000 €. Jeder Weg, der Gehalt aus kleinem
+  Kapital verspricht, ist Hebel oder Luege.
+
+  DER SPARWEG (Ziel 180.000 €, 20 % Rendite):
+  Start        3k/J    6k/J   12k/J   24k/J
+      0 €      15 J    11 J     8 J     6 J
+  20.000 €     10 J     8 J     7 J     5 J
+  50.000 €      7 J     6 J     5 J     4 J
+  OHNE SPAREN: NIE.
+
+  WAS TRAEGT MEHR? (20k Start, 12k/J, 20 % = 7 Jahre)
+  Rendite 20 -> 27 % (+35 %)   6 J   spart 1 Jahr
+  Sparrate 12k -> 16k (+35 %)  6 J   spart 1 Jahr
+  -> EXAKT GLEICH. Nur ist die Sparrate SICHER.
+  -> Der gesamte Edge dieses Projekts entspricht
+     "4.000 € mehr im Jahr zuruecklegen".
+
+  WAS PROP-KONTEN BEITRAGEN (10k Konto, 80 % Split):
+  schwaches Jahr    800 $ | Ø Jahr 1.440 $ | gutes Jahr 2.400 $
+  Drei Konten: 2.400-7.200 $/Jahr, Konto lebt Ø 102 Tage.
+  -> KEIN GEHALT. Ein Sparbeschleuniger mit Ausfallrisiko.
+
+  DIE SACHE, DIE NIEMAND SAGT:
+  Auch Profi-Trader leben NICHT von eigenen Renditen.
+  Sie bekommen ein GEHALT (80-150k) und handeln FREMDES
+  Kapital. "Von Trading leben" heisst fast immer: angestellt.
+
+  WAS ICH TAETE, IN DIESER REIHENFOLGE:
+  1. Erwerbseinkommen zuerst. Sparrate = ein Drittel mehr
+     Rendite, und du kontrollierst sie vollstaendig.
+  2. Kraken zu Ende spielen -- als DISZIPLINUEBUNG.
+     Weitere Challenges VERSETZT starten (70,9 % -> ~100 %).
+  3. Vol-Praemie VORBEREITEN, nicht handeln. Ab ~30k eigenem
+     Kapital, 1,0x, kein Hebel, erst nach 12 Monaten mehr.
+  4. Den Weg ernst nehmen, den du unbewusst gegangen bist:
+     Indikator-Bug gefunden, PDF beschafft und damit fuenf
+     meiner Dokumente widerlegt, zwei technische Einwaende
+     zum Condor, die beide zutrafen. DAS IST DER JOB.
+     Das Repository ist eine Bewerbungsmappe.
+
+  WAS ICH NICHT TAETE:
+  - Kein Anbieter ohne gelesene Regel-PDF (siehe Vanquish).
+  - Keine Suche nach dem naechsten Indikator (39 Ansaetze,
+    2 haltbar, 5 % Trefferquote).
+  - Kein Hebel ueber 1x im ersten Jahr eigenen Kapitals.
+  - Keine Kurse kaufen.
+
+  ZEITRAHMEN:
+  Jahr 1     Challenges versetzt, 1.500-3.000 $, Disziplin
+  Jahr 2-3   Kapital 20-50k, VRP klein live
+  Jahr 4-6   Kapital 80-150k, Trading traegt spuerbar bei
+  Jahr 7-9   180k+ -- Trading kann ein Gehalt ersetzen
+
+  Sieben bis neun Jahre klingt lang. Es ist der einzige
+  Zeitrahmen in diesem Projekt, der aus einer RECHNUNG kommt
+  statt aus einem Versprechen.
+
+═══════════════════════════════════════════════════════════
+  WARUM ALLE OEFFENTLICHEN STRATEGIEN SHARPE ~0 HABEN
+═══════════════════════════════════════════════════════════
+
+  DIE RAUSCHDECKE: bester Sharpe aus N Strategien OHNE Edge
+  Zeitraum    N=1    N=50   N=200  N=1000  N=5000
+   1 Jahr   -2,45    2,78    2,74    4,01    3,94
+   2 Jahre  -0,80    1,22    2,38    2,12    2,36
+   5 Jahre  +0,09    1,19    1,44    1,77    1,85
+  10 Jahre  -0,22    0,67    0,70    1,02    1,12
+
+  -> 1.000 wertlose Varianten ueber 5 Jahre liefern einen
+     BESTEN Sharpe von ~1,8. OHNE JEDEN EDGE.
+     Ein Skript mit 5 Parametern hat leicht 1.000 Kombinationen.
+     Die schoene Kurve ist kein Betrug -- sie ist der
+     arithmetisch erwartete Wert der SUCHE.
+
+  UND SHARPE 0,3 IST GAR NICHT MESSBAR:
+  wahrer Sharpe   Jahre fuer p<0,05
+      0,2               96,0
+      0,3               42,7
+      0,5               15,4
+      1,0                3,8
+      1,5                1,7
+
+  -> "Diese Strategie hat Sharpe 0,3" auf 5 Jahren Daten ist
+     mathematisch NICHT von "Sharpe 0" unterscheidbar.
+     Das gilt auch fuer meinen S/R-Fund (0,36 ueber 5,4 Jahre).
+     Er haelt wegen VIER ANDERER Kontrollen, nicht wegen des Sharpe.
+
+  WARUM DIE KURVEN TROTZDEM GUT AUSSEHEN:
+  TradingView-Voreinstellungen: Slippage 0, Kommission 0,
+  Auswertung auf dem Optimierungszeitraum, kein Holdout.
+  Gemessene Wirkung je Fehler:
+    Look-ahead                     93 % -> 7 %
+    Kosten 0 -> 16 bp              Edge -35 %
+    Bestes von N                   54,7 % -> 31,9 %
+    Ueberlappung unkorrigiert      p=10^-240 -> p=0,27
+
+  WO DIE AUSSAGE ZU WEIT GEHT:
+  Ansatz                          Sharpe   Basis    Kontrollen
+  120 TA-Kombinationen (Median)    ~0,00  4,5 J     alle
+  S/R-Ausbruch BTC                  0,36  5,4 J     alle
+  Bot-Orderbuch (als MM)            0,85  2,7 J     OOS staerker
+  Vol-Praemie BTC                   1,85  5,4 J     t=4,12
+  Vol-Praemie S&P 500               1,52   10 J     t=4,67
+
+  -> Chartmuster: 0,00-0,36. DU HAST RECHT.
+  -> Risikopraemien: 1,5-1,9, ueber ZWEI unabhaengige Klassen.
+
+  DER UNTERSCHIED:
+                    Chartmuster          Risikopraemie
+  Woher das Geld?   jemand handelt       du traegst Risiko,
+                    schlechter           das andere loswerden wollen
+  Wenn alle es      VERSCHWINDET         BLEIBT -- die Versicherung
+  kennen?                                wird trotzdem gebraucht
+  Auf TradingView?  ja, tausendfach      nein, kein Indikator
+
+  DIE BRAUCHBARE VERSION:
+  "Kein Chartmuster hat einen nachweisbaren Edge, und die meisten
+   veroeffentlichten Backtests zeigen den Erwartungswert einer
+   SUCHE, nicht das Ergebnis einer Strategie."
+
+  Und die Frage, die alles entscheidet:
+  WIE VIELE VARIANTEN HAST DU GETESTET?
+
+═══════════════════════════════════════════════════════════
+  DIE FUENF FALLEN, DIE JEDEN BACKTEST SCHOENRECHNEN
+═══════════════════════════════════════════════════════════
+
+  1. Look-ahead      Fill zu einem Preis vor der Entscheidung   93% -> 7%
+  2. Ueberlappung    naives p=10^-240 -> korrigiert p=0,27
+  3. Multiples Testen  2 von 347 "signifikant" = UNTER Zufall
+  4. Bestes von N    54,7% -> 31,9% out-of-sample
+  5. Falscher Preis  HA-Preise statt echter: Vorzeichen kippt
+
+  Wer diese fuenf nicht kontrolliert, findet garantiert
+  eine funktionierende Strategie.
+
+
+═══════════════════════════════════════════════════════════
+  44. 4h MACD + STOCHASTIK + BOLLINGER  -- direkt gemessen
+═══════════════════════════════════════════════════════════
+
+  DAS LEHRBUCH-SETUP GIBT ES NICHT
+  Long-Konfluenz: Kurs <= unteres Band + Stoch < 20 + MACD-Hist steigt
+
+    Kurs <= unteres Band       508 Bars   6,0 %
+    Stochastik < 20           1109 Bars  13,2 %
+    MACD-Histogramm steigt    4185 Bars  49,8 %
+    zwei davon                 278 Bars   3,3 %
+    ALLE DREI                    0 Bars   0,0 %   <-- NULL
+
+  Grund: Wenn Kurs am unteren Band und Stoch < 20, dann FAELLT er
+  gerade -- und dann faellt auch das MACD-Histogramm. Die dritte
+  Bedingung widerspricht den ersten beiden per Konstruktion.
+
+  DIE DREI EINZELN AUF 4h (bp je Trade, BTC 2021-24)
+                      4h      24h      48h     120h
+    MACD           -14,3    -28,5    -28,0     -7,5
+    Stochastik     -18,8    -24,5    -22,9    -13,4
+    Bollinger      -21,7    -37,3    -43,4    -75,9
+  Alle zwoelf Zellen negativ. Bei 4h sogar signifikant (t = -2,9 / -3,3 / -3,3)
+
+  LIEGT ES AN DEN GEBUEHREN? NEIN
+    MACD       24h  ohne Kosten -10,6 bp | mit Kosten -26,6 bp
+    Stochastik 24h  ohne Kosten  -9,0 bp | mit Kosten -25,0 bp
+    Bollinger  24h  ohne Kosten -12,9 bp | mit Kosten -28,9 bp
+
+  TRENDLESART (MACD>Signal, ueber Mittelband, Stoch kreuzt hoch)
+    BTC  Suche 21-24   +30,0 bp  t= 0,20  ->  HOLDOUT  -15,0 bp  t=-0,10
+    ETH  Suche 21-24   +69,4 bp  t= 0,39  ->  HOLDOUT  -93,0 bp  t=-0,34
+    SOL  Suche 21-24   -10,3 bp  t=-0,04  ->  HOLDOUT  +23,4 bp  t= 0,09
+  Alle sechs t-Werte zwischen -0,34 und +0,39. Signifikanz braucht ~2,0
+
+  GITTER AUS 324 VARIANTEN
+    54 % positiv im Suchzeitraum, Median +3,3 bp
+    Beste 8:  Suche +61,2 bp  ->  HOLDOUT -359,7 bp
+    Vorzeichenwechsel: 8 von 8
+
+  PASS-RATE UNTER DEN ECHTEN KRAKEN-REGELN (5 Tage halten)
+                            0,25x   0,35x   0,50x   1,00x
+    long+short              63,8%   50,5%   37,4%   30,2%
+    nur long                62,3%   44,2%   41,4%   28,1%
+    JEDES SIGNAL (1 Bar)     0,0%    0,0%    0,0%    0,5%
+
+  ABER GETRENNT NACH ZEITRAUM:
+    Suchzeitraum 2021-24    57,8 %  (270 Starts)
+    HOLDOUT 2025-26          9,3 %  ( 43 Starts)
+    Zufall bei diesen Regeln 37,5 %
+  -> Der Holdout liegt WEIT UNTER dem Wuerfel.
+
+  UND DIE KONTROLLEN, DIE GUT AUSSAHEN
+    Richtung gewuerfelt (500x)   echt 50,5 % vs Median 23,0 %  p=0,028
+    Signale verschoben  (500x)   echt 50,5 % vs Median 23,9 %  p=0,004
+  Beide WERTLOS: 270 von 325 Startpunkten liegen im Suchzeitraum.
+  Der p-Wert war nie das Problem -- der Zeitraum war es.
+
+  HANDELSFREQUENZ IST DER KILLER
+    jede MACD-Kreuzung 4h        170 Trades/J  = 27,2 % Gebuehren p.a.
+    Konfluenz, sofort raus       180 Trades/J  = 28,9 % Gebuehren p.a.
+    Konfluenz, 5 Tage halten      56 Trades/J  =  9,0 % Gebuehren p.a.
+
+  FAZIT
+  Positionsgroesse bewegt die Pass-Rate um 34 Punkte.
+  Die Indikator-Parameter bewegen sie um ~0.
+
+
+═══════════════════════════════════════════════════════════
+  45. DIESELBEN DREI ALS INFORMATIONSQUELLE (nicht als Signal)
+═══════════════════════════════════════════════════════════
+
+  RICHTUNG -- LEER
+  Transinformation ueber 5 Tage voraus (max. moeglich = 1,0 Bit):
+                          Richtung   Kontrolle
+    MACD-Histogramm         0,0017      0,0014
+    MACD-Linie              0,0020      0,0025   <- unter Kontrolle
+    Stochastik %K           0,0026      0,0011
+    Bollinger %B            0,0025      0,0009
+    Bollinger-Breite        0,0012      0,0020   <- unter Kontrolle
+
+  Das einzige monotone Muster (Stoch %K: Anteil + faellt 53,2 -> 48,4 %)
+  als Long-Short geprueft, unterstes gegen oberstes Quintil:
+    BTC  Suche -0,17 Pp (t=-0,34)  ->  HOLDOUT +0,53 Pp (t=+0,15)
+    ETH  Suche -0,70 Pp (t=-0,58)  ->  HOLDOUT +1,21 Pp (t=+0,35)
+    SOL  Suche -0,37 Pp (t=-0,25)  ->  HOLDOUT +0,59 Pp (t=+0,11)
+  Vorzeichen kippt in ALLEN DREI Maerkten.
+
+  RISIKO -- HAELT
+  Bollinger-Breite -> realisierte Vol der naechsten 5 Tage:
+    Markt  Zeitraum        engstes 20%   weitestes 20%   Faktor
+    BTC    Suche 21-24          39 %          72 %       1,85x
+    BTC    HOLDOUT 25-26        35 %          54 %       1,55x
+    ETH    Suche 21-24          45 %          96 %       2,15x
+    ETH    HOLDOUT 25-26        56 %          75 %       1,33x
+    SOL    Suche 21-24          77 %         147 %       1,89x
+    SOL    HOLDOUT 25-26        57 %          90 %       1,59x
+  Sechs von sechs gleiche Richtung. Erste Indikator-Aussage des
+  Projekts, die den Holdout auf drei Maerkten uebersteht.
+
+  ABER: KEINE ENTDECKUNG UND DIE SCHLECHTERE MESSUNG
+  Volatilitaetsclustering ist Lehrbuchwissen (Engle, Nobelpreis 2003).
+  R² fuer die Vol der naechsten 5 Tage:
+    Bollinger-Breite                 Suche 0,228   Holdout 0,194
+    realisierte Vol 20 Bars (direkt) Suche 0,315   Holdout 0,222
+    beide zusammen                   Suche 0,323   Holdout 0,239
+    Zuwachs durch die Breite               +0,009          +0,017
+  Die Breite IST die realisierte Vol (Korrelation +0,747), nur verrauscht.
+
+  DREI INDIKATOREN = ZWEI GROESSEN
+    MACD-Linie   <-> Momentum 20 Bars    +0,88
+    Bollinger %B <-> Stochastik %K       +0,85
+    BB-Breite    <-> realisierte Vol     +0,75
+  Hauptkomponenten: 4 von 6 erklaeren 90 %, die erste allein 48,9 %
+
+  WAS FOLGT
+  Positionsgroesse bewegt die Pass-Rate um 34 Punkte (63,8 -> 30,2 %).
+  Richtungswahl bewegt sie um ~0.
+  Die einzige nachweisbare Information der drei ist genau der Input
+  fuer die Positionsgroesse -- nicht fuer die Richtung.
+    Baender eng  -> kommende Vol 35-45 %  -> normale Groesse
+    Baender weit -> kommende Vol 55-75 %  -> Groesse halbieren
+
+
+═══════════════════════════════════════════════════════════
+  46. GIBT ES BESSERES ALS DIE BOLLINGER-BAENDER FUER RISIKO?
+═══════════════════════════════════════════════════════════
+
+  RANGLISTE -- BTC HOLDOUT 2025-26 (Spearman mit der Zukunft)
+                              Vol 5T   groesster    Tag <= -3 %
+                                       Rueckgang   (Tageslimit)
+    DVOL (implizite Vol)       0,348      0,110        0,210
+    Abwaerts-Semivol 20 T      0,323      0,190        0,166
+    EWMA (lambda 0,94)         0,322      0,112        0,155
+    ATR(14)/Preis              0,281      0,144        0,143
+    realisierte Vol 20 T       0,276      0,128        0,129
+    groesster Rueckgang 10 T   0,267      0,126        0,110
+    Parkinson (H-T)            0,229      0,112        0,107
+    realisierte Vol 5 T        0,221      0,160        0,110
+    BOLLINGER-BREITE           0,210      0,143        0,078  <- Platz 9/14
+    Garman-Klass               0,209      0,106        0,095
+    Spanne H/T gestern         0,205      0,160        0,147
+    Rogers-Satchell            0,200      0,109        0,089
+    |Rendite| gestern          0,134      0,115        0,128
+    Volumen / Ø20              0,063      0,114        0,122
+
+  Beim Kraken-Tageslimit: DVOL 0,210 gegen Bollinger 0,078 = Faktor 2,7
+
+  EINSCHRAENKUNG 1: AUF ETH ALLES SCHWAECHER
+    DVOL             BTC 0,348  ->  ETH 0,132
+    Abwaerts-Semivol BTC 0,323  ->  ETH 0,127
+    Bollinger        BTC 0,210  ->  ETH 0,078
+    realisierte Vol  BTC 0,276  ->  ETH 0,043
+
+  EINSCHRAENKUNG 2: NUR DER RANG, NICHT DAS NIVEAU
+  Out-of-Sample-R2 (Koeffizienten aus 2021-24 auf 2025-26):
+    DVOL + HAR              +0,103
+    EWMA                    +0,043
+    ATR                     -0,003
+    realisierte Vol 20 T    -0,033
+    BOLLINGER-BREITE        -0,134
+  Fast alles negativ = schlechter als den Mittelwert raten.
+  BTC-Vol fiel 51,8 -> 39,0 %, alte Eichung sagt zu hohe Werte voraus.
+  -> KEINE FESTEN VOL-SCHWELLEN. Nur Quantile der letzten 6-12 Monate.
+
+  DER ZAHLTAG-TEST -- UND ER DREHT DAS ERGEBNIS UM
+  BTC long-only, GLEICHER durchschnittlicher Einsatz 0,35x,
+  echte Kraken-Regeln:
+    feste Groesse 0,35x        41,4 %      --        max DD -36,6 %
+    EWMA-gesteuert             32,3 %   -9,1 Pp      max DD -31,4 %
+    ATR-gesteuert              32,3 %   -9,1 Pp      max DD -32,3 %
+    DVOL-gesteuert             32,2 %   -9,2 Pp      max DD -31,0 %
+    Abwaerts-Semivol           31,2 %  -10,2 Pp      max DD -32,1 %
+    realisierte Vol            30,5 %  -10,9 Pp      max DD -31,5 %
+    Bollinger-gesteuert        26,1 %  -15,4 Pp      max DD -29,5 %
+
+  JEDE Vol-Steuerung senkt die Pass-Rate um 9-15 Punkte -- obwohl
+  sie den Drawdown wie beabsichtigt senkt.
+
+  GRUND: Das Regelwerk hat ein ZIEL (+10 %), nicht nur eine Grenze.
+  Vol-Steuerung macht die Position genau dann klein, wenn grosse
+  Bewegungen moeglich sind. Volatilitaet ist hier nicht nur Gefahr,
+  sie ist der einzige Weg zum Ziel.
+
+  Die Rangfolge bleibt aber intakt: die schlechteste Risikomessung
+  (Bollinger) richtet den groessten Schaden an, die besten den kleinsten.
+
+  EMPFEHLUNG
+    Bollinger-Breite  ->  Abwaerts-Semivol 20 T (eine Zeile Code)
+    zusaetzlich       ->  DVOL von Deribit (einziger Wert, der nicht
+                          aus dem Chart kommt)
+    ABER NICHT zur Positionssteuerung -- nur um zu wissen, wann man
+    der laufenden Position nicht trauen sollte. Groesse bleibt fest
+    und klein.
+
+
+═══════════════════════════════════════════════════════════
+  48. VWAP -- der einzige der vier, der VOLUMEN benutzt
+═══════════════════════════════════════════════════════════
+
+  VORFRAGE: IST DER VWAP UEBERHAUPT ETWAS ANDERES?
+    BTC 20 Bars   VWAP <-> SMA  +0,9999   Ø |Differenz| 0,346 %
+    BTC 50 Bars   VWAP <-> SMA  +0,9999   Ø |Differenz| 0,515 %
+    ETH 20 Bars   VWAP <-> SMA  +0,9996   Ø |Differenz| 0,469 %
+  Die VWAP-LINIE ist praktisch ein gleitender Durchschnitt.
+
+  RICHTUNG: NICHTS
+  Abstand zum Tages-VWAP, unterstes gegen oberstes Quintil, 5 Tage:
+    BTC  Suche -0,20 (t=-0,38)  ->  HOLDOUT +0,19 (t=-0,09)
+    ETH  Suche -0,20 (t=-0,28)  ->  HOLDOUT +0,42 (t=+0,04)
+    SOL  Suche +0,60 (t=+0,10)  ->  HOLDOUT +0,71 (t=+0,16)
+
+  SIGNAL: 12 VON 12 ZELLEN NEGATIV
+    BTC Tages   Suche -14,8 bp  HOLDOUT -15,7 bp  (3.153 / 1.176 Signale)
+    BTC Wochen  Suche -13,1     HOLDOUT -15,7
+    BTC roll50  Suche  -2,5     HOLDOUT -15,7
+    ETH Tages   Suche -13,5     HOLDOUT  -6,2
+    ETH Wochen  Suche -12,8     HOLDOUT  -4,2
+    ETH roll50  Suche  -5,7     HOLDOUT -28,3
+  Tages-VWAP-Kreuzung feuert ~780x/Jahr auf 4h = ueber 100 % Gebuehren p.a.
+
+  FILTER NR. 10 AUF DAS S/R-SIGNAL -- GESCHEITERT
+                              Suche 21-24        HOLDOUT 25-26
+    ohne Filter             +49,4 bp (474)      +52,2 bp (301)
+    Einklang Tages-VWAP     +71,2 bp (365)      +53,8 bp (235)
+    Einklang VWAP(50)       +89,4 bp (324)      +26,1 bp (188)
+    GEGEN den Tages-VWAP    -23,8 bp (109)      +46,8 bp ( 66)
+  Im Suchzeitraum perfekt (+49 -> +89, Aussortierte bei -23,8).
+  Im Holdout halbiert er den Effekt, und die Aussortierten liefern +46,8.
+  ZEHNTER FILTER, ZEHNTES SCHEITERN.
+
+  ABER DIE BAENDER -- HIER STEHT ETWAS
+  Rangkorrelation, 4h, HOLDOUT 2025-26:
+    Markt  Mass                       Vol 5T   Tag <= -3 %
+    BTC    VWAP-Bandbreite (20)        0,420      0,241
+    BTC    Abwaerts-Semivol 20         0,409      0,301
+    BTC    Bollinger-Breite (20,2)     0,365      0,200
+    BTC    |Abstand| zum Tages-VWAP    0,136      0,078
+    BTC    Volumen / Ø20              -0,007      0,000
+    ETH    VWAP-Bandbreite (20)        0,366      0,166
+    ETH    Abwaerts-Semivol 20         0,361      0,168
+    ETH    Bollinger-Breite (20,2)     0,305      0,148
+  VWAP-Bandbreite schlaegt Bollinger in JEDER Spalte auf BEIDEN Maerkten.
+
+  UND DER VORSPRUNG KOMMT NACHWEISLICH VOM VOLUMEN
+                                        BTC Vol  BTC -3%  ETH Vol  ETH -3%
+    Schlusskurs, ungewichtet (Bollinger)  0,365    0,200    0,305    0,148
+    typ. Preis (HLC/3), ungewichtet       0,365    0,201    0,300    0,147
+    Schlusskurs, VOLUMENGEWICHTET         0,415    0,239    0,363    0,164
+    typ. Preis, VOLUMENGEWICHTET (VWAP)   0,420    0,241    0,366    0,166
+
+    HLC/3 statt Schlusskurs  ->  bringt NULL
+    Volumengewichtung        ->  bringt ALLES
+
+  Erster Vorschlag des Nutzers, der etwas hinzufuegt -- und zwar genau
+  die Groesse, die den anderen drei Indikatoren fehlt.
+
+  BILANZ VWAP
+    als Kurslinie          identisch mit der SMA (+0,9999)
+    als Richtungsinfo      nichts
+    als Signal             12 von 12 negativ
+    als Filter             gescheitert (Nr. 10)
+    ALS BANDBREITE         besser als Bollinger, beide Maerkte
+
+
+═══════════════════════════════════════════════════════════
+  49. VOLUME PROFILE -- "das Einzige, was funktioniert"
+═══════════════════════════════════════════════════════════
+
+  AUFBAU: Profil aus 1h-Bars, Volumen gleichmaessig ueber [Tief, Hoch]
+  verteilt (Verfahren von TradingView ohne Tickdaten). 720-Bar-Fenster,
+  100 Koerbe, Value Area 70 %. BTC/ETH/SOL, Holdout 2025-26.
+
+  DER ENTSCHEIDENDE TEST -- VOLUMEN-LEVEL GEGEN PIVOT-LEVEL
+  Gleiche Mechanik, 48 h halten, gleiche Kosten:
+                                      Suche 21-24      HOLDOUT 25-26
+    POC der Vorwoche                 -7,4 bp (750)   -26,7 bp (343)
+    Value-Area-Grenzen Vorwoche     -11,0 bp (1418)  -15,4 bp (526)
+    POC des Vormonats               -11,0 bp (397)   -16,2 bp (149)
+    Value-Area-Grenzen Vormonat      -1,5 bp (550)   -25,4 bp (348)
+    S/R AUS PIVOTS (validiert)      +49,4 bp (474)   +52,2 bp (301)
+
+  ACHT VON ACHT ZELLEN NEGATIV. Alle t zwischen -0,01 und -0,25.
+  Die Pivot-Regel liefert rund 70 bp je Trade mehr.
+
+  1) POC ALS MAGNET -- NEIN
+    BTC  Suche t=-0,73  ->  HOLDOUT t=-0,51
+    ETH  Suche t=-0,14  ->  HOLDOUT t=-1,08
+    SOL  Suche t=-1,82  ->  HOLDOUT t=+0,09
+  Alle sechs bei null oder negativ. Wenn ueberhaupt: Fortsetzung
+  statt Rueckkehr.
+
+  2) VALUE-AREA-AUSBRUCH -- 1 VON 3 MAERKTEN
+    BTC  Suche  -6,7 bp (t-0,05)  ->  HOLDOUT  +14,5 bp (t 0,12)
+    ETH  Suche -62,8 bp (t-0,34)  ->  HOLDOUT  +44,5 bp (t 0,16)
+    SOL  Suche +77,1 bp (t 0,23)  ->  HOLDOUT +101,3 bp (t 0,39)
+  BTC und ETH kippen. SOL in beiden Zeitraeumen positiv -- die
+  auffaelligste Zelle der Untersuchung, aber t=0,39 und 1 von 3.
+
+  3) LOW VOLUME NODES -- DAS HAELT
+  Mittlere absolute Bewegung ueber 48 h nach Volumendichte am Kurs:
+    Markt  Zeitraum    LVN(unt.20%)  HVN(ob.20%)  Verhaeltnis
+    BTC    Suche          3,47 %       2,80 %       1,24x
+    BTC    HOLDOUT        2,57 %       2,38 %       1,08x
+    ETH    Suche          4,07 %       3,49 %       1,17x
+    ETH    HOLDOUT        4,40 %       3,48 %       1,26x
+    SOL    Suche          6,53 %       5,36 %       1,22x
+    SOL    HOLDOUT        4,42 %       4,20 %       1,05x
+  SECHS VON SECHS ueber 1,0. Der Kurs laeuft durch duenne Zonen
+  tatsaechlich schneller -- aber das ist eine Aussage ueber TEMPO,
+  nicht ueber Richtung. Groesse 5-26 %.
+
+  4) ALS RISIKOMASS -- SCHLECHTER ALS DAS VORHANDENE
+  Rangkorrelation im Holdout (Vol 48h / Tag <= -3 %):
+    BTC  Value-Area-Breite      0,332 / 0,151
+    BTC  |Abstand zum POC|      0,180 / 0,078
+    BTC  Volumendichte          0,068 / 0,015
+    BTC  Bollinger-Breite       0,385 / 0,185
+    BTC  ABWAERTS-SEMIVOL       0,435 / 0,188
+    ETH  Value-Area-Breite      0,252 / 0,061   Semivol 0,376 / 0,181
+    SOL  Value-Area-Breite      0,435 / 0,147   Semivol 0,532 / 0,206
+  Die Abwaerts-Semivol schlaegt jedes Profil-Mass in jedem Markt.
+  Bemerkenswert: der VWAP hat als Bandbreite die Bollinger geschlagen,
+  das Volume Profile schafft das nicht -- obwohl beide Volumen nutzen.
+
+  BILANZ
+    Volumen-Level schlagen Pivot-Level      NEIN (8/8 negativ)
+    POC ist ein Magnet                      NEIN (alle t <= 0,09)
+    Value-Area-Ausbruch traegt              1 von 3 Maerkten
+    Kurs laeuft schnell durch duenne Zonen  JA (6/6, aber 5-26 %)
+    Profil als Risikomass                   NEIN
+
+  FUENF WERKZEUGE GETESTET (MACD, Stochastik, Bollinger, VWAP,
+  Volume Profile), FUENFMAL DASSELBE MUSTER:
+  ueber die RICHTUNG leer, ueber das RISIKO brauchbar.
+
+  GRENZE DES TESTS: keine Tickdaten. Footprint-Profile koennen anders
+  aussehen; das kann ich nicht messen.
+
+
+═══════════════════════════════════════════════════════════
+  50. DER SOL-BEFUND AUF 14 MAERKTEN GEPRUEFT
+═══════════════════════════════════════════════════════════
+
+  Value-Area-Ausbruch, 1h, 48 h halten, nach Kosten:
+    Markt   bp Suche    t    |  bp HOLDOUT    t    beide +
+    SOL      +77,1    0,23   |    +101,3    0,39     JA
+    DOT      +90,8    0,47   |     +25,8    0,10     JA
+    DOGE     +52,2    0,21   |     +31,1    0,10     JA
+    ADA      +33,7    0,18   |     +19,3    0,07     JA
+    AVAX     +56,4    0,20   |      -3,7   -0,01      -
+    LTC      +48,9    0,25   |     -88,8   -0,41      -
+    ATOM     +41,6    0,20   |     -37,8   -0,17      -
+    TRX      +23,1    0,12   |     -15,6   -0,13      -
+    XRP       +0,8    0,00   |     -23,5   -0,10      -
+    BTC       -6,7   -0,05   |     +14,5    0,12      -
+    LINK     -10,4   -0,05   |     +31,1    0,11      -
+    BNB      -14,1   -0,09   |     -26,3   -0,14      -
+    BCH      -15,0   -0,07   |     -31,0   -0,12      -
+    ETH      -62,8   -0,34   |     +44,5    0,16      -
+
+  GEPOOLT -- DER EIGENTLICHE TEST
+    Suchzeitraum 2021-24 :  7337 Trades   +22,1 bp   t =  0,39
+    HOLDOUT 2025-26      :  3154 Trades    -0,2 bp   t = -0,00
+
+  MINUS NULL KOMMA ZWEI BASISPUNKTE. t = -0,00.
+
+  KONTROLLE GEGEN ZUFALL
+    Maerkte gesamt                    14
+    positiv im Suchzeitraum            9  (64 %)
+    positiv im Holdout                 7  (50 % = Muenzwurf)
+    in BEIDEN positiv                  4
+    bei Zufall erwartet              3,5
+    p (Binomialtest gegen 25 %)    0,479
+    Korrelation Suche <-> Holdout  +0,105
+
+  SOL war nicht der Beginn einer Entdeckung, sondern das MAXIMUM
+  VON 14 RAUSCHZIEHUNGEN -- und ich hatte es selbst als interessant
+  markiert, bevor ich es geprueft habe.
+
+  Das ist Falle Nr. 4 des Projekts ("Bestes von N"), diesmal am
+  eigenen Befund vorgefuehrt. Der Unterschied zum ueblichen Ablauf
+  ist nur, dass der Test danach kam statt gar nicht.
+
+  ZAEHLER UNVERAENDERT: 2 haltbare Befunde von ueber 40 Ansaetzen.
+
+
+═══════════════════════════════════════════════════════════
+  51. ECHTE TICKDATEN -- FOOTPRINT UND LIQUIDATIONS-KARTE
+═══════════════════════════════════════════════════════════
+
+  DATENBASIS
+    110.886.718 einzelne Trades (Preis, Menge, Aggressor-Kennzeichen)
+    72 Tage -> 20.736 Fuenf-Minuten-Footprints
+    227.793 Bars Open Interest im 5-Minuten-Takt, 26 Monate
+  Primaerdaten aus dem Binance-Archiv. Kein Anbieter dazwischen.
+
+  COINGLASS
+    ohne Schluessel:  "API key missing"
+    mit Schluessel:   "401 Upgrade plan"  -- bei JEDEM Endpunkt,
+                      auch bei der reinen Coin-Liste.
+  Der Schluessel wird erkannt, der Tarif gibt nichts frei.
+
+  ─────────────────────────────────────────────────────────
+  DER LOOK-AHEAD IN MEINEM EIGENEN SKRIPT
+  ─────────────────────────────────────────────────────────
+  Erster Lauf (mit Tages-z-Scores = Zukunft im Merkmal):
+    CVD-Divergenz 6h      IC Suche +0,2199  HOLD +0,0931   1,54x
+    Delta grosse Trades   IC Suche -0,0793  HOLD -0,1009   1,26x
+    Delta alle Trades     IC Suche -0,0589  HOLD -0,0782   1,21x
+    Trade-Anzahl 6h       IC Suche +0,0770  HOLD +0,0426   1,00x
+  VIER Merkmale ueber der Kostenschwelle.
+
+  Fehler:  g.transform("mean") ueber den GANZEN Tag -- also auch
+  ueber Bars, die zum Entscheidungszeitpunkt nicht existierten.
+
+  Streng kausal (nachlaufende 24h-Fenster, 1 Bar verzoegert):
+    mittlere Tradegroesse 6h  +0,0062 -> -0,0424   1,49x  KIPPT
+    CVD-Divergenz 6h          -0,0021 -> +0,0616   1,44x  KIPPT
+    Trade-Anzahl 6h           +0,0221 -> -0,0658   0,59x  KIPPT
+    Anteil grosser Trades 6h  -0,0246 -> +0,0260   0,51x  KIPPT
+    Ungleichgewicht netto 6h  -0,0148 -> -0,0238   0,51x  stabil
+
+  CVD-IC FAELLT VON +0,2199 AUF -0,0021. Die 0,22 war Look-ahead.
+
+    Merkmale gesamt                        56
+    gleiches Vorzeichen Suche/Holdout      38 (68 %)
+    ueber der Kostenschwelle im Holdout     2
+    DAVON VORZEICHENSTABIL                  0
+
+  Gestapelte 3:1-Ungleichgewichte -- das Kernkonzept des
+  Footprint-Handels -- liegen bei 0,51x der Schwelle.
+
+  ─────────────────────────────────────────────────────────
+  LIQUIDATIONS-KARTE, SELBST GEBAUT
+  ─────────────────────────────────────────────────────────
+  Neue Positionen = OI-Zunahme je 5 Min
+  Richtung        = Taker-Long/Short-Verhaeltnis
+  Liquidation bei P*(1-1/L) long, P*(1+1/L) short
+  Hebel 10x/25x/50x/100x zu 20/30/30/20 %
+  Zerfall 3 Tage Halbwertszeit; Masse verschwindet, wenn der Kurs
+  durchlaeuft (dann WURDE liquidiert).
+    Ø Masse ueber dem Kurs   8.540 BTC
+    Ø Masse unter dem Kurs   6.794 BTC
+    Bars mit ausgeloester Masse   8,1 %
+
+  1) MAGNET-TEST
+    Asymmetrie oben/unten  3d  +0,0258 -> -0,1388  -143,4bp  8,96x KIPPT
+    Masse unten (log)      3d  -0,0275 -> +0,1016  +115,0bp  7,19x KIPPT
+    Masse oben (log)       3d  +0,0222 -> -0,1124   -79,8bp  4,99x KIPPT
+    Abstand groesster oben 3d  +0,0037 -> +0,0725   +73,9bp  4,62x stabil
+    naeher oben als unten  3d  +0,0092 -> -0,0265   -34,5bp  2,16x KIPPT
+
+    gleiches Vorzeichen  16 von 32 = GENAU 50 % (Muenzwurf)
+    ueber 16 bp im Holdout: 6, davon vorzeichenstabil: 2
+    Die zwei "stabilen" haben im Suchzeitraum IC +0,0037 bzw +0,0170
+    -- also praktisch null. Zweimal knapp auf derselben Seite gelandet.
+    3-Tage-Horizont auf 5-Min-Bars ueberlappt 864-fach.
+
+  2) NACH DER KASKADE
+    Suche  2024-25  n=1360   nach 1h -0,0bp   nach 6h  +7,6bp  Fortsetzung
+    HOLDOUT 2026    n= 442   nach 1h -5,5bp   nach 6h -14,2bp  UMKEHR
+    Beide gaengigen Erzaehlungen finden im anderen Zeitraum ihr Gegenteil.
+
+  3) ALS RISIKOMASS
+    Liquidationsmasse gesamt      Suche -0,287   HOLD -0,547
+    gerade ausgeloeste Masse            +0,138        +0,139
+    Abwaerts-Semivol (1 Tag)            +0,545        +0,605
+    realisierte Vol (1 Tag)             +0,553        +0,616
+    Die negative Korrelation ist vermutlich ein ARTEFAKT der eigenen
+    Konstruktion: die Karte wird geleert, wenn der Kurs durchlaeuft.
+    Viel Masse = Kurs bewegte sich zuletzt wenig. Und die schlichte
+    realisierte Vol schlaegt sie ohnehin.
+
+  BILANZ
+    Footprint schlaegt 5-Min-Bars       NEIN (0 von 56)
+    3:1-Ungleichgewichte                0,51x der Schwelle
+    CVD-Divergenz                       war Look-ahead
+    Liquidations-Magnet                 50 % = Muenzwurf
+    Umkehr nach Kaskade                 widerspruechlich
+    Masse als Risikomass                Artefakt, verliert gegen Vol
+
+  SIEBTES WERKZEUG, SIEBTES MAL DASSELBE -- diesmal mit den feinsten
+  Daten, die es fuer diesen Markt gibt.
+  ES LAG NICHT AN DER DATENAUFLOESUNG. Das war die letzte Ausrede.
+
+
+═══════════════════════════════════════════════════════════
+  54. ALLE BEFUNDE MIT KORRIGIERTER STATISTIK
+═══════════════════════════════════════════════════════════
+
+  S/R-AUSBRUCH
+    Suche 21-24     474   +49,4 bp   t ALT 0,36 -> t NEU 1,52
+    HOLDOUT 25-26   301   +52,2 bp   t ALT 0,47 -> t NEU 1,73
+    gesamt          775   +50,5 bp   t ALT 0,54 -> t NEU 2,16
+  Pass-Rate Kraken-Regeln: 76,8 % (0,25x) / 78,1 % (0,35x) / 50,5 % (0,5x)
+
+  VOLATILITAETSPRAEMIE -- Korrektur war dort RICHTIG
+    naiv 22,77   alt (n/30) 4,16   neu (Einzigartigkeit) 4,19
+  An jedem Tag feuert ein 30-Tage-Fenster: Ueberlappung wirklich maximal.
+  Der Fehler trat nur auf, wo Signale duenn gesaet waren.
+
+  DIE ZEHN FILTER (Ausgangslage +49,4 / +52,2 bp)
+    1 Mindest-Durchbruch 0,25 ATR  +41,2 (1,15)  +21,2 (0,65)  schlechter
+    2 Rollenlogik                   +3,2 (0,10)  -17,4(-0,58)  KIPPT
+    3 Cooldown 48 Bars             +60,5 (1,72)  +32,9 (0,99)  schlechter
+    5 Heikin-Ashi                  +58,9 (1,77)  +44,8 (1,45)  schlechter
+    6 Session 08-20 UTC            +78,2 (2,05)  +41,6 (1,26)  schlechter
+    7/8 Wochentage                 +57,3 (1,65)  +34,2 (1,09)  schlechter
+    9 MARKTPHASE TREND             +84,6 (2,07)  +70,8 (1,94)  BESSER
+   10 VWAP im Einklang             +71,2 (2,10)  +53,8 (1,66)  +-0
+  Neun von zehn bleiben gescheitert. Marktphase ist der einzige, der in
+  BEIDEN Zeitraeumen ueber der Ausgangslage liegt -- aber Bonferroni bei
+  10 Tests verlangt t > 2,81, erreicht werden 2,07 und 1,94. KANDIDAT,
+  KEIN BEFUND. Halbiert ausserdem die Signalzahl (474 -> 244).
+
+  ─────────────────────────────────────────────────────────
+  DER ABGELEGTE S/R-BOUNCE VERLIERT SIGNIFIKANT
+  ─────────────────────────────────────────────────────────
+    Suche    651   -72,1 bp   t ALT -0,63 -> t NEU -2,17
+    HOLDOUT  433   -87,4 bp   t ALT -0,90 -> t NEU -2,79
+    gesamt  1084   -78,2 bp   t ALT -0,99 -> t NEU -3,28
+  Sein GEGENTEIL ist damit der staerkste Einzeleffekt des Projekts.
+
+  IST ES DER AUSBRUCH UNTER ANDEREM NAMEN? NEIN
+    Ausbruch 768 Ereignisse, Bounce 1068, gemeinsame Bars 21 (2,0 %)
+    Ohne Ueberschneidungen: +72,0 bp (t 2,18) / +88,9 bp (t 2,82)
+
+  DER GANZE EFFEKT SITZT AUF DER SHORT-SEITE
+    Suche    long 289  -49,1 bp (t-1,02) | short 362 +111,3 bp (t 3,00)
+    HOLDOUT  long 194   -2,7 bp (t-0,07) | short 239 +102,5 bp (t 2,65)
+  Nach einem Bounce an einer UNTERSTUETZUNG geht es weiter runter.
+  Und zwar in einem Markt, der +102 % bzw +74 % gestiegen ist --
+  der Effekt laeuft GEGEN den Drift.
+
+  KONTROLLE: LEVEL ODER NUR DIE VORBEWEGUNG?
+  Bars mit gleicher Vorbewegung, aber KEIN Level in Reichweite (200x):
+    Suche    echt +111,3 bp | Kontrolle Median -39,1 bp | p = 0,000
+    HOLDOUT  echt +102,5 bp | Kontrolle Median  +3,8 bp | p = 0,000
+  Reine Abwaerts-Fortsetzung ohne Level-Bedingung:
+    Suche   < -1 ATR  -39,9 bp (t-1,70)   -1..-0,3 ATR  -29,8 (t-1,43)
+    HOLDOUT < -1 ATR  +16,7 bp (t 0,70)   -1..-0,3 ATR   -3,2 (t-0,16)
+  ES IST DAS LEVEL, NICHT DIE BEWEGUNG.
+
+  WARUM ES TROTZDEM NICHT BEWIESEN IST
+    andere Maerkte:  ETH +49,5/+50,5   SOL +20,4/+63,4
+                     BNB +24,1/-33,2   XRP -4,2/+14,9   ADA -4,9/+85,1
+    Holdout 5 von 6 positiv (Median +57,0 bp), aber 3 von 6 KIPPEN.
+    Bonferroni ueber 12 Tests verlangt t > 2,87:
+      Suche 3,00 bestanden, Holdout 2,65 verfehlt.
+    Asymmetrie (nur short) UNERKLAERT -- das staerkste Warnsignal.
+    Und: der Befund entstand beim wiederholten Hinsehen nach einer
+    Methodikkorrektur. Genau die Lage, in der Scheinbefunde entstehen.
+
+  FOLGERUNG
+    Ausbruch und Gegen-Bounce sagen DASSELBE: Level halten nicht.
+    Das ist EIN Mechanismus, nicht zwei -- und das Gegenteil dessen,
+    was jeder Kurs lehrt.
+    Naechster Schritt: VORWAERTSTEST, nicht hochskalieren.
+
+
+═══════════════════════════════════════════════════════════
+  55. VORWAERTSTEST -- BEIDE REGELN GESCHEITERT
+═══════════════════════════════════════════════════════════
+
+  Kriterium VORHER festgelegt und committet (vorwaertstest_spec.md):
+  "bestanden = Effekt > 0 auf der MEHRHEIT der frischen Maerkte"
+
+  TEST 1 -- ACHT MAERKTE, FUER DIESE REGELN NIE BENUTZT
+    Markt   Ausbruch Suche  Ausbruch HOLD   GegBounce Suche  GegBounce HOLD
+    ATOM      +25,6           -39,3            +69,0           -12,0
+    AVAX     +146,2 (2,18)     -1,3            +87,3           -39,2
+    BCH       -15,1           -73,6             +0,3            +8,5
+    DOGE      -33,7            +3,3             +7,5           -50,3
+    DOT        +6,3           -69,2            -37,4           +78,3
+    LINK      -24,2            +7,8            -52,8           -99,7 (-2,08)
+    LTC       -54,5           -59,2            -47,2          -127,0 (-1,98)
+    TRX       +44,0           -37,9 (-1,85)    -51,3           -72,8 (-2,97)
+
+    S/R-Ausbruch        Suche  -0,7 bp (4/8)  HOLDOUT -36,9 bp (2/8)
+    Gegen-Bounce short  Suche -10,6 bp (4/8)  HOLDOUT -31,1 bp (2/8)
+
+  ZWEI VON ACHT. Kriterium war die Mehrheit. GESCHEITERT, beide Regeln.
+  Drei Maerkte zeigen den Gegen-Bounce SIGNIFIKANT NEGATIV -- auf BTC
+  war derselbe Effekt mit t +2,65 positiv.
+
+  TEST 2 -- FRISCHER ZEITRAUM 2026-07-01 BIS 2026-08-07 (14 Maerkte)
+    S/R-Ausbruch        gepoolt -39,7 bp ueber 353 Trades, 5/13 positiv
+    Gegen-Bounce short  gepoolt -42,4 bp ueber 277 Trades, 5/12 positiv
+
+    BTC SELBST (der Entwicklungsmarkt):
+      S/R-Ausbruch        -128,9 bp (38 Trades)
+      Gegen-Bounce short  -115,7 bp (21 Trades)
+
+  WAR DAS NUR PECH? NEIN.
+  Verteilung aller historischen Bloecke gleicher Laenge:
+    Ausbruch (38 Trades)     Median +49,3   5-95 %: -76..+268
+                             beobachtet -128,9 -> schlechter in nur 1,6 %
+    GegBounce (21 Trades)    Median +85,3   5-95 %: -114..+384
+                             beobachtet -115,7 -> schlechter in nur 5,0 %
+
+  DEUTUNG
+  Alles an der Regel wurde auf BTC gewaehlt: Levellogik, 6 Beruehrungen,
+  48 h Haltedauer, Toleranz. Auf BTC t = 2,16 / 2,65. Auf acht Maerkten,
+  die bei keiner dieser Entscheidungen mitgeredet haben: -37 / -31 bp.
+  Das ist die Signatur einer UEBERANPASSUNG.
+
+  UND DER WICHTIGSTE PUNKT:
+  Die korrigierte Statistik hat den Befund signifikant gemacht --
+  der Vorwaertstest hat ihn trotzdem widerlegt. Signifikanz auf den
+  Entwicklungsdaten war nie das Entscheidende.
+
+  ZURUECKGENOMMEN
+  Die Empfehlung, die bezahlte Kraken-Challenge mit dieser Regel zu
+  spielen (BTC 1h, >=6 Beruehrungen, 48 h, 0,35x), ist nicht mehr
+  gedeckt. Die Pass-Rate von 78,1 % stammt aus derselben BTC-Historie,
+  auf der die Regel gebaut wurde.
+
+  STAND NACH 55 UNTERSUCHUNGEN
+    Volatilitaetspraemie   HAELT (zwei Anlageklassen, 4,16 -> 4,19)
+    S/R-Ausbruch           im Vorwaertstest gescheitert
+    Gegen-Bounce           im Vorwaertstest gescheitert
+    Marktphasen-Filter     Kandidat, nie vorwaerts getestet
+    alles andere           gescheitert
+  EIN Befund von 55 -- und der eine ist kein Chartmuster.
+
+
+═══════════════════════════════════════════════════════════
+  56. DIE TRADER, DIE ES NACHWEISLICH KOENNEN
+      Hyperliquid -- 41.362 Konten, jede PnL ON-CHAIN
+═══════════════════════════════════════════════════════════
+
+  GRUNDVERTEILUNG (36.889 Konten mit > 1 Mio $ Volumen)
+    allTime im Plus          41,9 %
+    Gewinn > 100.000 $       19,62 %
+    Gewinn > 1 Mio $          4,89 %
+    Gewinn > 10 Mio $         0,57 %
+    Oberstes 1 % haelt 57,7 % ALLER Gewinne
+    Gesamt: 15,7 Mrd $ Gewinne, 5,0 Mrd $ Verluste, 10,3 Bio $ Volumen
+
+  "ZWEIMAL PROFITABEL" IST REINER ZUFALL
+  Zwei DISJUNKTE Perioden (Monat-minus-Woche vs Woche-minus-Tag),
+  2.234 Konten mit > 1 Mio $ Volumen in beiden:
+    Periode A im Plus        48,5 %
+    Periode B im Plus        54,2 %
+    in BEIDEN im Plus        26,1 %
+    bei Unabhaengigkeit      26,3 %
+    UEBERSCHUSS              -0,2 Prozentpunkte
+  Genau der Nachweis, den Trader vorlegen -- und er ist wertlos.
+  (Auch mein eigener erster Gruppenvergleich beruhte darauf.)
+
+  ABER DIE RAENDER PERSISTIEREN
+    oberstes Dezil zweimal    1,88 % gegen 1,00 % Zufall = 1,9x
+    oberste 5 % zweimal       0,45 % gegen 0,25 %        = 1,8x
+    unterstes Dezil zweimal  20,0 % gegen 10 %           = 2,0x
+  Rangkorrelation ueber ALLE Konten: +0,005 (also null).
+  KOENNEN EXISTIERT AN DEN RAENDERN, NICHT IN DER MITTE.
+
+  Schwellenanalyse (die erste Rechnung war ein Nennerartefakt):
+    Mindestvol.  10.000 $  Rho -0,275
+                500.000 $  Rho -0,147
+                  2 Mio $  Rho -0,104
+                 50 Mio $  Rho +0,005   <- sauber
+
+  WIE HANDELT DIE KERNGRUPPE? (echte Fills)
+  42 Konten zweimal oberstes Dezil gegen 29 zweimal unterstes:
+                          KERN      GEGEN      p
+    Fills pro Tag          199        204     0,233
+    Ordergroesse ($)     4.519      4.425      --
+    Maerkte                  6          6      --
+    Gebuehren (bp/Vol)    1,18       1,42     0,159
+    TAKER-ANTEIL         38,0 %     66,3 %    0,057   <- der einzige
+
+  VIER VON FUENF MERKMALEN IDENTISCH.
+  Der einzige Unterschied: sie NEHMEN kaum Liquiditaet.
+  Das ist derselbe Edge wie der Orderflow-IC des Projekts
+  (-0,041, p = 3e-173): wer mit Market-Order kauft, zahlt.
+
+  FREQUENZ TRENNT NICHT
+    unter 20 Fills/Tag (menschlich)   n=23   56,5 % dauerhaft im Plus
+    20-100                            n=56   51,8 %
+    100-500                           n=42   38,1 %
+    500-2000 (Bot)                    n=11   72,7 %
+    ueber 2000 (HFT)                   n=7   57,1 %
+  (geschichtete Stichprobe, Basisrate 50 %)
+  18,8 % der Kerngruppe handeln unter 20 Fills/Tag.
+  MAN MUSS KEIN BOT SEIN. MAN MUSS AUFHOEREN, DEN SPREAD ZU ZAHLEN.
+
+  GRENZEN
+    Perioden sehr kurz (3 Wochen gegen 6 Tage)
+    p = 0,057 ist NICHT signifikant, und einer von fuenf Vergleichen
+    n = 32 gegen 26
+    Leaderboard ist eine Auswahl; geschlossene Nullkonten fehlen
+    Eine Adresse ist kein Mensch (Vaults, verteilte Wallets)
+
+  PRAKTISCHE FOLGERUNG
+    Limit-Orders statt Market-Orders. Auf den Preis warten statt ihn
+    zu nehmen. Die einzige Erkenntnis des Projekts, die man SOFORT
+    umsetzen kann, ohne einen Edge gefunden zu haben -- sie macht
+    jede Strategie besser, auch eine ohne Vorteil.
+
+
+═══════════════════════════════════════════════════════════
+  57. MARKOV-KETTEN UND DER RAINBOW CHART
+═══════════════════════════════════════════════════════════
+
+  MARKOV -- DAS GEDAECHTNIS IST DA
+  Chi-Quadrat gegen Unabhaengigkeit:
+    ETH 1h  k=3 o=2  n=46.736  Chi² 1651,6  p = 0,00      V 0,133
+    ETH 1h  k=5 o=2  n=46.736  Chi² 3303,4  p = 0,00      V 0,133
+    BTC 4h  k=5 o=2  n=11.685  Chi²  780,5  p = 8,9e-108  V 0,129
+    BTC 1D  k=5 o=2  n= 1.945  Chi²  143,9  p = 1,1e-03   V 0,136
+  p = 0,00 heisst kleiner als darstellbar. Der Markt ist NICHT
+  gedaechtnislos.
+
+  UND ES HAELT OUT-OF-SAMPLE
+  Log-Loss-Verbesserung gegen die Randverteilung im Holdout:
+    BTC 1h k=5 o=2   +1,854 %
+    BTC 1h k=3 o=2   +1,389 %
+    BTC 4h k=5 o=2   +0,843 %
+    ETH 4h k=3 o=1   -0,104 %   (der einzige negative)
+  FUENFZEHN VON SECHZEHN POSITIV.
+
+  ABER DER BETRAG
+  Handeln nach der Markov-Vorhersage, BTC 4h, Holdout:
+    k=3 o=1   3.275 Signale   -16,40 bp je Trade
+    k=3 o=2   3.274 Signale   -15,33 bp
+    k=5 o=1   3.275 Signale   -15,97 bp
+    k=5 o=2   3.274 Signale   -16,05 bp
+  Kostenschwelle 16 bp -> BRUTTOVORTEIL zwischen +0,7 und -0,4 bp.
+  Dasselbe Muster wie beim Orderflow (p=3e-173 bei 0,29 bp).
+
+  ───────────────────────────────────────────────────────
+  RAINBOW CHART
+  ───────────────────────────────────────────────────────
+  Der 3-MONATS-EFFEKT VERSCHWINDET VOLLSTAENDIG
+                        unten     oben     Spanne
+    Fit ueber alles    +34,3 %  -13,6 %   +48,0 Pp
+    KAUSAL             +18,8 %  +17,7 %    +1,1 Pp
+  98 % des sichtbaren Effekts sind Look-ahead.
+
+  DER 1-JAHRES-EFFEKT UEBERLEBT -- SCHEINBAR
+    Fit ueber alles   +310,9 % / -30,0 %   Spanne +340,9 Pp
+    KAUSAL            +180,7 % /  -1,3 %   Spanne +182,1 Pp
+  Aber:
+    Zeitraum 9,0 Jahre, 2.906 taegliche Beobachtungen
+    davon UNABHAENGIG: 8   (1-Jahres-Fenster ueberlappen 365-fach)
+    BTC-Zyklen im Zeitraum: 2
+    t ohne Korrektur 14,12  ->  t MIT Korrektur 0,74 (n_eff 2,4)
+    Kontrolle gegen verschobenes Band: p = 0,138
+  Es ist die Beschreibung von ZWEI Bullenzyklen, keine Statistik.
+
+  UND DIE TRENDLINIE SELBST IST NICHT STABIL
+   Stand    Exponent   Prognose in 1 Jahr   tatsaechlich
+   2020-01    0,039         7.326 $           28.924 $
+   2021-01    0,139         9.346 $           47.723 $
+   2022-01    0,470        20.723 $           16.617 $
+   2023-01    0,515        24.985 $           44.180 $
+   2024-01    0,541        28.457 $           93.576 $
+   2025-01    0,651        38.759 $           88.839 $
+   2026-01    0,764        53.262 $           62.888 $
+  SIEBEN PROGNOSEN, SIEBEN FEHLSCHLAEGE (-80 % bis +25 %).
+  Exponent wanderte 0,039 -> 0,786: die "Mitte" wird laufend neu
+  gezeichnet.
+
+  EINSCHRAENKUNG: meine Historie beginnt 2017-08 (Binance), der echte
+  Rainbow nutzt Daten ab 2010. Mit 15 statt 9 Jahren waere die Linie
+  stabiler. Das geht ZUGUNSTEN des Rainbow Charts.
+
+  ───────────────────────────────────────────────────────
+  DIE ZUSAMMENGESETZTE ANTWORT
+  ───────────────────────────────────────────────────────
+    Kann man etwas vorhersagen?   JA (p = 0,00, 15/16 bestaetigt)
+    Wie viel?                     unter 1 Basispunkt je Trade
+    Was kostet ein Trade?         16 Basispunkte
+    Verhaeltnis                   1 : 20 bis 1 : 50
+
+  Das Problem ist nicht, dass der Markt zufaellig waere.
+  Das Problem ist, dass er FAST zufaellig ist -- und die Gebuehren
+  in der Luecke sitzen.
+
+
+═══════════════════════════════════════════════════════════
+  58. "DEN GAMBLERN LIQUIDITAET STELLEN"
+      7.812.435 echte Einzeltrades, fuenf Tage
+═══════════════════════════════════════════════════════════
+
+  METHODE: kein Quote-Modell. Jeder Trade HAT einen Maker auf der
+  Gegenseite -- gemessen wird direkt, was dieser Maker verdient hat
+  (realisierter Spread nach adverser Selektion).
+
+  DER NAIVE MARKET MAKER VERLIERT
+    Tag           Trades       1s      10s     1min    10min
+    2026-03-10  2.802.252   -0,581   -0,665   -0,672   -1,042
+    2026-05-19    991.693   -0,479   -0,633   -0,523   -0,319
+    2026-06-24  2.352.076   -0,537   -0,558   -0,439   -0,332
+    2026-07-15  1.107.089   -0,505   -0,571   -0,556   -0,399
+    2026-08-02    559.325   -0,387   -0,583   -0,790   -0,530
+  ZWANZIG VON ZWANZIG ZELLEN NEGATIV.
+  Gepoolt -0,575 bp je Trade, Median -0,429, positiv in 46,6 %.
+
+  DIE HYPOTHESE KIPPT -- KLEINE TRADES SIND DIE SCHLECHTESTEN
+    Tradegroesse        Anteil    Trades      Maker      mit -1bp Rebate
+    unter 100 $         22,7 %  1.775.277   -0,705 bp        +0,295
+    100-500 $           40,5 %  3.167.689   -0,715 bp        +0,285
+    500-2.000 $         13,3 %  1.040.364   -0,374 bp        +0,626
+    2.000-10.000 $      12,9 %  1.005.484   -0,331 bp        +0,669
+    10.000-50.000 $      7,5 %    582.595   -0,246 bp        +0,754
+    ueber 50.000 $       3,1 %    241.026   -0,445 bp        +0,555
+  Kleine Prints sind oft Bruchstuecke grosser informierter Marktorders.
+  "Kleiner Trade" ist nicht dasselbe wie "kleiner Trader".
+
+  TAGESZEIT HILFT AUCH NICHT -- alle acht Fenster negativ
+    bestes  15-18 Uhr UTC  -0,368 bp
+    schlechtestes 00-03 Uhr -0,772 bp
+
+  WAS RETTET: ALLEIN DIE GEBUEHR
+    Standard-Maker 1,5 bp     -2,075 bp je Trade
+    Gebuehr null              -0,575 bp
+    Rebate -0,5 bp            -0,075 bp
+    Rebate -1,0 bp            +0,425 bp
+  Mit Rebate ist JEDES Segment profitabel.
+
+  IN ZAHLEN
+  Segment unter 500 $ = 63,3 % aller Trades, aber nur 1,4 % des
+  Volumens (163,4 Mio $/Tag). Wer es GANZ bedienen wuerde:
+    bei 1,5 bp Standardgebuehr   -13.192.459 $ im Jahr
+    bei Gebuehr null              -4.245.365 $
+    bei Rebate -1,0 bp           +1.719.364 $
+  Dieselbe Taetigkeit, dieselben Gegenparteien, dasselbe Risiko --
+  15 Mio $ Unterschied allein durch die Gebuehrenstufe.
+
+  FOLGERUNG
+  Die Idee ist RICHTIG und beschreibt ein reales Geschaeft -- genau das,
+  was die dauerhaft erfolgreichen Hyperliquid-Konten betreiben (Taker
+  38 % statt 66 %). Aber der Eintrittspreis ist eine GEBUEHRENSTUFE,
+  keine Strategie.
+
+  GRENZEN
+    Misst den DURCHSCHNITTLICHEN Maker; echte MM sind selektiv.
+    -0,575 bp ist der Startpunkt, nicht das Schicksal.
+    Keine Warteschlange modelliert -> Schaetzung eher ZU OPTIMISTISCH.
+    Fuenf Tage, ein Instrument (BTC-Perp Binance).
+    Rebate-Stufen sind Szenarien, nicht geprueft.
+
+
+═══════════════════════════════════════════════════════════
+  59. "AUF DER SEITE DES HAUSES STEHEN"
+═══════════════════════════════════════════════════════════
+
+  HLP-VAULT (Hyperliquid) -- stellt Liquiditaet, fuehrt Liquidationen
+  aus, kassiert Plattformgebuehren. 214,4 Mio $, on-chain nachpruefbar.
+  Native Frequenz ~14 Tage, 90 Beobachtungen ueber 3,17 Jahre.
+
+    kumulierte PnL              136,9 Mio $
+    Rendite kumuliert              +172,8 %
+    ANNUALISIERT                    +37,3 %
+    Volatilitaet p.a.                14,3 %
+    SHARPE                            2,12
+    groesster Rueckgang (14-Tage)    -5,8 %
+    Perioden im Plus                 86,7 %  (78 von 90)
+
+  Sharpe 2,12 ist HOEHER als alles bisher Gemessene
+  (S/R-Ausbruch 0,36, Volatilitaetspraemie 1,85).
+
+  ABER DER ERTRAG BRICHT WEG
+    2023            +19,6 %
+    2024            +79,1 %
+    2025            +19,0 %
+    2026 (bis Aug)   +7,1 %   -> hochgerechnet ~11 %
+  Mechanik: Der Ertrag haengt am VOLUMEN DER GAMBLER, nicht am
+  eigenen Kapital. Der Vault wuchs von wenigen Mio auf 214 Mio $ --
+  derselbe Gebuehrentopf durch mehr Anteile geteilt.
+
+  FUNDING-CARRY (Spot long, Perp short)
+    mittlere Rate je 8 h    0,00644 %
+    annualisiert              +7,05 %   nach Kosten +6,85 %
+    positive Zahlungen         84,4 %
+    Volatilitaet p.a.           0,48 %
+    2024 +11,96 % | 2025 +5,13 % | 2026 (bis Juli) +1,12 %
+  Derselbe Verfall. Sharpe 14,57 ist irrefuehrend: er misst die Ruhe
+  der Ertraege, nicht das Risiko der Konstruktion.
+
+  VERGLEICH ALLER WEGE
+    Weg                        Rendite   Vol   Sharpe   maxDD
+    HLP-Vault (das Haus)       +37,3 %  14,3%   2,12    -5,8%
+    Volatilitaetspraemie       +25,2 %  13,6%   1,85   -13,7%
+    Funding-Carry               +6,8 %   0,5%  14,57    -0,2%
+    Marktmachen ohne Rebate     -2,1 %    --      --      --
+    S/R-Ausbruch      im Vorwaertstest gescheitert
+
+  DREI EINSCHRAENKUNGEN
+  1. UEBERLEBENSAUSWAHL: HLP ist EIN Vault auf EINER Boerse, die
+     funktioniert hat. Genau der Fehler, vor dem dieses Projekt
+     fuenfzehnmal gewarnt hat.
+  2. Das 14-Tage-Raster VERSTECKT Rueckgaenge. Der wahre maximale
+     Rueckgang liegt ueber -5,8 %.
+  3. Es ist ein VERSICHERUNGSGESCHAEFT: viele kleine Gewinne, seltene
+     grosse Verluste. In drei Jahren ist der Fall nicht eingetreten.
+     Das ist kein Beweis, dass er nicht eintritt.
+
+  DIE 98 % GIBT ES NICHT
+    Perioden im Plus beim HLP-Vault    86,7 %
+    positive Funding-Zahlungen         84,4 %
+    Hyperliquid-Konten allTime im Plus 41,9 %
+  Das Haus gewinnt in RUND 85 % der Perioden, nicht in 98.
+
+  FOLGERUNG
+  Die Richtung stimmt aus einem STRUKTURELLEN Grund: Der Gebuehrenstrom
+  existiert unabhaengig davon, ob man recht hat. Das gilt fuer keinen
+  einzigen der 57 anderen Ansaetze dieses Projekts.
+  Erwartung realistisch 10-15 % p.a., nicht 37.
+  Dieser Weg braucht kein Koennen, aber KAPITAL.
+
+
+═══════════════════════════════════════════════════════════
+  60. "KAPITAL UND KREDITE GIBT ES GENUG"
+═══════════════════════════════════════════════════════════
+
+  DER ZINSSPREAD BEI VERSCHIEDENEN ERTRAGSNIVEAUS
+    Kreditart              37 % (23-26)  19 % (2025)  11 % (2026)
+    Lombard 4 %              +33,3 %      +15,0 %      +7,0 %
+    Rahmenkredit 7 %         +30,3 %      +12,0 %      +4,0 %
+    Ratenkredit 10 %         +27,3 %       +9,0 %      +1,0 %
+    Dispo 13 %               +24,3 %       +6,0 %      -2,0 %
+  Beim AKTUELLEN Niveau ist der Spread bei jedem Konsumentenkredit
+  nahe null oder negativ.
+
+  WENN ALLES GUT GEHT (20.000 $)
+     7 % / 5 J -> zurueck 24.389 $, Anlage bei 11 % 33.701 $  = +9.312 $
+    10 % / 5 J -> zurueck 26.380 $, Anlage bei 11 % 33.701 $  = +7.321 $
+     7 % / 7 J -> zurueck 25.977 $, Anlage bei 11 % 41.523 $  = +15.546 $
+
+  DIE HEBELTABELLE AUF DER GEMESSENEN VERTEILUNG (wertlos, s.u.)
+    3x   +125,9 % p.a.   max DD -16,9 %
+    5x   +258,7 % p.a.   max DD -27,4 %
+   10x   +815,3 % p.a.   max DD -51,2 %
+
+  WARUM SIE WERTLOS IST
+  Schlechteste Periode in 3,45 Jahren: -4,42 %.
+  Ereignisse mit -20 % oder schlimmer: NULL.
+  Man kann die Ruinwahrscheinlichkeit eines Versicherers nicht aus
+  einer Stichprobe schaetzen, in der kein Schaden vorkommt.
+
+  DREIERREGEL (0 Ereignisse in n Versuchen -> obere Schranke 3/n)
+    je 14-Tage-Periode:  bis zu  3,3 %
+    je Jahr:             bis zu   87 %
+  Aus drei Jahren ohne Schaden folgt PRAKTISCH NICHTS.
+
+  RUINWAHRSCHEINLICHKEIT UEBER 5 JAHRE
+    Schaden        Hoehe     1x      2x      3x      5x     10x
+    alle  4 Jahre  -30 %   0,0 %   0,0 %   0,0 %  73,2 %  73,8 %
+    alle  4 Jahre  -60 %   0,0 %  70,2 %  71,9 %  73,8 %  72,0 %
+    alle 10 Jahre  -30 %   0,0 %   0,0 %   0,0 %  40,7 %  40,8 %
+    alle 10 Jahre  -60 %   0,0 %  37,7 %  37,6 %  39,2 %  39,0 %
+    alle 25 Jahre  -60 %   0,0 %  18,4 %  18,5 %  19,6 %  18,9 %
+    alle 50 Jahre  -60 %   0,0 %   9,8 %   8,9 %   8,8 %   9,3 %
+  OHNE HEBEL: NULL PROZENT RUIN IN JEDEM SZENARIO.
+  Das Risiko kommt nicht aus der Strategie, sondern aus dem Kredit.
+
+  EIGENKAPITAL NACH DEM EREIGNIS (in % des Einsatzes)
+    Vault-Verlust    1x     2x     3x     5x    10x
+      -10 %         90 %   80 %   70 %   50 %    0 %
+      -20 %         80 %   60 %   40 %    0 %  -100 %
+      -50 %         50 %    0 %  -50 % -150 %  -400 %
+
+  DIE ZWEITE FALLE: ERTRAG FAELLT, ZINS NICHT
+    2024  +79,1 %  ->  3x netto +223,3 %
+    2025  +19,0 %  ->  3x netto  +43,0 %
+    2026  +11,0 %  ->  3x netto  +19,0 %
+  Ein Kredit laeuft 5-7 Jahre. Der Ertrag, auf den man ihn aufnimmt,
+  existiert dann vermutlich nicht mehr.
+
+  DER UNTERSCHIED, UM DEN ES GEHT
+    1x eigenes Geld  ->  schlimmster Fall: Einsatz weg, NULL
+    2x               ->  Einsatz weg + 100 % Schulden
+    5x               ->  Einsatz weg + 400 % Schulden
+  2024 stand beim Nutzer eine Null. Das war vorbei.
+  Mit Kredit waere es nicht vorbei gewesen.
+
+
+═══════════════════════════════════════════════════════════
+  61. KORREKTUR: DER HLP-VAULT VERDIENT GERADE NICHTS
+═══════════════════════════════════════════════════════════
+
+  Die +37,3 % p.a. mit Sharpe 2,12 waren der DREIJAHRESDURCHSCHNITT.
+  Fuer eine Entscheidung HEUTE ist der aktuelle Lauf massgeblich.
+
+  AUS DEMSELBEN API-AUFRUF, jedes Fenster einzeln:
+    Fenster    Dauer          PnL     Ø Kapital   annualisiert
+    day         1,0 d      +1.298 $     215,3 M       +0,2 %
+    week        7,1 d     -20.753 $     217,5 M       -0,5 %
+    month      30,4 d     +63.818 $     231,6 M       +0,3 %
+    allTime  1.185,5 d  +136,9 Mio $    222,0 M      +15,9 %
+
+  Das API-Feld `apr` meldet es selbst: 0,0021 = 0,21 %.
+
+  JAHRESVERLAUF, KORREKT ANNUALISIERT
+    2023            +37,9 %
+    2024            +85,9 %
+    2025            +19,5 %
+    2026            +12,6 %
+    letzte 30 Tage   +0,3 %
+  Verlauf 86 -> 20 -> 13 -> 0. Kein Ausreisser, eine Linie.
+
+  FUNDING-CARRY HAELT SICH BESSER -- ist aber nicht risikofrei
+    2026-01  +5,39 %   95,7 % positiv
+    2026-02  -0,83 %   46,4 %
+    2026-03  -1,09 %   44,1 %
+    2026-04  -2,16 %   35,6 %
+    2026-05  +2,72 %   71,0 %
+    2026-06  +2,47 %   76,7 %
+    2026-07  +6,66 %   98,9 %
+    letzte 30 Tage +6,71 %  |  letzte 90 Tage +4,13 %  |  gesamt +7,05 %
+  DREI NEGATIVE MONATE IN FOLGE im Fruehjahr 2026.
+
+  WAS 20.000 $ REALISTISCH BRINGEN
+    HLP-Vault        ~0 %        ->     ~0 $
+    Funding-Carry    4-7 %       ->  800-1.400 $
+    Volatilitaetspr. ~25 %       ->  5.000 $ (taegliche Arbeit noetig)
+
+  800 BIS 1.400 DOLLAR IM JAHR. Das ist die Groessenordnung.
+
+  EMPFEHLUNG
+    Nicht alles auf einmal: 2.000-3.000 $ in den Funding-Carry,
+    nach 3 Monaten die EIGENEN Zahlen pruefen, dann entscheiden.
+    Unterschied "alles jetzt" gegen "ueber 9 Monate verteilt":
+    bei 5 % rund 500 $ -- dafuer kauft man sich echte Messungen.
+    Den HLP-Vault jetzt NICHT bestuecken (0 % ist kein Grund),
+    aber beobachten: ueber 8 % annualisiert waere neue Datenlage.
+    Vergleichsanker nicht vergessen: 4-7 % mit Boersen- und
+    Liquidationsrisiko muss sich gegen risikoarme Alternativen
+    messen. Unter zwei Prozentpunkten Abstand ist der Aufwand
+    nicht bezahlt.
+
+  EIGENER FEHLER
+  +37,3 % berichtet, ohne zu pruefen, ob das der aktuelle Lauf ist.
+  Derselbe Fehlertyp wie beim Rainbow Chart: eine ueber den ganzen
+  Zeitraum gemittelte Groesse als Aussage ueber die Gegenwart lesen.
+  Das apr-Feld stand in derselben API-Antwort.
+
+
+═══════════════════════════════════════════════════════════
+  62. METHODISCHES AUDIT UND FINALER TEST
+═══════════════════════════════════════════════════════════
+
+  WAS TATSAECHLICH GETESTET WURDE
+    Forschungsskripte              167
+    nummerierte Untersuchungen      61
+    TATSAECHLICH GETESTETE VARIANTEN ~1.067
+    -> Bonferroni-Schwelle: t > 4,07  (p < 4,7e-05)
+
+  METHODISCHE SAUBERKEIT (grep ueber alle 167 Skripte)
+    Kosten                   51,5 %
+    Look-ahead-Kontrolle     40,1 %
+    Holdout / Split          30,5 %
+    Zufallskontrolle         23,4 %
+    Ueberlappungskorrektur   21,6 %
+    mehrere Maerkte          13,8 %
+    Funding                   4,2 %
+    Bonferroni / FDR          4,2 %
+    Slippage explizit         3,0 %
+
+  DIE VIER LUECKEN
+  1. HOLDOUT VERBRAUCHT: der BTC-Zeitraum 2025-26 wurde ueber
+     zwanzigmal benutzt. Nach dem ersten Zugriff war er keiner mehr.
+  2. SURVIVORSHIP UNGELOEST: alle 14 Maerkte sind Ueberlebende.
+     LUNA, FTT und hunderte tote Projekte fehlen vollstaendig.
+     Jede Renditeaussage ist nach oben verzerrt.
+  3. FUNDING FEHLT: bei 48 h Halten sind das ~3,9 bp je Long-Trade.
+  4. MULTIPLE TESTING zu spaet ernst genommen.
+
+  STREICHLISTE
+    S/R-Ausbruch            raus (Vorwaertstest, -9,84 bp im 25er-Test)
+    Gegen-Bounce            raus (-10,76 bp im 25er-Test)
+    Marktphasen-Filter      raus (verfehlt Bonferroni)
+    SOL-VA-Ausbruch         raus (4 von 14, Zufall erwartet 3,5)
+    alle 9 fruehere Filter  raus
+    alle Pass-Raten         raus (aus der Baudaten-Historie)
+    HLP +37,3 % p.a.        raus als Erwartungswert (aktuell +0,3 %)
+
+    Volatilitaetspraemie    BEHALTEN mit Einschraenkung: uebersteht
+      Bonferroni (t 4,19 > 4,07), zwei Anlageklassen, Kosten drin --
+      ABER KEIN HOLDOUT. Rettet sich nur als vorbestehende,
+      publizierte Hypothese statt als gesuchtes Muster.
+    Orderflow / Markov      BEHALTEN als Statistik, WERTLOS als Handel
+    Maker -0,575 bp         BEHALTEN (7,8 Mio Trades, 20/20 negativ)
+    Taker-Anteil 38/66      NICHT signifikant (p 0,057, 1 von 5 Tests)
+
+  ─────────────────────────────────────────────────────────
+  DER FINALE TEST
+  ─────────────────────────────────────────────────────────
+  25 kanonische Regeln, Lehrbuchparameter, KEINE Optimierung.
+  14 Maerkte, 1 h, 48 h Halten, 16 bp Kosten, 1.121.000 Trades.
+  Spezifikation vor der Rechnung committet.
+
+  24 VON 25 REGELN VERLIEREN
+    Keltner-Ausbruch          +6,08 bp   <- einziger positiver
+    Goldenes Kreuz            -3,12
+    ATR-Ausbruch              -3,88
+    S/R-Ausbruch (Projekt)    -9,84
+    Gegen-Bounce (Projekt)   -10,76
+    MACD 12/26/9             -13,14
+    Stochastik 14/3/3        -28,42
+    RSI 14 (30/70)           -32,40
+
+  REALITY CHECK (zirkulaere Verschiebung, 2.000 Runden)
+    beobachtetes Maximum          +6,08 bp
+    Zufalls-Maximum Median        -7,06 bp
+    Zufalls-Maximum 95. Perzentil +2,29 bp
+    FAMILIENWEISER p-WERT          0,0170
+  Nullkontrolle bestanden: Null-Streuung 7,09 bp gegen echten
+  Standardfehler 6,52 bp = 0,92x (eher zu breit als zu eng).
+
+  UND DANN DIE DIAGNOSTIK
+    gesamt            71.082 Trades   +6,08 bp   t  0,93
+    Suche 2021-24     48.770 Trades  +16,92 bp   t  2,01
+    HOLDOUT 2025-26   22.312 Trades  -17,61 bp   t -1,88
+    positiv in 5 von 14 Maerkten, getragen von DOGE und SOL
+    18 Parametervarianten: -6,65 bis +17,85 bp, 8 davon negativ
+
+  URTEIL
+  NEIN. Nach Kosten, Out-of-Sample und sauberer Statistik bleibt
+  kein reproduzierbarer Edge.
+
+  Der Unterschied zwischen "signifikant ueber einen Zeitraum" und
+  "reproduzierbar" ist das letzte Kriterium der Liste: REGIME CHANGES.
+  Ein familienweiser p-Wert ueber einen festen Zeitraum faengt sie
+  nicht. Nur die Teilung tut es.
+
+  ACHT FALLEN, ALLE IM EIGENEN MATERIAL VORGEFUEHRT
+    Look-ahead              Footprint IC 0,22 -> -0,002; Rainbow 48 -> 1,1 Pp
+    Ueberlappung zu naiv    p 1e-240 -> 0,27
+    Ueberlappung zu streng  Faktor 5,48; 200 bp Edge in 0 % erkannt
+    Bestes von N            SOL, Keltner, 324er-Gitter
+    Kosten doppelt          16 bp -> faktisch 32 bp
+    Zeitraummittel          HLP +37,3 % gegen aktuell +0,3 %
+    Holdout mehrfach        ueber zwanzigmal
+    Nullmodell zu eng       erste Fassung des finalen Tests
+
+
+═══════════════════════════════════════════════════════════
+  63. INDIKATOR gegen BAUCHGEFUEHL gegen ZUFALL
+═══════════════════════════════════════════════════════════
+
+  Gemeinsamer Massstab: bp je Trade nach Kosten, 14 Maerkte,
+  1 h, 48 h Halten, 16 bp je Roundtrip.
+  Spezifikation VOR der Rechnung committet.
+
+  DIE VIER GRUPPEN
+    Gruppe                              n    Median    25 %     75 %
+    1  Indikator (Regeln)              24   -15,18   -18,88   -10,53
+    2a Bauchgefuehl (Heuristiken)      10    -2,70   -28,35   +15,55
+    3  Zufall                          60   -15,30   -19,46    -8,23
+    2b echte Menschen              15.776    +5,36   -18,40  +105,73
+
+  VORAB FESTGELEGTER TEST
+    Kruskal-Wallis ueber 1, 2a, 3:  H = 1,031   p = 0,5971
+    URTEIL: 1 = 2 = 3, NICHT UNTERSCHEIDBAR
+
+  PAARWEISE (Mann-Whitney, Holm-korrigiert)
+    Indikator gegen Bauchgefuehl   p roh 0,3744   p Holm 0,7488   nein
+    Indikator gegen Zufall         p roh 0,7476   p Holm 0,7476   nein
+    Bauchgefuehl gegen Zufall      p roh 0,3603   p Holm 1,0000   nein
+
+  DIE ZEHN BAUCHGEFUEHL-HEURISTIKEN
+    "fuehlt sich nach Breakout an"    +52,27 bp
+    "laeuft heiss" (drei gruene Tage) +37,28
+    "ist ueberverkauft"               +15,95
+    "war ruhig, jetzt gehts los"      +14,34
+    "sieht bullish aus"                +0,98
+    "grosse Kerze"                     -6,37
+    "runde Zahl"                      -25,00
+    "sieht bearish aus"               -29,47
+    "faellt ins Messer"               -35,45
+    "ist ueberkauft"                  -60,87
+
+  NEUNTE FALLE -- LOOK-AHEAD IM EIGENEN CODE
+  Tagesbedingung per reindex(ffill) auf alle Stunden verteilt ->
+  die Stunde 01:00 kannte den Schluss um 23:00.
+    "laeuft heiss"       +176,10  ->   +37,28
+    "faellt ins Messer"  +116,15  ->   -35,45  (Vorzeichen kippt)
+
+  GRUPPE 2b: WARUM ECHTE MENSCHEN SCHEINBAR GEWINNEN
+  Nach Umschlag (Volumen / Kontowert), 15.776 Konten:
+    unter 5x  (kaum gehandelt)     692 Konten  +1736,14 bp   80,6 % > 0
+    5-25x                        1.928         +323,83       75,0 %
+    25-100x                      2.088         +114,55       74,7 %
+    100-1.000x                   4.557          +13,32       61,7 %
+    UEBER 1.000x (Vieltrader)    6.511           -6,72       36,1 %
+  PERFEKT MONOTON: je mehr gehandelt wird, desto schlechter.
+  Die besten Werte haben die, die FAST NICHT gehandelt haben --
+  dort misst PnL/Volumen den Kursanstieg, nicht die Handelsleistung.
+  Echte Vieltrader: Median -1,98 bp, nur 36,1 % im Plus.
+  Der Restabstand zum Zufall entspricht ungefaehr dem
+  Gebuehrenunterschied der Plattformen, nicht einem Koennen.
+
+  GRENZEN
+    Gruppe 2a hat nur 10 Mitglieder -> geringe Trennschaerfe.
+    Bauchgefuehl bleibt eine Modellierung, kein Mensch am Chart.
+    Gruppe 2b hat Ueberlebensauswahl und andere Kostenbasis.
+
+  DIE AUSSAGE
+    Schlagen Indikatoren den Zufall?        nein (p 0,7476)
+    Schlaegt Bauchgefuehl den Zufall?       nein (p 1,0000)
+    Schlagen Indikatoren das Bauchgefuehl?  nein (p 0,7488)
+    Was schlaegt alles?                     WENIGER HANDELN

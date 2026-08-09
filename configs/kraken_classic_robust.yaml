@@ -1,0 +1,45 @@
+# Robuste Einstellung fuer Kraken 1-Step Classic (10% Ziel, 6% max Drawdown).
+#
+# Validiert im WALK-FORWARD ueber 4 Jahre BTC 1h (46 x 90-Tage-Fenster,
+# 2022-2026, inkl. Baerenmarkt) -- nicht nur ein trendstarkes Kurzfenster.
+#
+# Bestes Setting ueber 4 Jahre: ATR 0.75x / Risiko 0.3%
+#   -> Pass-Rate 91%, Median-Fensterrendite +16.5%, Worst-Drawdown 6.9%
+# Der 30-Tage-Test hatte 0.5x/0.4% favorisiert -- das war leicht ueberangepasst;
+# ueber den Zyklus gewinnen etwas groessere Bricks (weniger Whipsaw) + weniger Risiko.
+#
+# Ehrlich: KEIN Setting besteht immer. ~9% der Fenster (die haertesten Crashs)
+# reissen auch hier das 6%-Limit. Nachhaltig != unfehlbar.
+
+initial_balance: 10000        # = deine Kraken-Prop-Kontogroesse
+# Groesse ist egal: die Strategie rechnet prozentual und liefert bei 5k/10k/25k/50k
+# identische Pass-Rate, Rendite und Drawdown. Bei 10k = 30 USD Risiko je Trade.
+
+renko:
+  mode: atr
+  atr_period: 14
+  atr_multiplier: 0.75        # 4-Jahres-Optimum (0.5x ueberpasst kurze Trendphasen)
+
+strategy:
+  reversal_bricks: 2          # Einstieg/Reversal bei 2 Gegen-Bricks
+  allow_long: true
+  allow_short: true
+
+costs:
+  # BESTAETIGTE Kraken-Prop-Gebuehren (Stand 2026-07):
+  #   Kommission 4 bps = 0.04% pro Seite (0.08% je Roundtrip)
+  #   Margin-Finanzierung 0.033% pro Tag, alle 4h berechnet
+  # Beides mindert das Guthaben und zaehlt auf MDL und MDD -- die Engine
+  # zieht sie laufend von der Equity ab, also korrekt beruecksichtigt.
+  fee_pct: 0.0004               # 4 bps pro Seite (bestaetigt)
+  funding_rate_daily_pct: 0.00033  # 0.033% pro Tag (bestaetigt)
+  # Diese beiden sind SCHAETZUNGEN und jetzt die groesste Unsicherheit:
+  slippage_pct: 0.0002
+  half_spread_pct: 0.0002
+  slippage_vol_mult: 0.05
+
+risk:
+  risk_per_trade_pct: 0.003   # PRIMAER 0.3% (Worst-DD 6.9%) | mehr Rendite: 0.004 (Worst-DD 9.2%)
+  stop_bricks: 2.0            # Stop-Distanz = 2 Bricks (= das Reversal-Signal)
+  max_leverage: 5.0
+  min_notional: 10.0

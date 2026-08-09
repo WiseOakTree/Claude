@@ -1,0 +1,158 @@
+========================================
+SPICKZETTEL - RENKO-REVERSAL LIVE
+Kraken Prop "Starter", 10.000 $
+0.75x ATR(14) | 0,3 % Risiko | 1h-Chart
+========================================
+
+
+0) EINMALIG PRUEFEN
+----------------------------------------
+Timeframe .............. 1h (NICHT 4h/Tag)
+Kontogroesse ........... 10000   <-- haeufigster Fehler!
+Risiko pro Trade ....... 0,3 %  = 30 $
+ATR-Laenge / Brick ..... 14 / 0,75x
+Reversal nach .......... 2 Bricks
+
+ACHTUNG: Steht die Kontogroesse falsch (z.B. noch
+auf 50.000), sind alle Positionen 5x zu gross und
+du reisst das 6-%-Limit in wenigen Trades.
+
+GROESSEN-FORMEL:
+   Size = 30 $ / (2 x Brick)
+
+   Beispiel: Brick 236,75
+   -> 30 / 473,50 = 0,0634 BTC (ca. 4.000 $ Nominal)
+
+
+1) DER ABLAUF (mehr ist es nicht)
+----------------------------------------
+1. Nachricht kommt
+   -> EINE Stop-Order auf das genannte Level legen
+
+2. Meldung "Level verschoben"
+   -> Order nachziehen
+
+3. Order loest aus
+   -> Position dreht, neues Level kommt
+   -> zurueck zu 1.
+
+Kein TP. Kein manuelles Schliessen.
+
+
+2) SITUATION -> AKTION
+----------------------------------------
+
+Du startest gerade, Indikator zeigt
+schon eine Position
+   -> NICHT einsteigen. Warten, bis das
+      naechste Signal ausloest, dann frisch
+      mitgehen.
+
+Neues Level gemeldet, du bist flat
+   -> Stop-Order auf das Level legen,
+      Groesse nach Formel oben.
+
+Du bist LONG, Sell-Stop UNTER Einstieg
+   -> Nichts tun. Das ist dein geplantes
+      Risiko (30 $).
+
+Du bist LONG, Sell-Stop UEBER Einstieg
+   -> Nichts tun. Gewinn ist gesichert,
+      laufen lassen.
+
+Level zu deinen GUNSTEN verschoben
+(Long: hoeher / Short: tiefer)
+   -> Order nachziehen.
+
+Level zu deinen UNGUNSTEN verschoben
+(Long: tiefer / Short: hoeher)
+   -> Order STEHEN LASSEN. Niemals das
+      Risiko nachtraeglich vergroessern.
+
+Position im Minus, Stop rueckt naeher
+   -> Nichts tun. Ausstoppen lassen.
+
+Preis naehert sich TP1 / TP2
+   -> Nichts tun. Die TPs sind nur
+      Orientierung. Mitnehmen kostet ca.
+      19 Prozentpunkte Erfolgsquote.
+
+Bot war offline / Signal verpasst
+   -> Nicht nachtraeglich einsteigen.
+      Auf das naechste Signal warten.
+
+Drawdown naehert sich 6 % (-600 $)
+   -> Handel pausieren. Die Challenge hat
+      kein Zeitlimit; ein Bust ist endgueltig.
+
+Tagesverlust naehert sich 3 % (-300 $)
+   -> Fuer den Tag aufhoeren.
+      Reset ist 00:30 UTC.
+
+
+3) DIE DREI "NIE"
+----------------------------------------
+1. NIE den Stop in die falsche Richtung
+   verschieben (Long tiefer, Short hoeher).
+
+2. NIE manuell schliessen, weil es rot
+   aussieht - der Stop macht das.
+
+3. NIE ein verpasstes Signal nachtraeglich
+   hinterherkaufen.
+
+
+4) WAS NORMAL IST
+----------------------------------------
+- 59 % deiner Trades sind Verlierer.
+  Das ist by design.
+
+- Durchschnitt: Verlierer -29 $,
+  Gewinner +75 $.
+  Groesster Gewinner in den Daten:
+  +519 $ (17R). Diese wenigen Trades
+  tragen das gesamte Ergebnis.
+
+- Serien von 4-6 Verlusten hintereinander
+  kommen vor.
+
+- Erwartetes Tempo bis +1.000 $:
+  ca. 2-3 Monate.
+
+- Erfolgswahrscheinlichkeit im 4-Jahres-
+  Backtest: 93 %. In ca. 7 % der Faelle
+  reisst auch das beste Setting das Limit.
+  Dann: neue Challenge, NICHT "aufholen".
+
+
+5) DEINE ZAHLEN (10.000 $ Konto)
+----------------------------------------
+Ziel ................... +1.000 $   (10 %)
+Max Drawdown ........... -600 $     (6 %)
+Max Tagesverlust ....... -300 $     (3 %)
+                         Reset 00:30 UTC
+Risiko je Trade ........ 30 $       (0,3 %)
+Oe Positionsgroesse .... ca. 4.000 $ Nominal
+                         (0,4x Hebel)
+Kosten je Trade ........ ca. 6,40 $
+   (Kommission 0,08 % Roundtrip
+    + Funding 0,033 %/Tag
+    + Slippage)
+
+
+6) WENN ETWAS UNKLAR IST
+----------------------------------------
+Warum kein TP?
+   -> docs/realism.md, Abschnitt 2c
+
+Warum vorab platzierte Orders?
+   -> docs/realism.md, Abschnitt 1
+
+Bot einrichten
+   -> docs/deploy_signals.md
+
+
+========================================
+Kein Finanzrat.
+Backtests sagen die Zukunft nicht vorher.
+========================================
