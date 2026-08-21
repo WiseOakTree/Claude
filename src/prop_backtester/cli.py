@@ -17,6 +17,7 @@ import sys
 from . import backtest
 from .config import BacktestConfig, load_config
 from .prop import PRESETS, evaluate_all_presets
+from .renko_macd import SETUPS
 from .renko_trail import VARIANTS, run_variant
 from .report import compute_metrics, format_report, save_plot
 
@@ -88,7 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
     cfgg.add_argument("--atr-period", type=int, help="ATR-Periode fuer Brick-Groesse")
     cfgg.add_argument("--atr-mult", type=float, help="ATR-Multiplikator fuer Brick-Groesse")
     cfgg.add_argument("--variant", metavar="KEY",
-                      help="Management-Stufe der Renko-Trail-Leiter (V0..V6), "
+                      help="Management-Stufe (V0..V6) oder Chart-Setup (MACD0..MACD2), "
                            "siehe --list-variants. Ohne Angabe: Stop-and-Reverse "
                            "ohne Handelsmanagement (der Ausgangspunkt)")
 
@@ -181,7 +182,11 @@ def main(argv=None) -> int:
         print("Renko-Trail -- Management-Leiter (docs/renko_trail_spec.md):\n")
         for key, v in VARIANTS.items():
             art = "Dauerposition" if v.mode == "reverse" else "diskrete Trades"
-            print(f"  {key:4s} {v.label:38s} ({art})")
+            print(f"  {key:6s} {v.label:44s} ({art})")
+        print("\nChart-Setup Renko+MACD (docs/renko_macd_oi_spec.md):\n")
+        for key, v in SETUPS.items():
+            print(f"  {key:6s} {v.label:44s} (MACD auf den Bricks)")
+        print("\n  Renko-Einstellungen dazu: --config configs/tradingview_renko_1pct.yaml")
         return 0
 
     if args.download_kraken:
@@ -199,9 +204,10 @@ def main(argv=None) -> int:
 
     if args.variant:
         key = args.variant.upper()
-        if key not in VARIANTS:
+        alle = {**VARIANTS, **SETUPS}
+        if key not in alle:
             raise SystemExit(f"Unbekannte Variante {args.variant!r} -- siehe --list-variants")
-        variant = VARIANTS[key]
+        variant = alle[key]
         result = run_variant(df, variant, cfg)
         metrics = compute_metrics(result)
         challenges = evaluate_all_presets(result.equity, result.initial_balance)

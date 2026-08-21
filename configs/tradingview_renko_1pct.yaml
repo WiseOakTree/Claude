@@ -1,0 +1,36 @@
+# Renko-Chart wie in TradingView eingestellt:
+#   Quelle OHLC, Boxgroesse 1 % vom Kurs, klassische 2-Boxen-Umkehr.
+#
+# Nutzung (MACD-Kreuzung auf den Bricks, mit hartem Stop):
+#   python -m prop_backtester --csv daten.csv \
+#       --config configs/tradingview_renko_1pct.yaml --variant MACD1
+#
+# Wichtig: der Fill erfolgt zum Schlusskurs der Bar, auf der der Brick
+# entstanden ist -- NICHT am Brick-Level. Warum das der entscheidende
+# Unterschied ist, steht in docs/renko_macd_oi.md.
+
+initial_balance: 50000
+
+renko:
+  mode: fixed
+  fixed_brick_pct: 0.01   # 1 % vom Kurs, waechst mit dem Kurs mit
+  source: ohlc            # auch Dochte erzeugen Bricks (TradingView "OHLC")
+  reversal_boxes: 2.0     # klassisches Renko: Gegenbrick erst nach 2 Boxen
+
+risk:
+  risk_per_trade_pct: 0.005   # 0,5 % des Kontos je Trade
+  stop_bricks: 2.0            # Stop = 2 Boxen = 2 % vom Kurs
+  max_leverage: 5.0
+
+costs:
+  fee_pct: 0.0004
+  slippage_pct: 0.0002
+  half_spread_pct: 0.0002
+  slippage_vol_mult: 0.0
+  funding_rate_daily_pct: 0.0003
+
+# Das Handelsmanagement kommt aus der gewaehlten Variante (--variant MACD0/1/2)
+# und wird von dieser Datei nicht ueberschrieben.
+
+execution:
+  mode: close

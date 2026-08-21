@@ -90,3 +90,33 @@ def filter_signals(signals: pd.DataFrame, ok: np.ndarray) -> pd.DataFrame:
     idx = signals["src_index"].to_numpy(dtype=int)
     maske = np.asarray(ok, dtype=bool)[idx]
     return signals[maske].reset_index(drop=True)
+
+
+# --- Fertige Setups ---------------------------------------------------------
+#
+# Das Chart-Setup "Renko OHLC, Box 1 %, MACD" in drei Managementstufen. Die
+# Renko-Einstellungen selbst kommen aus der Konfiguration (siehe
+# ``configs/tradingview_renko_1pct.yaml``), damit man Boxgroesse und Quelle
+# aendern kann, ohne den Code anzufassen.
+
+def _setups():
+    from .config import ManagementConfig
+    from .renko_trail import Variant
+
+    def v(key, label, mgmt):
+        return Variant(key, label, "macd", management=mgmt)
+
+    return {
+        "MACD0": v("MACD0", "MACD-Kreuzung, kein Stop (dreht am Gegensignal)",
+                   ManagementConfig()),
+        "MACD1": v("MACD1", "MACD-Kreuzung + harter Stop (2 Boxen)",
+                   ManagementConfig(hard_stop=True, stop_slippage_pct=0.0005)),
+        "MACD2": v("MACD2", "MACD-Kreuzung + Stop + Break-even + Trailing",
+                   ManagementConfig(hard_stop=True, stop_slippage_pct=0.0005,
+                                    breakeven_bricks=2.0,
+                                    breakeven_offset_pct=0.0016,
+                                    trail_bricks=2.0)),
+    }
+
+
+SETUPS = _setups()

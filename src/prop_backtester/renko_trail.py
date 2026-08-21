@@ -113,16 +113,17 @@ def brick_grid(bricks: pd.DataFrame, n_bars: int) -> np.ndarray:
 
 @dataclass
 class Variant:
-    """Eine Stufe der Management-Leiter."""
+    """Eine Stufe der Management-Leiter -- oder ein komplettes Chart-Setup."""
 
     key: str
     label: str
-    mode: str                      # "reverse" (Dauerposition) oder "entry" (diskret)
+    mode: str                      # "reverse", "entry" (diskret) oder "macd"
     management: ManagementConfig = field(default_factory=ManagementConfig)
     tp_r_multiples: List[float] = field(default_factory=list)
     tp_take_fractions: List[float] = field(default_factory=list)
     entry_bricks: int = 3
     reversal_bricks: int = 2
+    macd: tuple = (12, 26, 9)      # nur bei mode="macd": fast, slow, signal
 
 
 #: Break-even heisst "Stop auf Einstieg + Kosten" -- ein Stop exakt auf dem
@@ -185,6 +186,12 @@ def variant_signals(variant: Variant, bricks: pd.DataFrame,
         return entry_signals(bricks, entry_bricks=variant.entry_bricks,
                              allow_long=cfg.strategy.allow_long,
                              allow_short=cfg.strategy.allow_short)
+    if variant.mode == "macd":
+        from .renko_macd import macd_signals
+        fast, slow, signal = variant.macd
+        return macd_signals(bricks, fast=fast, slow=slow, signal=signal,
+                            allow_long=cfg.strategy.allow_long,
+                            allow_short=cfg.strategy.allow_short)
     raise ValueError(f"unbekannter Variant-Modus: {variant.mode!r}")
 
 
