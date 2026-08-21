@@ -198,3 +198,51 @@ def test_negative_parameter_werden_abgelehnt():
         ManagementConfig(hard_stop=True, trail_bricks=0.0).validate()
     with pytest.raises(ValueError):
         ManagementConfig(hard_stop=True, time_stop_bars=0).validate()
+
+
+# --- Feste Klammer: nur Stop und Ziel beenden den Trade -------------------
+
+def test_gegensignal_dreht_normalerweise():
+    df = _flat([100, 100, 100, 100])
+    sig = pd.concat([_sig(df, 0, target=1), _sig(df, 2, target=-1)])
+    res = run_backtest(df, sig, _cfg())
+    assert list(res.trades["side"]) == ["long", "short"]
+
+
+def test_ignore_reverse_signals_haelt_die_position():
+    df = _flat([100, 100, 100, 100])
+    sig = pd.concat([_sig(df, 0, target=1), _sig(df, 2, target=-1)])
+    mgmt = ManagementConfig(hard_stop=True, ignore_reverse_signals=True)
+    res = run_backtest(df, sig, _cfg(mgmt))
+    assert list(res.trades["side"]) == ["long"]
+
+
+def test_klammer_schliesst_am_ziel():
+    """SL 3 Bricks, TP 6 Bricks (2R): das Ziel beendet den Trade."""
+    df = _bars([(100, 100, 100, 100), (100, 107, 100, 106), (106, 106, 106, 106)])
+    cfg = BacktestConfig(
+        costs=_zero_costs(),
+        risk=RiskConfig(risk_per_trade_pct=0.01, stop_bricks=3.0, max_leverage=100.0,
+                        tp_r_multiples=[2.0], tp_take_fractions=[1.0]),
+        management=ManagementConfig(hard_stop=True, stop_slippage_pct=0.0,
+                                    ignore_reverse_signals=True),
+    )
+    res = run_backtest(df, _sig(df, 0, brick=1.0), cfg)
+    t = res.trades.iloc[0]
+    assert t["exit_reason"] == "ziel"
+    assert t["r_multiple"] == pytest.approx(2.0, abs=1e-9)
+
+
+def test_klammer_stop_zaehlt_vor_dem_ziel():
+    """Beruehrt eine Bar beide Seiten, gilt der Stop -- ohne Tickdaten pessimistisch."""
+    df = _bars([(100, 100, 100, 100), (100, 107, 96, 106)])
+    cfg = BacktestConfig(
+        costs=_zero_costs(),
+        risk=RiskConfig(risk_per_trade_pct=0.01, stop_bricks=3.0, max_leverage=100.0,
+                        tp_r_multiples=[2.0], tp_take_fractions=[1.0]),
+        management=ManagementConfig(hard_stop=True, stop_slippage_pct=0.0,
+                                    ignore_reverse_signals=True),
+    )
+    res = run_backtest(df, _sig(df, 0, brick=1.0), cfg)
+    assert res.trades["exit_reason"].iloc[0] == "stop"
+    assert res.trades["r_multiple"].iloc[0] == pytest.approx(-1.0, abs=1e-9)

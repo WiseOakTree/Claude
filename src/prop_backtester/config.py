@@ -143,6 +143,11 @@ class ManagementConfig:
       * ``trail_bricks``       -- Stop folgt dem Renko-Gitter in diesem Abstand
       * ``time_stop_bars``     -- Ausstieg nach so vielen Bars, sofern der Trade
                                   nicht mindestens ``time_stop_min_r`` im Plus liegt
+      * ``ignore_reverse_signals`` -- Gegensignale werden ignoriert, solange eine
+                                  Position offen ist. Dann beenden **nur** Stop
+                                  und Ziel den Trade (feste Klammer / OCO).
+                                  Ohne diese Option dreht ein Gegensignal die
+                                  Position -- das ist ein anderer Ausstieg.
 
     Break-even und Trailing setzen ``hard_stop`` voraus: ein nachgezogener Stop,
     der nie ausgeloest wird, waere reine Kosmetik.
@@ -155,6 +160,7 @@ class ManagementConfig:
     trail_bricks: Optional[float] = None
     time_stop_bars: Optional[int] = None
     time_stop_min_r: float = 1.0
+    ignore_reverse_signals: bool = False
 
     def validate(self) -> None:
         if self.stop_slippage_pct < 0:

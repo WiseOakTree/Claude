@@ -365,6 +365,10 @@ class Engine:
             if i in sig_by_bar:
                 # 3a) Reversal-Bar: Signal zuerst (pessimistisch, kein TP diese Bar)
                 target, sig_price, bsize = sig_by_bar[i]
+                if (pos is not None and pos.size > 0
+                        and m.ignore_reverse_signals):
+                    # Feste Klammer: nur Stop und Ziel beenden den Trade.
+                    target = pos.side
                 if pos is not None and pos.side != target:
                     self._close_units(pos, sig_price, pos.size)
                     balance += pos.realized
