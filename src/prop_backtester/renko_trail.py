@@ -125,6 +125,12 @@ class Variant:
     reversal_bricks: int = 2
 
 
+#: Break-even heisst "Stop auf Einstieg + Kosten" -- ein Stop exakt auf dem
+#: Einstiegskurs waere nach Gebuehren immer noch ein kleiner Verlust.
+#: 16 bp = Roundtrip aus der Spezifikation.
+BE_OFFSET = 0.0016
+
+
 def _mgmt(**kw) -> ManagementConfig:
     return ManagementConfig(**kw)
 
@@ -138,16 +144,20 @@ VARIANTS: Dict[str, Variant] = {
     "V2": Variant("V2", "diskrete Trades + harter Stop", "entry",
                   management=_mgmt(hard_stop=True)),
     "V3": Variant("V3", "+ Break-even nach 2 Bricks", "entry",
-                  management=_mgmt(hard_stop=True, breakeven_bricks=2.0)),
+                  management=_mgmt(hard_stop=True, breakeven_bricks=2.0,
+                                   breakeven_offset_pct=BE_OFFSET)),
     "V4": Variant("V4", "+ Brick-Trailing", "entry",
                   management=_mgmt(hard_stop=True, breakeven_bricks=2.0,
+                                   breakeven_offset_pct=BE_OFFSET,
                                    trail_bricks=2.0)),
     "V5": Variant("V5", "+ Teilmitnahme 50 % bei 2R", "entry",
                   management=_mgmt(hard_stop=True, breakeven_bricks=2.0,
+                                   breakeven_offset_pct=BE_OFFSET,
                                    trail_bricks=2.0),
                   tp_r_multiples=[2.0], tp_take_fractions=[0.5]),
     "V6": Variant("V6", "+ Zeitstop (voller Renko-Trail)", "entry",
                   management=_mgmt(hard_stop=True, breakeven_bricks=2.0,
+                                   breakeven_offset_pct=BE_OFFSET,
                                    trail_bricks=2.0, time_stop_bars=240,
                                    time_stop_min_r=1.0),
                   tp_r_multiples=[2.0], tp_take_fractions=[0.5]),
