@@ -196,3 +196,122 @@ Das Renko-Signal ist dann nur noch der Auslöser des Einstiegs — der Rest des
 Trades gehört dem Management. Genau deshalb ist die nächste Frage die
 entscheidende: Hätte dasselbe Management mit einem beliebigen Einstieg
 dasselbe geliefert?
+
+---
+
+## Das Nullmodell: dieselbe Verwaltung, gewürfelte Einstiege
+
+200 Ziehungen je Variante. Gleiche Anzahl Signale, gleiche Long/Short-Quote,
+Zeitpunkte gleichverteilt über dieselben Bars, **identisches Management,
+identische Kosten**. Nur der Einstiegszeitpunkt ist gewürfelt.
+
+### Frage A — Erwartungswert
+
+| | echt | Zufall Ø | 5 % | 95 % | **Perzentil** |
+|---|---|---|---|---|---|
+| V0 | −15,18 | −15,66 | −32,43 | −0,38 | 52,5 % |
+| V1 | −15,33 | −16,33 | −24,89 | −6,46 | 57,5 % |
+| V2 | −6,75 | −14,87 | −24,48 | −5,65 | **91,5 %** |
+| V3 | −10,94 | −16,18 | −24,50 | −7,01 | 81,0 % |
+| V4 | −22,19 | −22,44 | −28,12 | −16,49 | 51,5 % |
+| V5 | −18,00 | −20,77 | −25,83 | −15,61 | 83,0 % |
+| V6 | −18,00 | −21,10 | −26,37 | −16,08 | 83,5 % |
+
+Im Holdout fällt V2 von 91,5 % auf **27,0 %** — schlechter als drei Viertel
+aller Zufallsziehungen.
+
+**Keine Stufe erreicht das 95. Perzentil.** Und der Zufall landet fast überall
+auf demselben Wert wie das echte Signal: V0 real −15,18 gegen Zufall −15,66.
+Anders gesagt:
+
+> **Das Renko-Signal trägt nichts bei, was Zufallseinstiege nicht auch tragen.**
+> Was die Kurve formt, ist das Management und sind die Kosten.
+
+### Frage B — und hier wird es interessant
+
+| | echt | Zufall Ø |
+|---|---|---|
+| V0 Verlust > 1,2 R | 25,8 % | 24,7 % |
+| V1 Verlust > 1,2 R | 1,6 % | 1,8 % |
+| V4 Verlust > 1,2 R | 1,0 % | 0,7 % |
+
+**Die Risiko-Treue reproduziert der Zufall genauso.** Ein harter Stop drückt
+die Risikobrüche auf ~1,8 % — bei gewürfelten Einstiegen exakt so wie bei den
+echten.
+
+Das ist keine Enttäuschung, das ist der Punkt:
+
+> Risikomanagement wirkt **unabhängig davon, ob der Einstieg etwas taugt**.
+> Genau deshalb ist es der verlässliche Teil — und genau deshalb ist es
+> **kein Edge**. Es verbessert jeden Einstieg gleich, auch einen sinnlosen.
+
+---
+
+## Urteil nach den vorab festgelegten Kriterien
+
+### Frage A — erzeugt Management einen Edge?
+
+| Kriterium | Ergebnis |
+|---|---|
+| 1. bp/Trade > 0 im Suchzeitraum | ❌ beste Stufe −6,75 |
+| 2. gleiches Vorzeichen im Holdout | ❌ V2: −6,75 → −20,70 |
+| 3. über dem 95. Perzentil der Zufallseinstiege | ❌ höchstens 91,5 % |
+| 4. t > 2,69 (Bonferroni, 7 Varianten) | ❌ bestes t = −1,13 |
+
+**Alle vier verfehlt: kein Edge durch Management.** Wie vorab erwartet.
+
+### Frage B — verbessert Management die Risiko-Treue?
+
+| Kriterium | Ergebnis |
+|---|---|
+| 1. Anteil Verluste > 1,2 R sinkt gegenüber V0 | ✅ 25,8 % → 1,0–1,6 % |
+| 2. 95-%-Quantil des Verlusts sinkt | ✅ −1,84 R → −1,13 R |
+
+**Beide erfüllt.** Zusätzlich, ohne dass es Kriterium war: größter Einzelverlust
+−25,82 R → −1,87 R, Tage über dem 3-%-Limit 7,1 → 0,4.
+
+Wie vorab festgelegt werden A und B **nicht gegeneinander verrechnet**. Beides
+gilt gleichzeitig.
+
+---
+
+## Was das praktisch heißt
+
+1. **Der Stop gehört ausgeführt, nicht geplant.** Kosten: 0,16 bp je Trade.
+   Nutzen: der größte Einzelverlust fällt um Faktor 14. Es gibt in dieser
+   Untersuchung keinen billigeren Tausch.
+
+2. **Erwarte davon keinen Gewinn.** Kein Managementbaustein hat den
+   Erwartungswert positiv gemacht, und der Zufall schafft mit demselben
+   Management dasselbe. Wer glaubt, ein besserer Stop mache aus einem
+   Nullsignal ein System, hat die Wirkungsrichtung vertauscht.
+
+3. **Trailing ist eine Entscheidung, keine Verbesserung.** 11,25 bp je Trade
+   für 3,6 → 0,5 Limit-Tage. Auf einem Prop-Konto mit 3-%-Tageslimit kann das
+   der richtige Tausch sein. Auf eigenem Kapital ohne Tageslimit ist es teuer.
+
+4. **Rechne mit 1,09 R, nicht mit 1,00 R.** Wer 0,5 % Kontorisiko einstellt,
+   verliert im Schnitt 0,545 % — und bei einer Kurslücke bis 0,94 %.
+
+5. **Weniger Trades war der einzige Baustein mit positivem Vorzeichen.** Der
+   Schritt von der Dauerposition zu diskreten Trades (V1 → V2) brachte
+   +8,58 bp je Trade, indem er ein Drittel der Trades wegließ. Das ist
+   dieselbe Richtung, in die auch [`einfach.md`](einfach.md) und
+   [`drei_gruppen.md`](drei_gruppen.md) zeigen: **je mehr gehandelt wird, desto
+   schlechter.**
+
+---
+
+## Einschränkungen
+
+* **Ein Signal, eine Brick-Definition.** Geprüft wurde Management auf *diesem*
+  Renko-Signal. Dass Management auf einem Signal *mit* Edge nichts ändert,
+  folgt daraus nicht — nur, dass es selbst keinen erzeugt.
+* **Der Zufallsvergleich ist konservativ gebaut.** Zufallseinstiege in den
+  Dauerpositions-Stufen (V0/V1) erzeugen weniger Trades, weil die Engine
+  gleichgerichtete Folgesignale ignoriert. Verglichen wird deshalb bp **je
+  Trade**, nicht je Zeitraum.
+* **Kurslücken sind Binance-Spot-Lücken.** An einer Börse mit dünnerem Buch
+  oder bei Wochenendmärkten sind die 1,6 % Restrisiko größer.
+* **Keine Positionsgrößen-Optimierung.** 0,5 % je Trade, 5× Hebelgrenze, fest.
+* **BTC ist als Holdout verbraucht** und zählt im Holdout-Urteil nicht mit.
