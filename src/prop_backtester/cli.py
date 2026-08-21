@@ -5,6 +5,7 @@ Beispiele:
     python -m prop_backtester --csv daten.csv --config configs/example.yaml
     python -m prop_backtester --kraken XBTUSD --interval 60 --plot equity.png
     python -m prop_backtester --list-presets
+    python -m prop_backtester --demo --variant V6      # Renko-Trail mit Management
 """
 
 from __future__ import annotations
@@ -15,8 +16,9 @@ import sys
 
 from . import backtest
 from .config import BacktestConfig, load_config
-from .prop import PRESETS
-from .report import format_report, save_plot
+from .prop import PRESETS, evaluate_all_presets
+from .renko_trail import VARIANTS, run_variant
+from .report import compute_metrics, format_report, save_plot
 
 
 def _load_data(args):
@@ -85,11 +87,17 @@ def build_parser() -> argparse.ArgumentParser:
     cfgg.add_argument("--risk", type=float, help="Risiko pro Trade (Anteil), z.B. 0.005")
     cfgg.add_argument("--atr-period", type=int, help="ATR-Periode fuer Brick-Groesse")
     cfgg.add_argument("--atr-mult", type=float, help="ATR-Multiplikator fuer Brick-Groesse")
+    cfgg.add_argument("--variant", metavar="KEY",
+                      help="Management-Stufe der Renko-Trail-Leiter (V0..V6), "
+                           "siehe --list-variants. Ohne Angabe: Stop-and-Reverse "
+                           "ohne Handelsmanagement (der Ausgangspunkt)")
 
     out = p.add_argument_group("Ausgabe")
     out.add_argument("--plot", metavar="PNG", help="Equity/Drawdown-Plot speichern")
     out.add_argument("--json", metavar="FILE", help="Ergebnis als JSON speichern")
     out.add_argument("--list-presets", action="store_true", help="Kraken-Presets zeigen")
+    out.add_argument("--list-variants", action="store_true",
+                     help="Management-Stufen der Renko-Trail-Leiter zeigen")
     return p
 
 
@@ -169,6 +177,13 @@ def main(argv=None) -> int:
                 print(f"    {a:14s} -> {target}")
         return 0
 
+    if args.list_variants:
+        print("Renko-Trail -- Management-Leiter (docs/renko_trail_spec.md):\n")
+        for key, v in VARIANTS.items():
+            art = "Dauerposition" if v.mode == "reverse" else "diskrete Trades"
+            print(f"  {key:4s} {v.label:38s} ({art})")
+        return 0
+
     if args.download_kraken:
         return _run_download(args)
 
@@ -182,7 +197,17 @@ def main(argv=None) -> int:
     if len(df) < cfg.renko.atr_period + 5:
         raise SystemExit("Zu wenige Datenpunkte fuer die gewaehlte ATR-Periode.")
 
-    result, metrics, challenges = backtest(df, cfg)
+    if args.variant:
+        key = args.variant.upper()
+        if key not in VARIANTS:
+            raise SystemExit(f"Unbekannte Variante {args.variant!r} -- siehe --list-variants")
+        variant = VARIANTS[key]
+        result = run_variant(df, variant, cfg)
+        metrics = compute_metrics(result)
+        challenges = evaluate_all_presets(result.equity, result.initial_balance)
+        print(f"Variante {key}: {variant.label}\n")
+    else:
+        result, metrics, challenges = backtest(df, cfg)
     print(format_report(result, metrics, challenges))
 
     if args.plot:
