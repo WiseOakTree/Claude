@@ -10,20 +10,33 @@ die Equity-Kurve fuer die Prop-Regel-Pruefung realistisch ist:
     Teilverkaeufe korrekt anteilig belastet werden).
   * Optionale **Teil-Gewinnmitnahmen** an TP-Leveln (``tp_take_fractions``);
     der Rest laeuft bis zum Gegensignal (Stop-and-Reverse).
+  * Optionales **Handelsmanagement** (``ManagementConfig``): harter Stop,
+    Break-even, Brick-Trailing, Zeitstop. Standardmaessig aus.
   * Mark-to-Market inkl. **unrealisiertem** PnL -- Kraken Prop rechnet realized
     UND unrealized in Daily-Loss und Drawdown ein.
   * Fuer jede Bar werden zusaetzlich die intrabar Extrema (equity_low/high)
     geschaetzt (konservativ), damit Drawdown-Breaches nicht "durchrutschen".
 
-Reihenfolge innerhalb einer Bar: Liegt auf dieser Bar ein Reversal-Signal, wird
-**zuerst das Signal** verarbeitet (pessimistisch -- eine TP-Mitnahme derselben
-Bar wird verworfen). Nur auf signalfreien Bars werden TPs geprueft.
+Reihenfolge innerhalb einer Bar (bewusst pessimistisch, weil ohne Tickdaten die
+tatsaechliche Reihenfolge unbekannt ist):
+
+  1. **Stop** -- er zaehlt vor allem anderen. Wer Stop und Ziel in derselben Bar
+     hatte, wurde ausgestoppt.
+  2. **Signal** (Reversal); auf einer Signal-Bar entfaellt die TP-Pruefung.
+  3. **Teil-Gewinnmitnahme** auf signalfreien Bars.
+  4. **Zeitstop** zum Bar-Schluss.
+  5. **Stop nachziehen** (Break-even/Trailing) -- wirkt erst ab der naechsten Bar.
+
+Jeder Trade wird zusaetzlich in **R** abgerechnet: R ist das beim Einstieg
+geplante Risiko (Abstand Einstieg -> Anfangsstop, mal Positionsgroesse). Das
+erlaubt die eigentlich interessante Frage: Kommt der Trade dort an, wo er beim
+Einstieg geplant war -- oder wird der geplante Verlust regelmaessig ueberschritten?
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -40,6 +53,12 @@ class Position:
     entry_fee_per_unit: float  # Einstiegsgebuehr je Einheit
     entry_time: pd.Timestamp
     brick_size: float
+    entry_bar: int = -1                  # Bar-Index des Fills
+    initial_stop: float = float("nan")   # geplanter Stop beim Einstieg
+    stop_price: float = float("nan")     # aktueller Stop (nachgezogen)
+    risk_per_unit: float = 0.0           # 1R je Einheit (Einstieg -> Anfangsstop)
+    breakeven_done: bool = False
+    stop_moves: int = 0                  # wie oft der Stop nachgezogen wurde
     funding_per_unit: float = 0.0        # aufgelaufene Funding-Kosten je Einheit
     tp_prices: List[float] = field(default_factory=list)
     tp_fracs: List[float] = field(default_factory=list)
@@ -75,6 +94,7 @@ class Engine:
         self.half_spread = c.half_spread_pct
         self.slip_vol = c.slippage_vol_mult
         self.funding_daily = c.funding_rate_daily_pct
+        self.mgmt = cfg.management
 
     # --- Kosten ---------------------------------------------------------
     def _adverse(self, brick_size: float, price: float) -> float:
@@ -92,12 +112,18 @@ class Engine:
         per_unit_cost = pos.entry_fee_per_unit + pos.funding_per_unit + self.fee * price
         return pos.realized + (pos.side * (price - pos.entry_fill) - per_unit_cost) * pos.size
 
-    def _close_units(self, pos: Position, price: float, units: float) -> float:
-        """Schliesst ``units`` Einheiten zum Marktpreis und gibt den PnL zurueck."""
+    def _close_units(self, pos: Position, price: float, units: float,
+                     extra_adverse: float = 0.0) -> float:
+        """Schliesst ``units`` Einheiten zum Marktpreis und gibt den PnL zurueck.
+
+        ``extra_adverse`` ist ein zusaetzlicher Fill-Aufschlag (Anteil) -- fuer
+        Stop-Ausfuehrungen, die als Markt-Order in die Bewegung hinein laufen.
+        """
         units = min(units, pos.size)
         if units <= 0:
             return 0.0
-        exit_fill = price * (1 - pos.side * self._adverse(pos.brick_size, price))
+        adverse = self._adverse(pos.brick_size, price) + extra_adverse
+        exit_fill = price * (1 - pos.side * adverse)
         per_unit = (pos.side * (exit_fill - pos.entry_fill)
                     - pos.entry_fee_per_unit - self.fee * exit_fill - pos.funding_per_unit)
         pnl = per_unit * units
@@ -106,7 +132,7 @@ class Engine:
         return pnl
 
     def _open(self, side: int, price: float, brick_size: float,
-              balance: float, time: pd.Timestamp) -> Optional[Position]:
+              balance: float, time: pd.Timestamp, bar: int) -> Optional[Position]:
         """Oeffnet eine Position mit risiko-basierter Groesse; None wenn zu klein."""
         risk = self.cfg.risk
         stop_dist = risk.stop_bricks * brick_size
@@ -126,10 +152,13 @@ class Engine:
             tp_prices.append(entry_fill + side * m * stop_dist)
             tp_fracs.append(float(frac))
 
+        stop = entry_fill - side * stop_dist
         return Position(
             side=side, initial_size=size, size=size, entry_fill=entry_fill,
             entry_fee_per_unit=self.fee * entry_fill, entry_time=time,
-            brick_size=brick_size, tp_prices=tp_prices, tp_fracs=tp_fracs,
+            brick_size=brick_size, entry_bar=bar,
+            initial_stop=stop, stop_price=stop, risk_per_unit=stop_dist,
+            tp_prices=tp_prices, tp_fracs=tp_fracs,
             tp_done=[False] * len(tp_prices),
         )
 
@@ -149,6 +178,64 @@ class Engine:
                 pos.partials += 1
             realized += pnl
         return realized
+
+    # --- Handelsmanagement ----------------------------------------------
+    def _stop_fill(self, pos: Position, open_: float, high: float,
+                   low: float) -> Optional[float]:
+        """Wurde der Stop getroffen? Gibt den Ausfuehrungspreis zurueck.
+
+        **Gap-Regel:** Eroeffnet die Bar bereits jenseits des Stops, wird zur
+        Eroeffnung gefuellt -- nicht am Stop-Preis. Ein Stop schuetzt nicht
+        gegen Luecken, und ein Backtest, der das anders rechnet, luegt.
+        """
+        stop = pos.stop_price
+        if not np.isfinite(stop):
+            return None
+        if pos.side == 1:
+            if open_ <= stop:
+                return float(open_)
+            if low <= stop:
+                return float(stop)
+        else:
+            if open_ >= stop:
+                return float(open_)
+            if high >= stop:
+                return float(stop)
+        return None
+
+    def _update_stop(self, pos: Position, ref_price: float) -> None:
+        """Zieht den Stop nach (Break-even, Trailing) -- wirkt ab der naechsten Bar.
+
+        ``ref_price`` ist der Schlusskurs des letzten Renko-Bricks, wenn ein
+        Gitter uebergeben wurde, sonst der Bar-Schluss. Beides ist zum
+        Bar-Schluss bekannt -- kein Look-ahead.
+        """
+        m = self.mgmt
+        if not m.hard_stop or pos.size <= 0:
+            return
+        advance = pos.side * (ref_price - pos.entry_fill)
+        new_stop = pos.stop_price
+
+        if m.breakeven_bricks is not None and not pos.breakeven_done:
+            if advance >= m.breakeven_bricks * pos.brick_size:
+                be = pos.entry_fill * (1 + pos.side * m.breakeven_offset_pct)
+                new_stop = max(new_stop, be) if pos.side == 1 else min(new_stop, be)
+                pos.breakeven_done = True
+
+        if m.trail_bricks is not None:
+            cand = ref_price - pos.side * m.trail_bricks * pos.brick_size
+            new_stop = max(new_stop, cand) if pos.side == 1 else min(new_stop, cand)
+
+        if new_stop != pos.stop_price:
+            pos.stop_price = float(new_stop)
+            pos.stop_moves += 1
+
+    def _r_multiple(self, pos: Position, price: float) -> float:
+        """Aktueller Stand des Trades in R (geplantes Anfangsrisiko = 1)."""
+        risk_total = pos.risk_per_unit * pos.initial_size
+        if risk_total <= 0:
+            return 0.0
+        return self._unrealized(pos, price) / risk_total
 
     # --- Ausfuehrungsmodell (Look-ahead-Schutz) --------------------------
     def _resolve_fill(self, row, i, opens, highs, lows, closes, n):
@@ -192,13 +279,26 @@ class Engine:
         return i, level
 
     # --- Hauptlauf ------------------------------------------------------
-    def run(self, df: pd.DataFrame, signals: pd.DataFrame) -> BacktestResult:
+    def run(self, df: pd.DataFrame, signals: pd.DataFrame,
+            grid: Optional[Sequence[float]] = None) -> BacktestResult:
+        """Faehrt die Bars ab und rechnet Signale in Trades und Equity um.
+
+        ``grid`` (optional) ist je Bar der Schlusskurs des zuletzt bekannten
+        Renko-Bricks. Ist es gesetzt, zieht das Trailing den Stop am
+        **Brick-Gitter** nach statt am Bar-Schluss.
+        """
         n = len(df)
         highs = df["high"].to_numpy(float)
         lows = df["low"].to_numpy(float)
         closes = df["close"].to_numpy(float)
         times = df.index
         dt_frac = _infer_dt_hours(times) / 24.0  # Bruchteil eines Tages je Bar
+
+        grid_arr = None
+        if grid is not None:
+            grid_arr = np.asarray(grid, dtype=float)
+            if len(grid_arr) != n:
+                raise ValueError("grid muss dieselbe Laenge wie die Bars haben")
 
         # Fill-Preise NICHT vom Signal uebernehmen, sondern aus den Bar-Daten
         # ableiten -- verhindert Look-ahead-Bias per Konstruktion.
@@ -218,6 +318,7 @@ class Engine:
         eq_low = np.empty(n)
         eq_high = np.empty(n)
         trades = []
+        m = self.mgmt
 
         def eq_at(price: float) -> float:
             return balance + self._unrealized(pos, price)
@@ -243,25 +344,54 @@ class Engine:
             # 1) Bewertung mit dem Zustand zu Beginn der Bar
             mark()
 
+            # 2) Stop zuerst -- vor Signal und vor Teilmitnahme (pessimistisch)
+            if (pos is not None and pos.size > 0 and m.hard_stop
+                    and i > pos.entry_bar):
+                fill = self._stop_fill(pos, opens[i], hi, lo)
+                if fill is not None:
+                    self._close_units(pos, fill, pos.size,
+                                      extra_adverse=m.stop_slippage_pct)
+                    balance += pos.realized
+                    trades.append(_trade_record(pos, fill, times[i], i, "stop"))
+                    pos = None
+                    mark()
+
             if i in sig_by_bar:
-                # 2a) Reversal-Bar: Signal zuerst (pessimistisch, kein TP diese Bar)
+                # 3a) Reversal-Bar: Signal zuerst (pessimistisch, kein TP diese Bar)
                 target, sig_price, bsize = sig_by_bar[i]
                 if pos is not None and pos.side != target:
                     self._close_units(pos, sig_price, pos.size)
                     balance += pos.realized
-                    trades.append(_trade_record(pos, sig_price, times[i]))
+                    trades.append(_trade_record(pos, sig_price, times[i], i, "signal"))
                     pos = None
                 if pos is None and target != 0:
-                    pos = self._open(target, sig_price, bsize, balance, times[i])
+                    pos = self._open(target, sig_price, bsize, balance, times[i], i)
                 mark()
             elif pos is not None and pos.size > 0 and pos.tp_prices:
-                # 2b) Signalfreie Bar: Teil-Gewinnmitnahmen pruefen
+                # 3b) Signalfreie Bar: Teil-Gewinnmitnahmen pruefen
                 self._check_tps(pos, hi, lo)
                 if pos.size <= 1e-12:
                     balance += pos.realized
-                    trades.append(_trade_record(pos, cl, times[i]))
+                    trades.append(_trade_record(pos, cl, times[i], i, "ziel"))
                     pos = None
                 mark()
+
+            # 4) Zeitstop zum Bar-Schluss
+            if (pos is not None and pos.size > 0 and m.time_stop_bars is not None
+                    and i - pos.entry_bar >= m.time_stop_bars
+                    and self._r_multiple(pos, cl) < m.time_stop_min_r):
+                self._close_units(pos, cl, pos.size)
+                balance += pos.realized
+                trades.append(_trade_record(pos, cl, times[i], i, "zeit"))
+                pos = None
+                mark()
+
+            # 5) Stop nachziehen -- wirkt erst ab der naechsten Bar
+            if pos is not None and pos.size > 0:
+                ref = cl
+                if grid_arr is not None and np.isfinite(grid_arr[i]):
+                    ref = float(grid_arr[i])
+                self._update_stop(pos, ref)
 
             eq_low[i] = min(lows_cand)
             eq_high[i] = max(highs_cand)
@@ -271,7 +401,7 @@ class Engine:
         if pos is not None:
             self._close_units(pos, closes[-1], pos.size)
             balance += pos.realized
-            trades.append(_trade_record(pos, closes[-1], times[-1]))
+            trades.append(_trade_record(pos, closes[-1], times[-1], n - 1, "ende"))
             pos = None
 
         equity = pd.DataFrame(
@@ -288,9 +418,10 @@ class Engine:
         )
 
 
-def _trade_record(pos: Position, exit_price: float,
-                  exit_time: pd.Timestamp) -> dict:
+def _trade_record(pos: Position, exit_price: float, exit_time: pd.Timestamp,
+                  exit_bar: int = -1, reason: str = "") -> dict:
     notional = pos.entry_fill * pos.initial_size
+    risk_total = pos.risk_per_unit * pos.initial_size
     return {
         "entry_time": pos.entry_time,
         "exit_time": exit_time,
@@ -298,14 +429,23 @@ def _trade_record(pos: Position, exit_price: float,
         "size": pos.initial_size,
         "entry_price": pos.entry_fill,
         "exit_price": exit_price,
+        "initial_stop": pos.initial_stop,
+        "stop_moves": pos.stop_moves,
         "funding": pos.funding_per_unit * pos.initial_size,
         "partials": pos.partials,
         "pnl": pos.realized,
         "return_pct": pos.realized / notional if notional else 0.0,
+        # R = beim Einstieg geplantes Risiko. Der Vergleich "geplant vs.
+        # tatsaechlich" ist der eigentliche Pruefstein des Risikomanagements.
+        "risk": risk_total,
+        "r_multiple": pos.realized / risk_total if risk_total else 0.0,
+        "bars_held": (exit_bar - pos.entry_bar) if exit_bar >= 0 else -1,
+        "exit_reason": reason,
     }
 
 
 def run_backtest(df: pd.DataFrame, signals: pd.DataFrame,
-                 cfg: BacktestConfig) -> BacktestResult:
+                 cfg: BacktestConfig,
+                 grid: Optional[Sequence[float]] = None) -> BacktestResult:
     """Bequeme Top-Level-Funktion."""
-    return Engine(cfg).run(df, signals)
+    return Engine(cfg).run(df, signals, grid=grid)

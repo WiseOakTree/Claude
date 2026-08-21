@@ -112,6 +112,56 @@ class RiskConfig:
 
 
 @dataclass
+class ManagementConfig:
+    """Handelsmanagement -- was NACH dem Einstieg mit dem Trade passiert.
+
+    Der Ausgangspunkt dieses Projekts hatte hier eine Luecke: die
+    Positionsgroesse wurde ueber eine **geplante** Stop-Distanz bemessen
+    (``risk.stop_bricks * Brick``), aber dieser Stop wurde nie ausgefuehrt. Das
+    behauptete Risiko war damit unverbindlich.
+
+    Alle Bausteine sind **standardmaessig aus** -- ohne ausdrueckliche
+    Konfiguration verhaelt sich die Engine wie zuvor.
+
+      * ``hard_stop``          -- der geplante Stop wird tatsaechlich ausgefuehrt
+      * ``stop_slippage_pct``  -- Aufschlag auf JEDE Stop-Ausfuehrung. Ein Stop
+                                  ist eine Markt-Order in eine Bewegung hinein
+                                  und fuellt nicht am Stop-Preis.
+      * ``breakeven_bricks``   -- nach so vielen Bricks Vorsprung wandert der
+                                  Stop auf den Einstieg (plus ``breakeven_offset_pct``)
+      * ``trail_bricks``       -- Stop folgt dem Renko-Gitter in diesem Abstand
+      * ``time_stop_bars``     -- Ausstieg nach so vielen Bars, sofern der Trade
+                                  nicht mindestens ``time_stop_min_r`` im Plus liegt
+
+    Break-even und Trailing setzen ``hard_stop`` voraus: ein nachgezogener Stop,
+    der nie ausgeloest wird, waere reine Kosmetik.
+    """
+
+    hard_stop: bool = False
+    stop_slippage_pct: float = 0.0005
+    breakeven_bricks: Optional[float] = None
+    breakeven_offset_pct: float = 0.0
+    trail_bricks: Optional[float] = None
+    time_stop_bars: Optional[int] = None
+    time_stop_min_r: float = 1.0
+
+    def validate(self) -> None:
+        if self.stop_slippage_pct < 0:
+            raise ValueError("stop_slippage_pct darf nicht negativ sein")
+        if self.breakeven_bricks is not None and self.breakeven_bricks <= 0:
+            raise ValueError("breakeven_bricks muss > 0 sein")
+        if self.trail_bricks is not None and self.trail_bricks <= 0:
+            raise ValueError("trail_bricks muss > 0 sein")
+        if self.time_stop_bars is not None and self.time_stop_bars < 1:
+            raise ValueError("time_stop_bars muss >= 1 sein")
+        if not self.hard_stop and (self.breakeven_bricks is not None
+                                   or self.trail_bricks is not None):
+            raise ValueError(
+                "breakeven_bricks/trail_bricks benoetigen hard_stop=True -- "
+                "ein nie ausgefuehrter Stop laesst sich nicht nachziehen")
+
+
+@dataclass
 class ExecutionConfig:
     """Ausfuehrungsmodell -- verhindert Look-ahead-Bias per Konstruktion.
 
@@ -150,6 +200,7 @@ class BacktestConfig:
     strategy: StrategyConfig = field(default_factory=StrategyConfig)
     costs: CostConfig = field(default_factory=CostConfig)
     risk: RiskConfig = field(default_factory=RiskConfig)
+    management: ManagementConfig = field(default_factory=ManagementConfig)
     execution: ExecutionConfig = field(default_factory=ExecutionConfig)
 
     def validate(self) -> "BacktestConfig":
@@ -159,6 +210,7 @@ class BacktestConfig:
         self.strategy.validate()
         self.costs.validate()
         self.risk.validate()
+        self.management.validate()
         self.execution.validate()
         return self
 
@@ -182,6 +234,7 @@ def config_from_dict(data: Dict[str, Any]) -> BacktestConfig:
         strategy=_sub(StrategyConfig, data, "strategy"),
         costs=_sub(CostConfig, data, "costs"),
         risk=_sub(RiskConfig, data, "risk"),
+        management=_sub(ManagementConfig, data, "management"),
         execution=_sub(ExecutionConfig, data, "execution"),
     )
     return cfg.validate()

@@ -14,9 +14,11 @@ from typing import Dict, Optional, Tuple
 
 import pandas as pd
 
-from .config import BacktestConfig
+from .config import BacktestConfig, ManagementConfig
 from .renko import build_renko
 from .strategy import generate_signals
+from .renko_trail import (VARIANTS, Variant, entry_signals, brick_grid,
+                          run_variant, variant_config, variant_signals)
 from .engine import run_backtest, BacktestResult
 from .prop import evaluate_all_presets, evaluate_challenge, PRESETS, ChallengeResult
 from .report import compute_metrics
@@ -27,11 +29,19 @@ from . import data, kraken, binance
 __all__ = [
     "backtest",
     "BacktestConfig",
+    "ManagementConfig",
     "BacktestResult",
     "PRESETS",
     "ChallengeResult",
     "build_renko",
     "generate_signals",
+    "entry_signals",
+    "brick_grid",
+    "VARIANTS",
+    "Variant",
+    "run_variant",
+    "variant_config",
+    "variant_signals",
     "run_backtest",
     "evaluate_challenge",
     "evaluate_all_presets",
