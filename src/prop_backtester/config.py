@@ -23,6 +23,13 @@ class RenkoConfig:
     atr_multiplier: float = 1.0  # Brick-Groesse = ATR * multiplier
     fixed_brick: Optional[float] = None  # nur bei mode == "fixed": absolute Brick-Groesse
     fixed_brick_pct: Optional[float] = None  # alternativ bei "fixed": Prozent vom Preis
+    # Quelle der Bricks: "close" nutzt nur den Schlusskurs, "ohlc" auch Hoch und
+    # Tief -- dann erzeugen auch Dochte Bricks (TradingView-Einstellung "OHLC").
+    source: str = "close"
+    # Wie viele Boxen der Preis gegen die letzte Brick-Richtung laufen muss,
+    # damit ein Gegenbrick entsteht. 1.0 = Gitter (bisheriges Verhalten),
+    # 2.0 = klassisches Renko wie in TradingView ("Traditional").
+    reversal_boxes: float = 1.0
 
     def validate(self) -> None:
         if self.mode not in ("atr", "fixed"):
@@ -31,6 +38,10 @@ class RenkoConfig:
             raise ValueError("atr_period muss >= 2 sein")
         if self.mode == "fixed" and not (self.fixed_brick or self.fixed_brick_pct):
             raise ValueError("mode=fixed benoetigt fixed_brick oder fixed_brick_pct")
+        if self.source not in ("close", "ohlc"):
+            raise ValueError(f"RenkoConfig.source ungueltig: {self.source!r}")
+        if self.reversal_boxes < 1:
+            raise ValueError("reversal_boxes muss >= 1 sein")
 
 
 @dataclass
@@ -181,13 +192,23 @@ class ExecutionConfig:
                       ``level`` und ``known_at`` mitbringt und ``known_at`` echt
                       vor der Fill-Bar liegt. Die Engine prueft zusaetzlich, dass
                       das Level innerhalb der Bar-Spanne erreicht wurde.
+
+    ``signal_price`` -- 🛑 **Enthaelt bewusst Look-ahead.** Gefuellt wird zu dem
+                      Preis, den das Signal mitbringt (z.B. ein Renko-Brick-Level
+                      mitten in der Kerze), obwohl die Entscheidung erst der
+                      Schlusskurs geliefert hat. Das ist genau der Fehler, der
+                      die frueheren Ergebnisse dieses Projekts unbrauchbar
+                      gemacht hat -- und genau das, was Chart-Strategietester auf
+                      Renko-Charts tun. Der Modus existiert ausschliesslich, um
+                      die Groesse dieses Fehlers zu **messen**. Niemals fuer eine
+                      Aussage ueber Handelbarkeit benutzen.
     """
 
     mode: str = "close"
     strict: bool = True   # bei Verstoessen hart fehlschlagen statt still korrigieren
 
     def validate(self) -> None:
-        if self.mode not in ("close", "next_open", "level"):
+        if self.mode not in ("close", "next_open", "level", "signal_price"):
             raise ValueError(f"ExecutionConfig.mode ungueltig: {self.mode!r}")
 
 

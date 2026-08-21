@@ -3,17 +3,30 @@
 Modell (bewusst simpel & konsistent):
   * Es gibt ein Gitter (``anchor`` = Schlusskurs des letzten Bricks).
   * Ein neuer Brick entsteht, sobald sich der Preis um mindestens eine
-    Brick-Groesse vom ``anchor`` entfernt -- in beide Richtungen mit derselben
-    Schwelle (1-Brick-Gitter).
+    Brick-Groesse vom ``anchor`` entfernt.
   * Innerhalb einer Bar koennen mehrere Bricks entstehen.
 
-Warum 1-Brick-Gitter? In Kombination mit der Strategie "Reversal nach 2
-Gegen-Bricks" entspricht das exakt dem klassischen 2-Brick-Reversal: Nach einem
-Aufwaertsbrick mit Schluss C muss der Preis fuer 2 Abwaertsbricks bis C - 2*Brick
-fallen. So bleibt die Semantik "2 Bricks drehen" preisgenau erhalten.
+**Zwei Schalter, die die Brick-Reihe grundlegend aendern:**
+
+``source``
+    ``"close"`` -- nur der Schlusskurs jeder Bar wird gegen das Gitter geprueft.
+    ``"ohlc"``  -- auch Hoch und Tief; damit erzeugen auch **Dochte** Bricks.
+    Das entspricht der TradingView-Einstellung "OHLC" und liefert deutlich mehr
+    (und mehr wechselnde) Bricks. Reihenfolge innerhalb der Bar: das
+    **gegenlaeufige Extrem zuerst** (bei steigender Bar erst das Tief). Ohne
+    Tickdaten ist die echte Reihenfolge unbekannt; diese Wahl erzeugt eher
+    zusaetzliche Gegen-Bricks als zusaetzliche Trendbricks.
+
+``reversal_boxes``
+    Wie weit der Preis **gegen** die letzte Brick-Richtung laufen muss, damit
+    ein Gegenbrick entsteht. ``1.0`` ist ein reines Gitter -- in Kombination mit
+    der Strategie "Reversal nach 2 Gegen-Bricks" entspricht das exakt dem
+    klassischen 2-Brick-Reversal. ``2.0`` ist klassisches Renko wie in
+    TradingView ("Traditional"): ein Gegenbrick springt zwei Boxen weit.
 
 Bei ``mode="atr"`` ist die Brick-Groesse dynamisch: es wird die (Wilder-)ATR am
-ausloesenden Bar verwendet.
+ausloesenden Bar verwendet. Bei ``fixed_brick_pct`` waechst die Boxgroesse mit
+dem Kurs mit (TradingView: Boxgroesse in Prozent).
 """
 
 from __future__ import annotations
@@ -77,33 +90,49 @@ def build_renko(df: pd.DataFrame, cfg: RenkoConfig) -> RenkoResult:
     size_out: List[float] = []
     idx_out: List[int] = []
 
+    highs = df["high"].to_numpy(dtype=float) if cfg.source == "ohlc" else None
+    lows = df["low"].to_numpy(dtype=float) if cfg.source == "ohlc" else None
+    opens = df["open"].to_numpy(dtype=float) if cfg.source == "ohlc" else None
+
     anchor = np.nan  # Schlusskurs des letzten Bricks (Gitter-Anker)
+    last_dir = 0     # Richtung des letzten Bricks (fuer reversal_boxes)
 
     for i in range(len(closes)):
         size = brick_of(i)
         if not np.isfinite(size) or size <= 0:
             continue  # ATR-Warmup noch nicht bereit
-        price = closes[i]
         if np.isnan(anchor):
-            anchor = price  # erster gueltiger Bar setzt den Anker
+            anchor = closes[i]  # erster gueltiger Bar setzt den Anker
             continue
-        # Es koennen mehrere Bricks in einer Bar entstehen.
+
+        if cfg.source == "ohlc":
+            # Gegenlaeufiges Extrem zuerst -- pessimistisch (siehe Modulkopf).
+            path = ([lows[i], highs[i]] if closes[i] >= opens[i]
+                    else [highs[i], lows[i]])
+        else:
+            path = [closes[i]]
+
         # Groesse wird pro Bar fixiert (dynamische ATR wirkt ab dem naechsten Bar).
         guard = 0
-        while price >= anchor + size:
-            anchor += size
-            times_out.append(times[i]); close_out.append(anchor)
-            dir_out.append(1); size_out.append(size); idx_out.append(i)
-            guard += 1
-            if guard > 100000:  # Schutz gegen Endlosschleife bei Datenfehlern
-                raise RuntimeError("Renko-Aufbau: zu viele Bricks pro Bar")
-        while price <= anchor - size:
-            anchor -= size
-            times_out.append(times[i]); close_out.append(anchor)
-            dir_out.append(-1); size_out.append(size); idx_out.append(i)
-            guard += 1
-            if guard > 100000:
-                raise RuntimeError("Renko-Aufbau: zu viele Bricks pro Bar")
+        for price in path:
+            while True:
+                auf = size * (cfg.reversal_boxes if last_dir == -1 else 1.0)
+                ab = size * (cfg.reversal_boxes if last_dir == 1 else 1.0)
+                if price >= anchor + auf:
+                    anchor += auf
+                    richtung = 1
+                elif price <= anchor - ab:
+                    anchor -= ab
+                    richtung = -1
+                else:
+                    break
+                times_out.append(times[i]); close_out.append(anchor)
+                dir_out.append(richtung); size_out.append(size)
+                idx_out.append(i)
+                last_dir = richtung
+                guard += 1
+                if guard > 100000:  # Schutz gegen Endlosschleife bei Datenfehlern
+                    raise RuntimeError("Renko-Aufbau: zu viele Bricks pro Bar")
 
     bricks = pd.DataFrame({
         "time": times_out,

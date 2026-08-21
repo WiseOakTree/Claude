@@ -111,3 +111,48 @@ def test_non_strict_skips_instead_of_raising():
 def test_default_mode_is_close():
     """Der sichere Modus ist Default -- niemand faellt versehentlich zurueck."""
     assert BacktestConfig().execution.mode == "close"
+
+
+# --- Modus "signal_price": der Fehler, gezielt reproduziert ----------------
+#
+# Dieser Modus fuellt bewusst am Signal-Preis (Brick-Level mitten in der Kerze).
+# Er existiert nur, um die Groesse des Look-ahead-Fehlers zu messen -- z.B. um
+# zu zeigen, was ein Chart-Strategietester auf einem Renko-Chart anzeigt.
+
+def _sig_price(df, bar, price, target=1):
+    return pd.DataFrame({"time": [df.index[bar]], "src_index": [bar],
+                         "price": [price], "target": [target], "brick_size": [1.0]})
+
+
+def test_signal_price_fuellt_am_brick_level():
+    # Long-Signal: Brick-Level 100 liegt weit unter dem Schlusskurs 108.
+    df = _bars([(100, 108, 99, 108), (108, 112, 108, 112)])
+    cfg = BacktestConfig(costs=_zero_costs(),
+                         execution=ExecutionConfig(mode="signal_price"))
+    res = run_backtest(df, _sig_price(df, 0, 100.0), cfg)
+    assert res.trades["entry_price"].iloc[0] == pytest.approx(100.0)
+
+
+def test_signal_price_schoent_das_ergebnis_gegenueber_close():
+    df = _bars([(100, 108, 99, 108), (108, 112, 108, 112)])
+    ehrlich = run_backtest(df, _sig_price(df, 0, 100.0),
+                           BacktestConfig(costs=_zero_costs()))
+    geschoent = run_backtest(
+        df, _sig_price(df, 0, 100.0),
+        BacktestConfig(costs=_zero_costs(),
+                       execution=ExecutionConfig(mode="signal_price")))
+    assert geschoent.final_balance > ehrlich.final_balance
+
+
+def test_signal_price_bleibt_in_der_bar_spanne():
+    """Auch der geschoente Modus erfindet keinen Preis ausserhalb der Kerze."""
+    df = _bars([(100, 101, 99, 100), (100, 101, 99, 100)])
+    cfg = BacktestConfig(costs=_zero_costs(),
+                         execution=ExecutionConfig(mode="signal_price"))
+    res = run_backtest(df, _sig_price(df, 0, 50.0), cfg)
+    assert res.trades["entry_price"].iloc[0] == pytest.approx(99.0)
+
+
+def test_unbekannter_modus_wird_abgelehnt():
+    with pytest.raises(ValueError):
+        ExecutionConfig(mode="irgendwas").validate()

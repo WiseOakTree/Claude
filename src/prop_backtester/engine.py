@@ -253,6 +253,12 @@ class Engine:
             if i + 1 >= n:
                 return None          # kein Folgebar mehr -> Signal verfaellt
             return i + 1, float(opens[i + 1])
+        if ex.mode == "signal_price":
+            # 🛑 Bewusster Look-ahead -- nur zum Messen des Fehlers, siehe
+            # ExecutionConfig. Der Preis stammt aus dem Signal und kann zeitlich
+            # VOR der Information liegen, die das Signal ausgeloest hat.
+            price = float(getattr(row, "price"))
+            return i, min(max(price, float(lows[i])), float(highs[i]))
 
         # mode == "level": nur mit nachweislich vorab bekanntem Level zulaessig
         level = getattr(row, "level", None)
