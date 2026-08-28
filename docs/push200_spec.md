@@ -32,26 +32,48 @@ Und der Kostenanteil:
 
 > Kosten je Roundtrip ÷ Zielgröße = **Anteil des Ziels, der an die Börse geht.**
 
-Bei 200 $ Ziel auf BTC bei 77.000 $ und einem sehr wohlwollenden Kostenmodell
-(9 bp bei Gewinn) sind das **35 %**. Bei reinem Taker-Handel (16 bp) sind es
-**62 %**. Die daraus folgende Break-even-Trefferquote wird vorab ausgerechnet
-und **im Ergebnis der gemessenen gegenübergestellt**.
+Mit den **gemessenen 8 bp** des Nutzers und 200 $ Ziel auf BTC bei 79.000 $
+sind das **31,6 %** — und die Break-even-Trefferquote bei symmetrischem Ziel
+und Stop liegt damit bei **65,8 %** statt bei 50 %. Diese Zahl wird der
+gemessenen Trefferquote gegenuebergestellt.
 
-## Kostenmodell — bewusst wohlwollend
+Fuer groessere Ziele faellt sie schnell:
 
-Damit ein negatives Ergebnis nicht an zu strengen Annahmen liegt:
+| Ziel | in bp | Kosten-Anteil | Break-even-Trefferquote (1:1) |
+|---|---|---|---|
+| 200 $ | 25,2 | 31,6 % | **65,8 %** |
+| 500 $ | 63,1 | 12,7 % | 56,3 % |
+| 1.000 $ | 126,1 | 6,3 % | 53,2 % |
+| 2.000 $ | 252,3 | 3,2 % | 51,6 % |
 
-| Vorgang | Annahme | Kosten |
-|---|---|---|
-| Einstieg | Taker (Momentum, muss sofort rein) | 4 bp Gebühr + 1 bp halber Spread + 2 bp Slippage = **7 bp** |
-| Ausstieg am Ziel | **Maker**-Limit, liegt vorher im Buch | 2 bp Gebühr, keine Slippage = **2 bp** |
-| Ausstieg am Stop | Taker in die Bewegung hinein | 4 + 1 + 3 = **8 bp** |
-| Ausstieg zum Tagesschluss | Taker | **7 bp** |
-| Funding | Position wird am selben Tag geschlossen | **0** |
+## Kostenmodell — aus einem echten Trade des Nutzers abgeleitet
 
-Roundtrip: **9 bp bei Gewinn, 15 bp bei Verlust.** Zusätzlich gerechnet:
-reines Taker-Modell (16 bp flat) und ein **Nullkosten-Lauf**, um zu trennen,
-was Marktverhalten und was Reibung ist.
+Nachtrag vor der Rechnung: Der Nutzer hat einen realen Trade gezeigt
+(Short 0,387 BTC @ 79.272,30, Ausstieg 78.953,20, angezeigter Netto +99,00 $
+bei 12 EUR Gebuehr je Seite). Daraus laesst sich die Reibung ausrechnen statt
+sie zu schaetzen:
+
+| | |
+|---|---|
+| Nominal | 30.678,38 $ |
+| Bruttogewinn (319,10 $ Bewegung) | 123,49 $ |
+| angezeigter Netto | 99,00 $ |
+| **Gebuehr gesamt** | **24,49 $** (= 24 EUR) |
+| **Roundtrip** | **7,98 bp** (3,99 bp je Seite) |
+| Anteil am Bruttogewinn dieses Trades | **19,8 %** |
+
+Gerechnet wird deshalb mit **4 bp je Seite**, plus 2 bp zusaetzlicher Slippage
+auf Stop-Ausfuehrungen (Markt-Order in die Bewegung hinein). Roundtrip:
+**8 bp bei Gewinn, 10 bp bei Stop.**
+
+Zusaetzlich gerechnet: ein pessimistisches Taker-Modell (16 bp) und ein
+**Nullkosten-Lauf**, um zu trennen, was Marktverhalten und was Reibung ist.
+
+**Wichtiger Vorbehalt:** Ob die 12 EUR eine **prozentuale** oder eine **feste**
+Gebuehr sind, geht aus einem einzelnen Trade nicht hervor. Bei einer festen
+Gebuehr haengt alles an der Positionsgroesse — bei 10.000 $ Nominal waeren es
+24,5 bp statt 8, und die Kosten fraessen dann **97 % eines 200-$-Ziels**. Das
+wird im Ergebnis mitberichtet.
 
 ## Gitter
 
