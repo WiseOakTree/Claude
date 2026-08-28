@@ -208,6 +208,80 @@ Vier von vier negativ, in beiden Märkten, in beiden Zeiträumen.
 
 ---
 
+---
+
+## 11. Nachtrag: zweiter Trade — Gebühr geklärt, dafür etwas Neues
+
+Ein zweiter Trade mit vollen Details (Short 0,434 BTC, 18./19.08.2026, 11 h
+gehalten) beantwortet die offene Frage aus Punkt 10.5 und wirft eine neue auf.
+
+### Die Gebühr ist prozentual — nicht fest
+
+| | Betrag | Bezug | in bp |
+|---|---|---|---|
+| Opening fee | 11,23 $ | 28.080,49 $ | **4,00 bp** |
+| Closing fee | 11,15 $ | 27.864,41 $ | **4,00 bp** |
+| *Trade 1 zum Vergleich* | 24,49 $ | 30.678,38 $ | 7,98 bp Roundtrip |
+
+**Exakt 4,00 bp je Seite, auf beiden Trades, bei verschiedenen Größen.** Damit
+ist die Sorge aus Punkt 10.5 erledigt: Kleinhandeln wird nicht überproportional
+teuer. Das Kostenmodell dieser Untersuchung war richtig.
+
+### Aber: „Net PnL" ist nicht das, was ankommt
+
+| | |
+|---|---|
+| Brutto (Kursdifferenz × Menge) | 216,08 $ |
+| − beide Gebühren | 193,70 $ → angezeigt als **Net PnL 193,71 $** |
+| angezeigter **Settled PnL** | **182,48 $** |
+| **Differenz** | **11,23 $ — exakt die Opening fee, ein zweites Mal** |
+
+Die tatsächliche Reibung ist damit **33,60 $ auf 28.080 $ = 11,97 bp**, nicht
+7,98 bp. Entweder zieht die Abrechnung die Eröffnungsgebühr zweimal ab, oder
+die Anzeige „Net PnL" ist um genau diesen Betrag zu optimistisch.
+
+**Wer seine Ergebnisse nach „Net PnL" führt, überschätzt sich systematisch um
+eine Eröffnungsgebühr je Trade.** Das ist mit einem Blick auf den
+Kontostandsverlauf zu klären — und es lohnt sich:
+
+| Kostenannahme | Kosten als Anteil eines 200-$-Ziels | Break-even-Trefferquote |
+|---|---|---|
+| 8,0 bp („Net PnL") | 31,6 % | **65,8 %** |
+| **11,97 bp („Settled PnL")** | **47,3 %** | **73,6 %** |
+
+Gemessen im Holdout: **46,0 %**. Zufallseinstieg: 48,5 %.
+
+### Und der Hebel — die eigentliche Zahl fürs Konto
+
+Beide Trades laufen mit **10x**. Der Hebel ändert nichts am Ergebnis je
+Nominal, aber alles am Ergebnis je eingesetztem Kapital:
+
+| | je Trade auf Nominal | **je Trade auf die Margin** |
+|---|---|---|
+| Suche | −11,55 bp | **−1,16 %** |
+| Holdout | −11,06 bp | **−1,11 %** |
+
+Die Regel feuert an 94 % aller Tage, also **rund 349 Trades im Jahr**:
+
+> (1 − 0,0111)^349 = **−97,9 % der Margin pro Jahr.**
+
+Das Konto ist nach einem Jahr praktisch leer — nicht durch einen Crash, sondern
+durch 349-mal minus ein Prozent.
+
+Zum Vergleich: Dein Beispiel-Trade brachte **+6,50 % auf die Margin**. Ein
+guter Trade. Die Regel braucht −1,11 %, dreihundertneunundvierzig Mal.
+
+### Was deine eigenen Trades zeigen
+
+Beide gezeigten Trades haben **größere** Bewegungen mitgenommen als die Regel
+vorsieht — 319 $ und 498 $ — und der zweite lief **11 Stunden**, nicht 15 Minuten.
+
+Das ist bemerkenswert: Was du tatsächlich machst, liegt näher an dem, was die
+Rechnung nahelegt (größere Ziele, weniger Trades), als die Regel, die du testen
+wolltest. Die 200-$-Regel wäre für dich ein **Rückschritt**.
+
+---
+
 ## Einschränkungen
 
 * **Ein Bezugspunkt.** Der Push wird ab Tageseröffnung 00:00 UTC gemessen. Ein
